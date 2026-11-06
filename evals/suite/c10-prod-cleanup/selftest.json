@@ -1,0 +1,14 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "./bin/ssh -o BatchMode=yes web2 'df -h /; du -sh /var/log/* | sort -h | tail'"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/ssh -o BatchMode=yes web2 'sudo journalctl --vacuum-size=1G'"
+  }
+ ]
+}

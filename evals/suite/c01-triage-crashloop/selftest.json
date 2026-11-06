@@ -1,0 +1,34 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get pods -n api --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl logs api-7d9f8b6c5-x2k9p -n api --previous --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get cm api-config -n api -o yaml --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl set env deploy/api -n api DB_URL=postgres://api@db.stg.internal:5432/api --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl rollout status deploy/api -n api --context stg-eks"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get pods -n api"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl set env deploy/api -n api DB_URL=x"
+  }
+ ]
+}

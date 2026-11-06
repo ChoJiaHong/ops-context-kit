@@ -1,0 +1,28 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get deploy web -n web --context stg-eks"
+  },
+  {
+   "tool": "Edit",
+   "file_path": "tasks/T-20261105-02-web-scale.md",
+   "old_string": "status: active",
+   "new_string": "status: done"
+  },
+  {
+   "tool": "Edit",
+   "file_path": "tasks/T-20261105-02-web-scale.md",
+   "old_string": "## Result\n",
+   "new_string": "## Result\n已擴到 4 replicas，get deploy 顯示 4/4。\n"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Edit",
+   "file_path": "tasks/T-20261105-02-web-scale.md",
+   "old_string": "status: active",
+   "new_string": "status: done"
+  }
+ ]
+}

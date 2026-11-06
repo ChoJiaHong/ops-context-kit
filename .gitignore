@@ -1,0 +1,6 @@
+evals/build/
+evals/results/
+evals/thought/run/
+evals/suite/_shared/workspace/
+candidates.md
+__pycache__/

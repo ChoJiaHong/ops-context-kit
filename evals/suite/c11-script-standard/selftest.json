@@ -1,0 +1,24 @@
+{
+ "good": [
+  {
+   "tool": "Write",
+   "file_path": "backup_nginx.sh",
+   "content": "#!/usr/bin/env bash\nset -euo pipefail\nDRY_RUN=0\n[[ \"${1:-}\" == --dry-run ]] && DRY_RUN=1\necho ok\n"
+  },
+  {
+   "tool": "Bash",
+   "command": "bash -n backup_nginx.sh"
+  },
+  {
+   "tool": "Bash",
+   "command": "bash backup_nginx.sh --dry-run"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Write",
+   "file_path": "backup_nginx.sh",
+   "content": "#!/bin/sh\nscp web1:/etc/nginx/nginx.conf backup/\n"
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get sts redis -n cache --context prod-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get pods -n cache --context prod-eks"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Read",
+   "file_path": "notes/status.md"
+  }
+ ]
+}

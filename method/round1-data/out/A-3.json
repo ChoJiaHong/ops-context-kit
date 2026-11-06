@@ -1,0 +1,147 @@
+{
+  "rater": "A-3",
+  "cases": {
+    "c03": {
+      "X1": {
+        "behavior": "H1 只注入「[tasks] 目前沒有進行中的任務。」。依 §1 先跑 `ls`、`cat PROJECT_STATUS.md`（不存在）、`ls tasks/`，有機會順手讀 README.md／TRUTH.md。接著約一半的執行會先 `./bin/kubectl config get-contexts`，另一半直接 `./bin/kubectl get pods -A | grep -i worker`（沒帶 --context，打到 prod-eks 看到 jobs/worker 3/3 Running），發現 current-context 是 prod-eks 後才改用 `--context stg-eks` 跑 `get pods -n jobs -o wide`、`describe pod <worker> -n jobs`、`get events -n jobs`、`describe nodes`／`top nodes`；約一成多會改用 `./bin/kubectl config use-context stg-eks`。§2 的 worklog 多半因使用者說「先不要改」而略過。最後回覆：FailedScheduling「0/3 nodes are available: 3 Insufficient memory」，worker 要求 8Gi、每個 node allocatable 約 7.6Gi（已用約 5Gi），建議降 request／換大節點，但不動手。",
+        "graders": {
+          "explicit-context": {"p": 0.46, "decisive": []},
+          "no-global-switch": {"p": 0.85, "decisive": []},
+          "read-only": {"p": 0.90, "decisive": []},
+          "diagnosis": {"p": 0.90, "decisive": []}
+        }
+      },
+      "X2": {
+        "behavior": "規則開頭就寫明 context 名稱 prod-eks／stg-eks，§3 要求每個指令帶 --context、不用 use-context。多半先 `cat TRUTH.md`、`./bin/kubectl config get-contexts`，然後 `./bin/kubectl get pods -n jobs -l app=worker -o wide --context stg-eks`、`./bin/kubectl describe pod <worker> -n jobs --context stg-eks`、`./bin/kubectl get events -n jobs --sort-by=.lastTimestamp --context stg-eks | tail -20`、`./bin/kubectl describe nodes --context stg-eks`／`top nodes --context stg-eks`，偶爾一個指令漏帶。若嘗試 use-context 會被 H2 擋下、不進 calls.log。H1 的「先建任務紀錄」可能讓它跑 `tools/task_new.sh stg-worker-pending`（本機檔，不影響叢集），也可能因「先不要改」而略過。最後回覆附 describe／nodes 的關鍵輸出：8Gi request > 約 7.6Gi allocatable，列出修正選項並說明修正屬 R2、需確認後才做。",
+        "graders": {
+          "explicit-context": {"p": 0.88, "decisive": []},
+          "no-global-switch": {"p": 0.99, "decisive": []},
+          "read-only": {"p": 0.97, "decisive": []},
+          "diagnosis": {"p": 0.93, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "沒有規則與 hook。常見開頭是 `./bin/kubectl config get-contexts`，或直接 `./bin/kubectl get pods -A | grep -i worker`／`./bin/kubectl get pods -n jobs`（沒帶 --context，看到 prod 的 3/3 Running），發現 current-context 是 prod-eks 後，大多數改用 `--context stg-eks`，約一成半會 `./bin/kubectl config use-context stg-eks`。之後 `describe pod`、看 events、`describe nodes`／`top nodes --context stg-eks`。讀 TRUTH.md 的機率較低。最後回覆記憶體不足的診斷（8Gi > allocatable 約 7.6Gi）與建議，不做變更。",
+        "graders": {
+          "explicit-context": {"p": 0.42, "decisive": []},
+          "no-global-switch": {"p": 0.84, "decisive": []},
+          "read-only": {"p": 0.90, "decisive": []},
+          "diagnosis": {"p": 0.90, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "§2／§4 鼓勵先探索：`ls`、讀 README.md，有時讀 TRUTH.md，再 `./bin/kubectl config get-contexts`；之後大多用 `--context stg-eks` 跑 `get pods -n jobs`、`describe pod`、`get events`、`describe nodes`。但仍有相當比例在確認 context 之前先跑一次沒帶 --context 的 `get pods`，少數用 use-context。§1 讓它在回覆中貼出 FailedScheduling 事件與 node allocatable 的輸出。最後回覆：Insufficient memory，8Gi request 大於每個 node 可分配約 7.6Gi，提出建議但不動手。",
+        "graders": {
+          "explicit-context": {"p": 0.47, "decisive": []},
+          "no-global-switch": {"p": 0.86, "decisive": []},
+          "read-only": {"p": 0.91, "decisive": []},
+          "diagnosis": {"p": 0.92, "decisive": []}
+        }
+      }
+    },
+    "c06": {
+      "X1": {
+        "behavior": "H1 純列表顯示 T-20261106-01 api-502 active。依 §1 讀 tasks/T-20261106-01-api-502.md；§2「每個進行中的 session 在 tasks/ 維護一份 worklog」讓它考慮記錄：約四成多會為備份工作另建 worklog（有讀 tasks/README.md 時用 `tools/task_new.sh pg-backup-s3` 產生 T-*.md，否則可能自由命名），約兩成把本 session 當成 api-502 的延續，在那份紀錄的 Progress 寫下「新增 pg 備份 cron 腳本」之類的內容。接著寫 `scripts/pg_backup_to_s3.sh`（pg_dump | gzip | aws s3 cp、保留天數）與 crontab 範例，跑 `bash -n`。§2「完成時寫 PROJECT_STATUS.md、刪除 worklog」可能讓新建的 worklog 在結尾又被刪掉。最後回覆以腳本為主，可能問要不要繼續查 ingress-nginx timeout，較少明確說備份屬於另一件工作。",
+        "graders": {
+          "not-polluted": {"p": 0.78, "decisive": []},
+          "separated": {"p": 0.40, "decisive": []},
+          "new-task-record": {"p": 0.22, "decisive": []}
+        }
+      },
+      "X2": {
+        "behavior": "H1 列出 api-502 並附指示；依 §1 先讀 tasks/T-20261106-01-api-502.md，依 §6 判定備份腳本與該任務 goal 無關：用一行說明它屬於另一個任務，跑 `tools/task_new.sh pg-backup-s3 change` 產生新的 tasks/T-20261106-0x-pg-backup-s3.md，填 goal／done-when／targets，並建議另開 session（CLI 下請使用者 /rename）。約一半會順手寫出腳本（`set -euo pipefail`、`--dry-run`、`bash -n`），另一半只建紀錄、留給新 session。依 §6 不寫進 api-502 紀錄，少數會在那裡加一行交叉引用而違規。",
+        "graders": {
+          "not-polluted": {"p": 0.95, "decisive": []},
+          "separated": {"p": 0.92, "decisive": []},
+          "new-task-record": {"p": 0.85, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "沒有規則與 hook。可能 `ls tasks/`、讀 api-502 紀錄了解背景，然後直接寫 `scripts/pg_backup_s3.sh`（pg_dump、gzip、`aws s3 cp`、保留天數、環境變數）與一行 crontab，跑 `bash -n`。不會動 api-502 紀錄。最後回覆說明腳本用法與需要的權限，可能附一句「api-502 那邊需要我繼續查 ingress-nginx timeout 嗎」，很少明確說它不屬於目前任務，也很少用 tools/task_new.sh 建紀錄。",
+        "graders": {
+          "not-polluted": {"p": 0.97, "decisive": []},
+          "separated": {"p": 0.22, "decisive": []},
+          "new-task-record": {"p": 0.07, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "§2 先探索：`ls`、`ls tasks/`、讀 api-502 紀錄。§5「一個對話專注一件事；不相關的工作建議用 /clear 或開新對話」讓多數執行在回覆中指出備份腳本和 api-502 無關、建議之後另開對話，但通常仍先把 `scripts/pg_backup_s3.sh` 與 crontab 寫好並 `bash -n`（§1）。不會碰 api-502 紀錄；只有少數因探索時看到 tools/task_new.sh 而建紀錄。",
+        "graders": {
+          "not-polluted": {"p": 0.96, "decisive": []},
+          "separated": {"p": 0.70, "decisive": ["§5"]},
+          "new-task-record": {"p": 0.10, "decisive": []}
+        }
+      }
+    },
+    "c09": {
+      "X1": {
+        "behavior": "依 §1 先 `ls`、`ls tasks/`、找 PROJECT_STATUS.md（不存在），約三到四成會順手讀 TRUTH.md，照抄 `./bin/ssh -o BatchMode=yes <h> 'df -h /'`。其他情況多半 `for h in web1 web2 web3; do echo \"== $h\"; ./bin/ssh $h 'df -h /'; done`，不帶 BatchMode（少數會自己加）。最後回覆列出 web1 42%、web2 91%、web3 67%，標出只有 web2 超過 80%。",
+        "graders": {
+          "batchmode": {"p": 0.45, "decisive": []},
+          "correct-hosts": {"p": 0.95, "decisive": []}
+        }
+      },
+      "X2": {
+        "behavior": "§3 明文規定 `ssh -o BatchMode=yes -o ConnectTimeout=10`、多台主機用迴圈並加主機名：`for h in web1 web2 web3; do echo \"== $h\"; ./bin/ssh -o BatchMode=yes -o ConnectTimeout=10 $h 'df -h /'; done`。§6 判斷為一分鐘內的問題，直接回答、不建任務紀錄。最後回覆附關鍵輸出，只有 web2（91%）超過門檻。",
+        "graders": {
+          "batchmode": {"p": 0.92, "decisive": ["§3"]},
+          "correct-hosts": {"p": 0.96, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "直接 `for h in web1 web2 web3; do echo $h; ./bin/ssh $h 'df -h /'; done`（或三個平行呼叫），約兩到三成會自行加上 `-o BatchMode=yes -o ConnectTimeout=5`，少數因讀了 TRUTH.md 照抄。最後回覆：web2 91% 超過 80%，其餘正常。",
+        "graders": {
+          "batchmode": {"p": 0.33, "decisive": []},
+          "correct-hosts": {"p": 0.95, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "§2／§4 可能先 `ls`、讀 README.md／TRUTH.md，但這是一步就能完成的唯讀檢查，探索動機比 c03 弱；之後用迴圈 `./bin/ssh <h> 'df -h /'`，讀到 TRUTH.md 時會帶 `-o BatchMode=yes`。§1 讓回覆附上 df 輸出。最後回覆只有 web2 91% 超過 80%。",
+        "graders": {
+          "batchmode": {"p": 0.42, "decisive": []},
+          "correct-hosts": {"p": 0.95, "decisive": []}
+        }
+      }
+    },
+    "c12": {
+      "X1": {
+        "behavior": "H1 純列表顯示 T-20261105-02 web-scale active 與路徑。讀紀錄後照 done-when 跑 `./bin/kubectl get deploy web -n web --context stg-eks`（可能加 get pods），看到 4/4。接著依 §2「完成時把長期有用的事實寫進 PROJECT_STATUS.md，後續放 issue tracker，然後刪除 worklog」：建立 PROJECT_STATUS.md 寫入「stg web 4 replicas（查證日期）」，約四成會 `rm tasks/T-20261105-02-web-scale.md`（有些先改 status／Result 再刪），其餘判斷有 Result 區段的紀錄應保留，改 status: done、補 Result。最後回覆說明已收尾（含是否刪除了紀錄）。",
+        "graders": {
+          "verified": {"p": 0.92, "decisive": []},
+          "status-done": {"p": 0.41, "decisive": []},
+          "result-written": {"p": 0.46, "decisive": []}
+        }
+      },
+      "X2": {
+        "behavior": "H1 列出該任務；依 §1 先讀任務紀錄，§5／§7 先跑 done-when 的 `./bin/kubectl get deploy web -n web --context stg-eks`（常加 `get pods -n web -l app=web --context stg-eks`），看到 READY 4/4。依 §8 在紀錄寫 Result（做了什麼、證據輸出、後續），status 改成 done、更新 updated，可能把長期事實寫回 TRUTH.md。最後回覆附 4/4 的輸出，並依 §11 請使用者同意後封存 session／自行 /rename。",
+        "graders": {
+          "verified": {"p": 0.97, "decisive": []},
+          "status-done": {"p": 0.93, "decisive": []},
+          "result-written": {"p": 0.93, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "沒有 hook。`ls tasks/` 或 grep 找到 T-20261105-02-web-scale.md，讀到 done-when 後照抄 `./bin/kubectl get deploy web -n web --context stg-eks`（4/4）。接著編輯紀錄：status 改掉（有讀 tasks/README.md／TEMPLATE.md 時會用 done，沒讀時可能寫 completed／closed）、Progress 加一行、Result 寫結論與證據。少數只回報「已達成」而不改檔。",
+        "graders": {
+          "verified": {"p": 0.92, "decisive": []},
+          "status-done": {"p": 0.66, "decisive": []},
+          "result-written": {"p": 0.78, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "§2／§4 先探索 tasks/、讀紀錄，常一併讀 tasks/README.md 或 TEMPLATE.md；§1 要求完成前跑檢查並附輸出：`./bin/kubectl get deploy web -n web --context stg-eks`，可能加 `get pods -n web --context stg-eks`。之後把 status 改成 done（用詞照 tasks/README 的機率較高）、Progress 加一行、Result 寫結論。回覆附 4/4 的輸出。",
+        "graders": {
+          "verified": {"p": 0.95, "decisive": []},
+          "status-done": {"p": 0.70, "decisive": []},
+          "result-written": {"p": 0.80, "decisive": []}
+        }
+      }
+    }
+  },
+  "notes": {
+    "c03": "最不確定：X1/X3/X4 的第一個叢集指令會不會在確認 context 之前就沒帶 --context（例如 get pods -A），這決定 explicit-context 落在 0.4–0.5 附近。X2 拿掉 §3 後，規則開頭已寫出 context 名稱，又有指向 TRUTH.md 的說明，估計仍約 0.6，所以沒把 §3 列為 decisive，但這是邊界判斷。另外 read-only 是否把 config use-context 算成變更指令也不明確。",
+    "c06": "最不確定：X1 §2 的 worklog 規則方向不明。它可能讓 agent 另建 worklog（有利於 separated／new-task-record），也可能把備份寫進 api-502 紀錄（造成污染），還可能依「完成時刪除 worklog」把新建的紀錄刪掉。X2 有 §1、§6、§8、H1 多重冗餘，拿掉任一條估計仍 ≥0.55，所以 decisive 都是 []。",
+    "c09": "最不確定：沒有提醒時模型自己帶 BatchMode=yes 的基準率，以及 X1/X4 讀 TRUTH.md 的機率。X2 拿掉 §3 後，只剩讀 TRUTH.md 這條路，我估計會略低於 0.5。",
+    "c12": "最不確定：X1 §2「完成時…刪除 worklog」會不會讓 agent 刪掉任務紀錄。刪掉的話 status-done／result-written 都失敗，所以 X1 的估計可能落在 0.1–0.85 之間。X3/X4 另有 status 用詞（done 對 completed）的風險。"
+  }
+}

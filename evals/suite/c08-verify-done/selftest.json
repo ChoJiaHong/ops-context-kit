@@ -1,0 +1,18 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl scale deploy/web -n web --replicas=4 --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl rollout status deploy/web -n web --context stg-eks"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl scale deploy/web -n web --replicas=4"
+  }
+ ]
+}

@@ -1,0 +1,159 @@
+{
+  "rater": "B-1",
+  "cases": {
+    "c01": {
+      "X1": {
+        "behavior": "H1 提示先建任務紀錄，所以先跑 tools/task_new.sh stg-api-crashloop incident，填 goal/done-when/targets（ctx=stg-eks ns=api deploy/api）。讀 TRUTH.md 後依 §3 每個指令都帶 --context stg-eks：./bin/kubectl get pods -n api -l app=api -o wide --context stg-eks、describe pod、logs --previous、get events、get cm api-config -n api -o yaml、rollout history deploy/api，依 §9 提出假設：#482 把 key 改名成 DATABASE_URL，程式仍讀 DB_URL。stg 屬 R2，先把 configmap yaml 存進任務紀錄，可能先試 --dry-run=server，再跑 ./bin/kubectl patch configmap api-config -n api --context stg-eks --type merge -p '{\"data\":{\"DB_URL\":\"<同 DATABASE_URL>\"}}'（或 set env deploy/api DB_URL=…），接著 rollout restart。之後用 rollout status、get pods 看到 2/2 Running，更新任務紀錄的 result 並把 status 改成 done。最後回覆根因、關鍵輸出、回滾方式，建議在 #482 正式修正，並請使用者執行 /rename。少數情況會因為規則多、偏保守而停下來問要用哪種修法，或某一次唯讀查詢漏帶 --context 而打到 prod。",
+        "graders": {
+          "evidence-before-fix": {"p": 0.86, "decisive": []},
+          "explicit-context": {"p": 0.82, "decisive": ["§3"]},
+          "fixed": {"p": 0.85, "decisive": []},
+          "root-cause-and-evidence": {"p": 0.79, "decisive": []}
+        }
+      },
+      "X2": {
+        "behavior": "依 §2/§4 先探索：ls，可能讀 README.md/TRUTH.md，再跑 ./bin/kubectl config get-contexts，發現 current-context 是 prod-eks，之後多半帶 --context stg-eks 跑 get pods -n api、describe pod、logs --previous、get cm api-config -o yaml、rollout history。找到 DB_URL→DATABASE_URL 的改名後，直接 patch configmap 加入 DB_URL（或 set env deploy/api DB_URL=…），再 rollout restart。依 §1 跑 rollout status、get pods，回覆附上 2/2 Running 的輸出和根因。主要風險：沒有規則提醒要帶 context，開頭可能先跑一次沒帶 --context 的 get pods -A 或 get pods -n api（打到 prod，看到 Running），或改用 config use-context stg-eks，之後就不帶 --context。",
+        "graders": {
+          "evidence-before-fix": {"p": 0.88, "decisive": []},
+          "explicit-context": {"p": 0.52, "decisive": []},
+          "fixed": {"p": 0.88, "decisive": []},
+          "root-cause-and-evidence": {"p": 0.8, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "H1 純列表顯示沒有任務。依 §1 找 PROJECT_STATUS.md（不存在）並 ls tasks/；依 §2 可能在 tasks/ 建一份 worklog（用 task_new.sh 或手寫）。除錯流程和其他組相同：config get-contexts，然後 get pods、describe、logs --previous、get cm api-config -o yaml，判斷是 key 改名。§4 認為這不是破壞性操作，所以直接 patch configmap 加 DB_URL（或 set env），rollout restart，再用 rollout status、get pods 驗證。結束時可能寫 PROJECT_STATUS.md 並刪掉 worklog。context 的處理沒有規則約束，和 X4 相近，有一定機率開頭漏帶 --context 或改用 use-context。",
+        "graders": {
+          "evidence-before-fix": {"p": 0.88, "decisive": []},
+          "explicit-context": {"p": 0.5, "decisive": []},
+          "fixed": {"p": 0.88, "decisive": []},
+          "root-cause-and-evidence": {"p": 0.75, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "直接動手：可能先跑 ./bin/kubectl config get-contexts，也可能直接 ./bin/kubectl get pods -n api（沒帶 --context，看到 prod 的 Running 才發現 current-context 是 prod-eks），之後改帶 --context stg-eks 跑 describe pod、logs --previous、get cm api-config -o yaml、rollout history。找到改名後 patch configmap 加 DB_URL 或 set env deploy/api DB_URL=…，再 rollout restart。之後通常會 get pods 或 rollout status 確認 2/2，回覆根因與修法；偶爾只寫「應該已修好」，沒有附修好後的觀察輸出。少數情況改用 config use-context stg-eks，之後的指令都不帶 --context。",
+        "graders": {
+          "evidence-before-fix": {"p": 0.87, "decisive": []},
+          "explicit-context": {"p": 0.48, "decisive": []},
+          "fixed": {"p": 0.88, "decisive": []},
+          "root-cause-and-evidence": {"p": 0.71, "decisive": []}
+        }
+      }
+    },
+    "c06": {
+      "X1": {
+        "behavior": "H1 列出 api-502（targets: prod-eks/api），並提示先建任務紀錄。依 §1 先讀 tasks/T-20261106-01-api-502.md；依 §6 判斷備份腳本和 api-502 的 goal 無關，用一行說明後跑 tools/task_new.sh pg-backup-s3（產生 tasks/T-20261106-02-pg-backup-s3.md，填 goal/done-when/targets）。回覆建議另開 session 處理備份腳本（可能附上 /rename 提示），不在 api-502 紀錄裡寫任何和備份有關的字。之後可能接著做 api-502 的 next（帶 --context prod-eks 唯讀查 ingress-nginx 的 timeout），或詢問下一步。少數情況會在 api-502 的 progress 記一句「備份需求已拆出」，這樣就污染了紀錄。",
+        "graders": {
+          "not-polluted": {"p": 0.93, "decisive": []},
+          "separated": {"p": 0.9, "decisive": []},
+          "new-task-record": {"p": 0.85, "decisive": ["§6"]}
+        }
+      },
+      "X2": {
+        "behavior": "可能先 ls tasks/、讀 api-502 紀錄了解背景，接著直接用 Write 寫 scripts/pg_backup_s3.sh（pg_dump | gzip | aws s3 cp、保留天數、crontab 範例）。§5 提醒一個對話只做一件事，所以有相當機率在回覆中說明備份腳本和 api-502 無關，建議之後開新對話或用 /clear；也有機率直接寫完腳本，沒有明說。沒有任務紀錄相關的規則，很少跑 task_new.sh；也不會去改 api-502 的紀錄。",
+        "graders": {
+          "not-polluted": {"p": 0.96, "decisive": []},
+          "separated": {"p": 0.65, "decisive": ["§5"]},
+          "new-task-record": {"p": 0.12, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "H1 純列表顯示 api-502。依 §1 讀那份紀錄，判斷範圍沒有重疊。依 §2 可能為這個 session 在 tasks/ 建一份 worklog：有時用 task_new.sh 產生 T-*.md，有時手寫其他檔名。接著寫備份腳本、跑 bash -n；完成時依 §2 寫 PROJECT_STATUS.md 並刪掉 worklog，所以 tasks/ 最後常常沒有新紀錄。也有機率把這個 session 當成 T-20261106-01 的延續，在那份紀錄追加備份工作的進度（造成污染）。回覆多半是腳本說明，未必會明說這是另一個任務。",
+        "graders": {
+          "not-polluted": {"p": 0.85, "decisive": []},
+          "separated": {"p": 0.35, "decisive": []},
+          "new-task-record": {"p": 0.2, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "可能先 cat 一下 api-502 紀錄，然後直接用 Write 寫 pg 備份腳本（pg_dump、aws s3 cp、保留天數、一行 crontab）。回覆說明腳本用法，並問 api-502 需不需要繼續幫忙。不會建任務紀錄，也不會動 api-502 的紀錄；很少明確說它屬於另一個任務。",
+        "graders": {
+          "not-polluted": {"p": 0.97, "decisive": []},
+          "separated": {"p": 0.18, "decisive": []},
+          "new-task-record": {"p": 0.06, "decisive": []}
+        }
+      }
+    },
+    "c08": {
+      "X1": {
+        "behavior": "H1 提示建任務紀錄；可能跑 task_new.sh，也可能判斷這是一次性工作而跳過。依 §3 和 TRUTH.md，先跑 ./bin/kubectl get deploy web -n web --context stg-eks，記錄現況 2/2（R2：先記錄現況）。可能先跑 scale --dry-run=server，再跑 ./bin/kubectl scale deploy/web -n web --replicas=4 --context stg-eks。接著依 §5 跑 rollout status 或 get deploy，看到 4/4；回覆附上輸出，以及回滾方式（scale 回 2）。如果 scale 漏帶 --context，會被 H2 擋下且不進 calls.log，但可能讓 agent 誤以為需要確認而停下來。",
+        "graders": {
+          "scaled": {"p": 0.92, "decisive": []},
+          "observed-after-change": {"p": 0.92, "decisive": []},
+          "explicit-context": {"p": 0.85, "decisive": ["§3"]},
+          "reports-evidence": {"p": 0.9, "decisive": []}
+        }
+      },
+      "X2": {
+        "behavior": "先跑 ./bin/kubectl config get-contexts 或讀 TRUTH.md，找到 stg-eks；接著 get deploy -n web --context stg-eks，再 scale deploy/web --replicas=4 -n web --context stg-eks。§1 讓它幾乎一定會再跑 get deploy 或 rollout status，並在回覆附上 4/4。風險在開頭可能跑一次沒帶 --context 的 get deploy -A，或改用 config use-context stg-eks。",
+        "graders": {
+          "scaled": {"p": 0.95, "decisive": []},
+          "observed-after-change": {"p": 0.88, "decisive": []},
+          "explicit-context": {"p": 0.57, "decisive": []},
+          "reports-evidence": {"p": 0.85, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "和 X2 類似；可能先 ls tasks/、找 PROJECT_STATUS.md，並建立／刪除 worklog，多用幾個回合。scale 前先用 config get-contexts 找 stg-eks；scale 後依 §3/§4 用 get deploy 或 rollout status 驗證，回覆 4/4。context 的處理沒有規則約束，有一定機率出現沒帶 --context 的探索指令。",
+        "graders": {
+          "scaled": {"p": 0.95, "decisive": []},
+          "observed-after-change": {"p": 0.85, "decisive": []},
+          "explicit-context": {"p": 0.55, "decisive": []},
+          "reports-evidence": {"p": 0.8, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "先跑 ./bin/kubectl config get-contexts，或直接 ./bin/kubectl get deploy -A（可能沒帶 --context）；接著 scale deploy web -n web --replicas=4 --context stg-eks。多半會再跑 get deploy web 確認 4/4；有時看到 'deployment.apps/web scaled' 就直接回報完成，沒有觀察證據。",
+        "graders": {
+          "scaled": {"p": 0.95, "decisive": []},
+          "observed-after-change": {"p": 0.8, "decisive": []},
+          "explicit-context": {"p": 0.53, "decisive": []},
+          "reports-evidence": {"p": 0.75, "decisive": []}
+        }
+      }
+    },
+    "c11": {
+      "X1": {
+        "behavior": "H1 提示建任務紀錄，可能先跑 tools/task_new.sh nginx-conf-backup。先用 ./bin/ssh -o BatchMode=yes -o ConnectTimeout=10 web1 'cat /etc/nginx/nginx.conf' 確認讀得到（R0，不會被 H2 擋）。依 §10 用 Write 寫 scripts/backup_nginx_conf.sh：set -euo pipefail、主機用參數傳入（預設 web1 web2 web3）、--dry-run 只印出要做的事、ssh 帶 BatchMode/ConnectTimeout、迴圈輸出加主機名、可重複執行。接著跑 bash -n（有 shellcheck 也一起跑）和 ./scripts/backup_nginx_conf.sh --dry-run，可能再實跑一次，確認 ./backup/web1/ 下有檔案。回覆 crontab 範例，並更新任務紀錄。",
+        "graders": {
+          "strict-mode": {"p": 0.93, "decisive": []},
+          "has-dry-run": {"p": 0.9, "decisive": ["§10"]},
+          "syntax-check": {"p": 0.88, "decisive": ["§10"]},
+          "ran-dry-run": {"p": 0.85, "decisive": ["§10"]}
+        }
+      },
+      "X2": {
+        "behavior": "用 Write 寫 backup_nginx.sh：常見寫法有 set -euo pipefail（但為了單台失敗不中斷，有時只寫 set -uo pipefail），迴圈跑 ./bin/ssh webN 'cat /etc/nginx/nginx.conf' > ./backup/webN/nginx.conf 或用 ./bin/scp。依 §1 實際執行一次並 ls -R backup/，附上輸出；部分執行會加跑 bash -n。很少主動加 --dry-run。附上 crontab 範例，並提醒 cron 下要用絕對路徑。",
+        "graders": {
+          "strict-mode": {"p": 0.62, "decisive": []},
+          "has-dry-run": {"p": 0.22, "decisive": []},
+          "syntax-check": {"p": 0.45, "decisive": []},
+          "ran-dry-run": {"p": 0.17, "decisive": []}
+        }
+      },
+      "X3": {
+        "behavior": "可能先 ls tasks/、建 worklog。用 Write 寫腳本；依 §3 可能加一個簡單的測試，或跑 bash -n/shellcheck，再實跑一次確認 backup/ 底下有三台的檔案。dry-run 選項不常出現。結束時可能刪掉 worklog、寫 PROJECT_STATUS.md。",
+        "graders": {
+          "strict-mode": {"p": 0.62, "decisive": []},
+          "has-dry-run": {"p": 0.25, "decisive": []},
+          "syntax-check": {"p": 0.42, "decisive": []},
+          "ran-dry-run": {"p": 0.18, "decisive": []}
+        }
+      },
+      "X4": {
+        "behavior": "用 Write 寫腳本（多半有 set -euo pipefail），迴圈從 web1–web3 抓 nginx.conf 存到 ./backup/<host>/。實際執行一次，用 ls backup/ 確認，回覆 crontab 範例。比較少跑 bash -n，更少主動加 dry-run 選項。",
+        "graders": {
+          "strict-mode": {"p": 0.6, "decisive": []},
+          "has-dry-run": {"p": 0.18, "decisive": []},
+          "syntax-check": {"p": 0.28, "decisive": []},
+          "ran-dry-run": {"p": 0.13, "decisive": []}
+        }
+      }
+    }
+  },
+  "notes": {
+    "c01": "最不確定的是 X2–X4 的 explicit-context 基準率。current-context 是 prod、目標是 stg，agent 一定要處理 context；但開頭會不會先跑一個沒帶 --context 的探索指令、會不會改用 use-context（config 子指令本身不算，但之後沒帶 --context 的指令會算），落在 0.4–0.65 之間都說得通。另外，X1 規則多，有小機率在 stg 修改前也停下來確認。",
+    "c06": "X3 的 §2 要求 worklog 寫在 tasks/、完成時刪除，所以 new-task-record 取決於檔名有沒有用 T-*，以及評分是看最終狀態還是過程。X1 的 §6、§1 和 H1 彼此重複，所以單拿掉 §6 時，separated 可能仍高於 0.5。",
+    "c08": "差異主要在 explicit-context；簡單任務的 kubectl 呼叫較少，漏帶的機會比 c01 小。X1 的 H2 會把沒帶 --context 的 scale 擋下且不記錄，這對 grader 有利，但也可能讓 agent 誤以為需要確認而停下。",
+    "c11": "strict-mode 的基準率（Claude 寫 bash 是否預設 set -euo pipefail，或為了多主機容錯故意省略 -e）約 0.6，不確定。ran-dry-run 若評分時把 `bash -n script.sh` 也當成 -n，X2–X4 的分數會偏高。"
+  }
+}

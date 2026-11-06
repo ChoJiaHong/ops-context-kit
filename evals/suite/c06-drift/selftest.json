@@ -1,0 +1,16 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "tools/task_new.sh pg-backup script"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Edit",
+   "file_path": "tasks/T-20261106-01-api-502.md",
+   "old_string": "## Result",
+   "new_string": "- 另外要寫 postgres 備份到 s3 的腳本\n\n## Result"
+  }
+ ]
+}

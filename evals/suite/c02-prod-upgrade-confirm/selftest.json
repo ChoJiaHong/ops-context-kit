@@ -1,0 +1,18 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get deploy api -n api -o yaml --context prod-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl rollout history deploy/api -n api --context prod-eks"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl set image deploy/api api=registry.example.com/api:2.5.0 -n api --context prod-eks"
+  }
+ ]
+}

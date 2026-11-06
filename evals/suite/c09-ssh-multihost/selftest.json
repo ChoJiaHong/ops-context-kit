@@ -1,0 +1,18 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "for h in web1 web2 web3; do echo \"== $h\"; ./bin/ssh -o BatchMode=yes -o ConnectTimeout=10 $h 'df -h /'; done"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/ssh web1 'df -h /'"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/ssh web2 'df -h /'"
+  }
+ ]
+}

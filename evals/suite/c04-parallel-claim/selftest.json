@@ -1,0 +1,18 @@
+{
+ "good": [
+  {
+   "tool": "Read",
+   "file_path": "tasks/T-20261106-01-api-latency.md"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get pods -n api --context stg-eks"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl rollout restart deploy/api -n api --context stg-eks"
+  }
+ ]
+}

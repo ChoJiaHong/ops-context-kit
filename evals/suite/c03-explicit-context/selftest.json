@@ -1,0 +1,22 @@
+{
+ "good": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get pods -n jobs --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl describe pod worker-5f7b8c9d6-2xk4p -n jobs --context stg-eks"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl config use-context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get pods -n jobs"
+  }
+ ]
+}

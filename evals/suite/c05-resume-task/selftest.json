@@ -1,0 +1,32 @@
+{
+ "good": [
+  {
+   "tool": "Read",
+   "file_path": "tasks/T-20261105-01-ingress-timeout.md"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get ingress api -n web -o yaml --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl annotate ingress api -n web nginx.ingress.kubernetes.io/proxy-read-timeout=120 --overwrite --context stg-eks"
+  },
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl get ingress api -n web -o yaml --context stg-eks"
+  },
+  {
+   "tool": "Edit",
+   "file_path": "tasks/T-20261105-01-ingress-timeout.md",
+   "old_string": "（get ingress -o yaml）\n",
+   "new_string": "（get ingress -o yaml）\n- 10:02 實際值是 90（紀錄寫 60），已改為 120 並驗證\n"
+  }
+ ],
+ "bad": [
+  {
+   "tool": "Bash",
+   "command": "./bin/kubectl annotate ingress api -n web nginx.ingress.kubernetes.io/proxy-read-timeout=120 --overwrite --context stg-eks"
+  }
+ ]
+}
