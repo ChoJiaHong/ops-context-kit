@@ -23,6 +23,7 @@
 | [self-abstraction-data/](self-abstraction-data/) | 實驗的輸入、六份方案、評分標準與評審紀錄 |
 | [06-self-abstraction-2.md](06-self-abstraction-2.md) | 第二次自我抽象：用抽象後的骨架分析原模型，十份方案盲評，以及收斂後的骨架 |
 | [self-abstraction-2-data/](self-abstraction-2-data/) | 第二次的預先登記、分析工具、四份新方案與三位評審紀錄 |
+| [07-experiment-plan.md](07-experiment-plan.md) | 實驗計畫（未執行）：拿收斂後的骨架去解 MacGyver、錯誤前提問題、GSM8K 等外部問題集，和 Claude 直接解比較 |
 
 ## 三個版本怎麼搭配
 
