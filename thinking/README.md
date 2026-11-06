@@ -8,7 +8,7 @@
 - 寫或調 CLAUDE.md 不需要它：直接用現成的規則集，出錯才改（[02](02-failure-driven-narrowing.md)）。
 - 設計 agent 工作流的結構時，它改寫後很好用（[03](03-human-agent-design.md)）。
 - 它可以當成範本衍生不同版本，核心是兩層骨架（[04](04-prototype-and-skeleton.md)）。
-- 用它來抽象它自己，沒有比直接抽象好（[05](05-self-abstraction-experiment.md)）。
+- 用它來抽象它自己，沒有比直接抽象好（[05](05-self-abstraction-experiment.md)）；但用**抽象後的骨架**再做一次，就勝過 Claude 自己的方式，骨架也接近收斂（[06](06-self-abstraction-2.md)）。
 
 ## 文件
 
@@ -21,6 +21,8 @@
 | [04-prototype-and-skeleton.md](04-prototype-and-skeleton.md) | 原模型當原型：可替換的槽位、上層骨架（參照、差異、作用、範圍、必要）、下層骨架（綁定假設、功能重述） |
 | [05-self-abstraction-experiment.md](05-self-abstraction-experiment.md) | 自我抽象實驗：用原模型抽象原模型 vs. 直接抽象，盲評結果 |
 | [self-abstraction-data/](self-abstraction-data/) | 實驗的輸入、六份方案、評分標準與評審紀錄 |
+| [06-self-abstraction-2.md](06-self-abstraction-2.md) | 第二次自我抽象：用抽象後的骨架分析原模型，十份方案盲評，以及收斂後的骨架 |
+| [self-abstraction-2-data/](self-abstraction-2-data/) | 第二次的預先登記、分析工具、四份新方案與三位評審紀錄 |
 
 ## 三個版本怎麼搭配
 

@@ -86,7 +86,7 @@ python3 evals/mine_sessions.py                # 從你的真實對話挖案例
 [thinking/](thinking/README.md) 整理從「創新縮窄法」出發的分析：
 - 原模型是創意搜尋方法，適合在已有成熟解法的領域靠情境資源做出更好的方案；用在優化、調校很弱（[01](thinking/01-evaluation.md)）。
 - 優化 Claude 設定用 [失敗驅動的縮窄法](thinking/02-failure-driven-narrowing.md)；設計 agent 工作流用 [人機差異設計法](thinking/03-human-agent-design.md)。
-- 原模型可抽象成兩層骨架（[04](thinking/04-prototype-and-skeleton.md)）；用它抽象它自己沒有比直接抽象好（[05](thinking/05-self-abstraction-experiment.md)）。
+- 原模型可抽象成兩層骨架（[04](thinking/04-prototype-and-skeleton.md)）；用原模型抽象它自己沒有比直接抽象好（[05](thinking/05-self-abstraction-experiment.md)），但用抽象後的骨架再做一次就勝過 Claude 自己的方式（[06](thinking/06-self-abstraction-2.md)）。
 
 ## 參考
 - [agent-context-kit](https://github.com/siudajakub/agent-context-kit)（MIT）：分層記憶、worklog、hooks、驗證腳本；a2 對照組改編自它的規則。
