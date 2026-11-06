@@ -10,5 +10,5 @@
 - hooks（`.claude/settings.json`）：
   - SessionStart：列出進行中的任務與 targets（K2）
   - PreCompact：提醒在上下文被壓縮前更新任務紀錄
-  - PreToolUse：沒帶 --context、修改全域設定 → 擋下並請你自己修正（K3）；R3 指令 → 要求使用者確認（K4）
+  - PreToolUse：沒帶 --context、修改全域設定 → 擋下並請你自己修正（K3）；不可逆操作與 prod 變更 → 跳出核准提示給使用者（K4）。提示是保險，不代表你該先停下來問：符合 K4「直接做」的條件就照常執行，由使用者在提示上核准
 - 改了 AGENTS.md、TRUTH.md 或 hooks 之後，執行 `python3 tools/check_kit.py`。

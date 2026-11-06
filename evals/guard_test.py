@@ -56,10 +56,22 @@ CASES = [
     ("deny", "dd if=/dev/zero of=/dev/sda"),
 ]
 
+# KIT_PROD_CONFIRM=0：prod 上的可回復變更不再要求確認，不可逆操作仍然要
+CASES_NO_PROD_CONFIRM = [
+    ("allow", "kubectl --context prod-eks rollout restart deploy/api -n app"),
+    ("allow", "ssh web2 'sudo sed -i s/50MB/50m/ /etc/nginx/conf.d/app.conf'"),
+    ("allow", "helm upgrade api ./chart --kube-context prod-eks"),
+    ("ask", "kubectl --context prod-eks delete pvc data-0 -n app"),
+    ("ask", "ssh web1 'sudo truncate -s 0 /var/log/big.log'"),
+    ("fix", "kubectl get pods -n app"),
+]
 
-def decide(cmd):
-    env = dict(os.environ, CLAUDE_PROJECT_DIR=TEMPLATE)
+
+def decide(cmd, **extra):
+    env = dict(os.environ, CLAUDE_PROJECT_DIR=TEMPLATE, **extra)
     env.pop("KIT_PROD_PATTERN", None)
+    if "KIT_PROD_CONFIRM" not in extra:
+        env.pop("KIT_PROD_CONFIRM", None)
     out = subprocess.run([sys.executable, os.path.join(TEMPLATE, "tools", "guard.py")],
                          input=json.dumps({"tool_name": "Bash", "tool_input": {"command": cmd}}),
                          capture_output=True, text=True, env=env, check=True).stdout.strip()
@@ -73,12 +85,14 @@ def decide(cmd):
 
 def main():
     bad = 0
-    for want, cmd in CASES:
-        got = decide(cmd)
+    runs = [(want, cmd, {}) for want, cmd in CASES]
+    runs += [(want, cmd, {"KIT_PROD_CONFIRM": "0"}) for want, cmd in CASES_NO_PROD_CONFIRM]
+    for want, cmd, extra in runs:
+        got = decide(cmd, **extra)
         if got != want:
             bad += 1
-            print(f"FAIL want={want} got={got}: {cmd!r}")
-    print(f"{len(CASES) - bad}/{len(CASES)} passed")
+            print(f"FAIL want={want} got={got} {extra}: {cmd!r}")
+    print(f"{len(runs) - bad}/{len(runs)} passed")
     sys.exit(1 if bad else 0)
 
 

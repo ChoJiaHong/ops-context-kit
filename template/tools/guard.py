@@ -4,13 +4,16 @@
 1. 擋下並請 agent 自己修正（deny + 指示，不打擾使用者）
    - kubectl／helm 沒有明確帶 --context（K3）
    - 修改共用的全域設定：kubectl config use-context、kubectx、gcloud config set…（K3）
-2. 要求使用者確認（ask；無人值守時等於擋下）
-   - R3：prod 上的變更、不可逆操作（K4）
+2. 要求使用者確認（ask：桌面版會跳出核准提示，使用者點同意就照常執行；無人值守時等於擋下）
+   - 不可逆操作（K4）
+   - prod 上的變更（K4）。K4 v3 允許「使用者明確要求、可回復」的 prod 變更直接做，
+     這個提示是保險：互動使用時只是多點一次核准。設 KIT_PROD_CONFIRM=0 可以關掉這一類，只保留不可逆操作的確認。
 3. 直接拒絕（deny）
    - 災難指令：rm -rf /、mkfs、dd 寫入磁碟
 
 prod 名單來自 TRUTH.md「環境」表格中 prod 欄為 yes 的列；也可以用環境變數 KIT_PROD_PATTERN（regex）覆寫。
 設 KIT_REQUIRE_CONTEXT=0 可以關掉「kubectl 一定要帶 --context」這一條。
+設 KIT_PROD_CONFIRM=0 可以關掉「prod 上的可回復變更要確認」這一條（不可逆操作仍然要確認）。
 
 第 1 輪思想實驗後的修改（method/round1.md）：
 - 「沒帶 --context」從「問使用者」改成「擋下讓 agent 自己補上」：這是可以自己修正的錯，不該打斷使用者。
@@ -193,12 +196,12 @@ def classify(cmd):
         return "deny", (f"↺ 請修正後重試：這段指令沒有明確指定叢集「{seg[:80]}」。加上 --context <ctx>（helm 用 --kube-context），"
                         f"可用的 context 見 TRUTH.md。這不需要問使用者（K3）。")
     reasons = [why for pat, why in IRREVERSIBLE if re.search(pat, cmd, re.I)]
-    hits = prod_changes(cmd)
+    hits = prod_changes(cmd) if os.environ.get("KIT_PROD_CONFIRM", "1") != "0" else []
     if hits:
         reasons.insert(0, f"prod 變更（{'、'.join(hits)}）")
     if reasons:
-        return "ask", (f"⚠ R3 需要使用者確認：{'；'.join(dict.fromkeys(reasons))}。不要換寫法繞過；"
-                       f"停下來說明「做什麼、影響範圍、怎麼回滾」，讓使用者決定（K4）。")
+        # ask 的說明是給使用者看的（核准提示），不是給 agent 的指示
+        return "ask", f"⚠ 需要你確認：{'；'.join(dict.fromkeys(reasons))}（K4）。同意才會執行。"
     return None, ""
 
 
