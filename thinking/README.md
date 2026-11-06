@@ -37,6 +37,7 @@
 | [10-claude-md.md](10-claude-md.md) | claude.md 集的現況：各工具的結構、md 在工作流的位置、infra 用的結構、子 agent 控制、社群做法、提示詞正規化、Jira／Teams 自動化、多 session 隔離，以及下一步實驗方向 |
 | [11-double-loop-pure.md](11-double-loop-pure.md) | 雙向迴圈的最終抽象、方向的例子、從原模型到最終形式的路徑；skill 草稿在 [double-loop/bidirectional-loop/](double-loop/bidirectional-loop/SKILL.md) |
 | [12-kit-loop.md](12-kit-loop.md) | 用雙向迴圈檢視 ops-context-kit：四組方向的紀錄、五個優化方向、kit 的新定位（以任務檔為中心的 session 生命週期系統） |
+| [13-two-layer.md](13-two-layer.md) | 兩層雙向迴圈：第一層設計第二層（目標 ↔ 機制，巢狀缺口 ↔ 工具），找出投資和目標錯配、憑證分讀寫、隔離換掉確認 |
 
 ## 三個版本怎麼搭配
 
