@@ -38,6 +38,7 @@
 | [11-double-loop-pure.md](11-double-loop-pure.md) | 雙向迴圈的最終抽象、方向的例子、從原模型到最終形式的路徑；skill 草稿在 [double-loop/bidirectional-loop/](double-loop/bidirectional-loop/SKILL.md) |
 | [12-kit-loop.md](12-kit-loop.md) | 用雙向迴圈檢視 ops-context-kit：四組方向的紀錄、五個優化方向、kit 的新定位（以任務檔為中心的 session 生命週期系統） |
 | [13-two-layer.md](13-two-layer.md) | 兩層雙向迴圈：第一層設計第二層（目標 ↔ 機制，巢狀缺口 ↔ 工具），找出投資和目標錯配、憑證分讀寫、隔離換掉確認 |
+| [14-full-delegation-gap.md](14-full-delegation-gap.md) | 工程師把工作全部交給 AI：查證哪些缺口已有工具，找出真正的空白（理解與技能回不到負責的人身上）與解法（接手卡、能力帳本、理解債） |
 
 ## 三個版本怎麼搭配
 
