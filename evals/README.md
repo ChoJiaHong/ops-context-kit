@@ -83,7 +83,14 @@ python3 evals/thought/make_packet2.py           # 讀 method/round2-data/{cases,
 # 每個案例交給 sonnet 和 opus 各一位評分者，結果放到 method/round2-data/out/<小組>-<批次>.json
 python3 evals/thought/analyze2.py               # → method/round2-data/report2.md（含損益兩平分析）
 ```
-結果見 [method/round2.md](../method/round2.md)。之後的輪次請沿用第 2 輪的設計。
+結果見 [method/round2.md](../method/round2.md)。
+
+第 3 輪比較「方法修改」和「專家修改」，先預先登記（[method/round3-plan.md](../method/round3-plan.md)）再產生新案例：
+```bash
+python3 evals/thought/make_packet3.py           # 讀 method/round3-data/{cases,a3p,a4p}
+python3 evals/thought/analyze3.py               # 依預先登記的標準判定 → method/round3-data/report3.md
+```
+之後的輪次請沿用第 2、3 輪的設計：獨立案例作者、預先登記、新案例驗證修改。
 
 ## 讀結果
 `run.sh` 會在最後產生 `results/<時間>/summary.md`，內容有三部分：
