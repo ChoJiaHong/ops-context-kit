@@ -1,0 +1,12 @@
+{"arm": "A2", "batch": "gsm8k-2", "items": {
+"GS11": {"analysis": "Options: 25% of 40 only; 25% of everything. The fee is on the $40 total. Choose 40 + 10 + 3 + 4.", "final": "Fee = 0.25*40 = 10. Total = 40 + 10 + 3 + 4 = 57.\nANSWER: 57"},
+"GS12": {"analysis": "One jellyfish per second per spring. 4 hours = 14400 s. Only sensible reading: 5 * 14400.", "final": "4 hours = 14400 seconds. 5 springs * 14400 = 72000.\nANSWER: 72000"},
+"GS13": {"analysis": "Options: 5 years*12 = 60 months; or count inclusive of birthday months (61). She collects during the period from age 5 to 10, so 60.", "final": "From 5th to 10th birthday is 5 years = 60 months, 1 shell each month = 60.\nANSWER: 60"},
+"GS14": {"analysis": "Regular 8 hours at $20, overtime 3 hours at 150% = $30. Straightforward.", "final": "8*20 = 160. Overtime 3*30 = 90. Total 250.\nANSWER: 250"},
+"GS15": {"analysis": "Need 6 pounds. Promotion: buy one get one half off, so pairs cost 4+2 = 6. Alternative: no discount = 24. Use promotion.", "final": "6 pounds = 3 pairs, each pair costs 4 + 2 = 6. Total 18.\nANSWER: 18"},
+"GS16": {"analysis": "6 girls are 1/3 of Pomeranians, so 18 Pomeranians, which are 2/3 of the puppies.", "final": "Pomeranians = 6*3 = 18. Total = 18/(2/3) = 27.\nANSWER: 27"},
+"GS17": {"analysis": "Plates: 6 * 6000 = 36000. Cups cost 36000 - 1200 = 34800 for 20 dozen = 240 cups. Per cup = 145.", "final": "Half a dozen = 6 plates, 36000. Cups total 34800. 20 dozen = 240 cups. 34800/240 = 145.\nANSWER: 145"},
+"GS18": {"analysis": "Count buttons, not value. 27 small stickers -> 27 large buttons. 20 large stickers -> 20 large buttons. 20 large stickers -> 3 small buttons each = 60. Total 107.", "final": "90% of 30 = 27 large buttons. 50% of 40 = 20 large buttons. Other 20 large stickers give 60 small buttons. Total = 27 + 20 + 60 = 107.\nANSWER: 107"},
+"GS19": {"analysis": "Direct fractions: 27 * 2/3 = 18 Pomeranians; one third are girls = 6.", "final": "27*2/3 = 18. 18/3 = 6.\nANSWER: 6"},
+"GS20": {"analysis": "Beck starts with 77. After giving 10: Boris 90, Beck 87. Difference 3 (not 13 or 23).", "final": "Beck 77 + 10 = 87; Boris 100 - 10 = 90. Difference = 3.\nANSWER: 3"}
+}}

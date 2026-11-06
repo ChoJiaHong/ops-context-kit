@@ -1,0 +1,46 @@
+{
+ "arm": "A2",
+ "batch": "macgyver-3",
+ "items": {
+  "MG21": {
+   "analysis": "WD-40 penetrates rust and frees links; gloves protect hands; screwdriver can pry; dry lube for after. Carabiner and scissors not useful. Useful: WD-40, gloves, screwdriver, dry lubricant.",
+   "final": "step1: Spray WD-40 on the rusted chain and wait a few minutes.\nstep2: Wearing gloves, flex the links by hand, using the screwdriver to pry stiff links loose.\nstep3: Loop the chain over the rear sprocket and chainring, pry it onto teeth with the screwdriver, turn pedal.\nstep4: Apply dry lubricant.\nVERDICT: SOLVABLE"
+  },
+  "MG22": {
+   "analysis": "Brush: long reach, can push the toy. Step ladder: height. Rocking chair unstable; hanger can't hook fuzz; strap and broom optional. Useful: ladder, long-bristled brush (or broom).",
+   "final": "step1: Set up the step ladder beside the wardrobe.\nstep2: Climb and use the long-bristled brush (or wicker broom) to sweep or push the toy toward the edge until it falls.\nVERDICT: SOLVABLE"
+  },
+  "MG23": {
+   "analysis": "Pot, bottle allow boiling and bandana filters sediment, but chemical contamination from agriculture is not removed by boiling or cloth; boiling can concentrate chemicals. No chemical filter, charcoal, or distillation setup with condenser of enough quality.",
+   "final": "Not possible: boiling and cloth filtering remove germs and particles, not agricultural chemicals, and no listed item can adsorb or reliably distill them out.\nVERDICT: UNSOLVABLE"
+  },
+  "MG24": {
+   "analysis": "Items offer observation or filtering only. DNA extraction needs detergent, salt, and alcohol, none available. Coffee filter only filters; nothing to lyse cells or precipitate DNA.",
+   "final": "Not possible: no lysis agent (detergent), salt, or cold alcohol is provided, so DNA cannot be released or precipitated with only filters, a beaker, and bags.\nVERDICT: UNSOLVABLE"
+  },
+  "MG25": {
+   "analysis": "Foam inserts and moleskin are good; felt pads fill space; tissue paper fills; rubber bands weak; double-sided tape weak. Useful: foam inserts, moleskin, felt pads.",
+   "final": "step1: Place foam inserts (or felt pads) inside the shoes under the heels/insoles to take up extra volume.\nstep2: Stick moleskin pads on the heel interior to add grip and stop slipping.\nVERDICT: SOLVABLE"
+  },
+  "MG26": {
+   "analysis": "T-shirt can be torn into strips (scissors dull but can nick fabric then tear); gloves help; ladder reaches 6ft+ person reach, so tie accessible parts. Watering can, soil useless.",
+   "final": "step1: Use the scissors to nick the t-shirt and tear it into long strips; twist or double strands for strength.\nstep2: Stand on the ladder wearing gloves and tie the vines to the trellis with the strips, as high as the ladder reaches, then train vines upward later.\nVERDICT: SOLVABLE"
+  },
+  "MG27": {
+   "analysis": "Bandanas are sturdy cloth for bundles; pantyhose weak but usable inside bandanas or as ties; stapler, frame, nail polish, knife, compass not needed.",
+   "final": "step1: Lay out each bandana and pile Legos in the center.\nstep2: Gather corners, knot them to make sacks; use pantyhose legs as extra ties or inner liners (Legos inside bandana).\nVERDICT: SOLVABLE"
+  },
+  "MG28": {
+   "analysis": "Paper is straight-edged with known standard size; pen/pencil to mark; clip or stapler to hold. Keyboard useless, others not needed.",
+   "final": "step1: Take a sheet of paper of known size (e.g., A4 = 29.7 cm long) and fold it into equal parts.\nstep2: Mark and number the divisions with a pen on a strip of paper, or fold the strip to subdivide into centimeters.\nVERDICT: SOLVABLE"
+  },
+  "MG29": {
+   "analysis": "Broom reaches only partly alone; sturdy chair adds height; stand on chair and bat the lightweight toy with the broom. Cookie sheet, mirror, keys, string not needed.",
+   "final": "step1: Place the dining chair under the chandelier.\nstep2: Stand on the chair and hold the straw broom by the handle end, then nudge the toy until it falls off.\nstep3: Catch it, or let it drop onto a cushion.\nVERDICT: SOLVABLE"
+  },
+  "MG30": {
+   "analysis": "Silicone sealant is gone and nothing else is adhesive or sealing. Sandpaper, brushes, straw, filter, gloves cannot seal a leak.",
+   "final": "Not possible: no sealant, adhesive, or patch material remains; the other items can clean or roughen the surface but cannot seal the leak.\nVERDICT: UNSOLVABLE"
+  }
+ }
+}

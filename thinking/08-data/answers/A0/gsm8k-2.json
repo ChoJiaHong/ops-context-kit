@@ -1,0 +1,12 @@
+{"arm":"A0","batch":"gsm8k-2","items":{
+"GS11":{"analysis":"","final":"25% of 40 = 10. Total = 40 + 10 + 3 + 4 = 57.\nANSWER: 57"},
+"GS12":{"analysis":"","final":"4 hours = 14400 s; 5 springs: 5 * 14400 = 72000.\nANSWER: 72000"},
+"GS13":{"analysis":"","final":"From age 5 to 10 is 5 years = 60 months, so 60 shells.\nANSWER: 60"},
+"GS14":{"analysis":"","final":"8*20 = 160; overtime 3 h at $30 = 90; total 250.\nANSWER: 250"},
+"GS15":{"analysis":"","final":"6 pounds = 3 pairs; each pair costs 4 + 2 = 6; total 18.\nANSWER: 18"},
+"GS16":{"analysis":"","final":"Pomeranians = 6*3 = 18; puppies = 18*3/2 = 27.\nANSWER: 27"},
+"GS17":{"analysis":"","final":"Plates: 6*6000 = 36000. Cups total = 36000 - 1200 = 34800. Cups = 240. Each = 145.\nANSWER: 145"},
+"GS18":{"analysis":"","final":"27 small stickers -> 27/3 = 9 large buttons. 20 large stickers -> 20 large buttons. 20 large stickers -> 60 small buttons. Total 9+20+60 = 89.\nANSWER: 89"},
+"GS19":{"analysis":"","final":"27*2/3 = 18; 18/3 = 6.\nANSWER: 6"},
+"GS20":{"analysis":"","final":"Boris 100, Beck 77. After: Boris 90, Beck 87. Difference 3.\nANSWER: 3"}
+}}

@@ -1,0 +1,82 @@
+{"judge": "J2", "items": {
+"MG02": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "高壓水柱鬆動岩土、湯匙與水桶挖泥再回填，與參考解一致。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "水柱沖土成洞、桶匙舀泥漿後回填，可行且精簡。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "水力開挖加桶匙清泥後回填，與參考解一致。"}},
+"MG04": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "少量橄欖油塗抹、浴帽悶住、細齒梳梳除，與參考解一致。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "油加浴帽悶後以細齒梳梳除，精簡可行。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "節省使用剩餘橄欖油、輕手使用易破浴帽再細梳，可行。"}},
+"MG05": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "先以醋與棉花棒清除腐蝕，再用鋁箔墊片補足尺寸差，合理。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "醋清接點、鋁箔墊片、以線或卡片固定，皆用題目物品。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "清接點後以鋁箔墊片讓小電池接觸兩端，可行。"}},
+"MG07": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "斜面臨界角取 tan 的方法正確，斜面可用尺或題目隱含的待測表面。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以尺當斜面抬高至滑動、量角求 tan，可行。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "斜面臨界角法正確，傾斜的是題目情境中的待測表面。"}},
+"MG09": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "插棍撐起毛巾蓋住雨衣破洞成遮篷並壓邊，可行。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "兩棍撐毛巾加雨衣、以沙與杯壓邊，可行且精簡。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "短樁加雨衣與毛巾搭低矮遮陽棚並壓邊，可行。"}},
+"MG10": {
+ "甲": {"goal": 0, "feasible": 0, "efficient": 1, "hallucination": 0, "note": "靠丟石頭或瓶子擊鈴，違反題目明言石頭、瓶子無助於碰到鈴的限制。"},
+ "乙": {"goal": 0, "feasible": 0, "efficient": 1, "hallucination": 0, "note": "直接主張石頭可丟到 20 呎，與題目限制相抵觸。"},
+ "丙": {"goal": 0, "feasible": 0, "efficient": 0, "hallucination": 0, "note": "仍靠石頭擊鈴違反限制，且綁在 10 呎繩上反而縮短射程，是多餘步驟。"}},
+"MG12": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以金屬尺當一字起子鎖緊，滑牙時塞冰棒棍碎片為合理備案。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以尺端當一字起子鎖緊，最精簡。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "彎尺扳直後當一字起子鎖緊，可行。"}},
+"MG13": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "銼粗表面、塞布減流、浮床片塗環氧樹脂壓上並以吹風機加速固化，與參考解思路相同。"},
+ "乙": {"goal": 1, "feasible": 0, "efficient": 1, "hallucination": 0, "note": "先從浮床割下補片又要用充氣浮床頂住，自相矛盾。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 1, "note": "環氧浸布貼補並以充氣浮床頂住、吹風機加速固化可行，但提到題目未列的梯子。"}},
+"MG14": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "戴手套用毯子當袋搬雪，與參考解一致。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "毯子當雪橇或袋子搬雪，精簡可行。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以毯子拖運雪倒入泳池，鍋鏟畚箕僅為輔助，可行。"}},
+"MG15": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以鋁箔加曬衣夾擴大烤盤成斜蓋並留通風口，可行。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 1, "note": "烤盤加鋁箔以夾子固定可行，但選項中提到題目未列的桿子。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 0, "hallucination": 0, "note": "烤盤加鋁箔已足夠，再把桌布蓋在熱鋁箔上是多餘且有燃燒風險的步驟。"}},
+"MG16": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以圓形耐熱披薩石當鍋蓋，附安全取放方式，可行。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "披薩石直接當蓋，一步完成。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 1, "note": "披薩石當蓋可行，但提到題目未列的隔熱手套。"}},
+"MG17": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "濕毛巾包魚放入網袋遮住孔洞，與參考解等效。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "毛巾包魚放進袋中提回，與參考解等效。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "題目未限制帽子，用帽子加濕毛巾裝魚提回是合理替代。"}},
+"MG18": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "站上椅子直接手調麥克風，書本僅視穩定度選用。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 0, "hallucination": 0, "note": "可達成，但強制在椅面疊上題目已說幾乎無助增高的書再站上去，多餘又不穩。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "站椅子手調，書本為視需要選用，可行。"}},
+"MG21": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "WD-40 鬆鏽、戴手套活動鏈節、起子撬上齒盤、上乾式潤滑，與參考解一致。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "流程與參考解相同，步驟合理。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "不用起子、戴手套手動掛鏈亦可行，流程完整。"}},
+"MG22": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "用梯子加長毛刷把玩偶掃下，衣架方案只是選用。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "梯子加刷子把玩偶掃下，精簡可行。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "避開搖椅改用梯子，再以刷子或掃把掃下，可行。"}},
+"MG24": {
+ "甲": {"goal": 0, "feasible": 0, "efficient": 0, "hallucination": 0, "note": "回答 UNSOLVABLE，未提供解法。"},
+ "乙": {"goal": 0, "feasible": 0, "efficient": 0, "hallucination": 0, "note": "回答 UNSOLVABLE，未提供解法。"},
+ "丙": {"goal": 0, "feasible": 0, "efficient": 0, "hallucination": 0, "note": "回答 UNSOLVABLE，未提供解法。"}},
+"MG25": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "泡棉鞋墊填空間、鼴鼠皮貼後跟、必要時加毛氈，可行。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "鞋墊加後跟鼴鼠皮，精簡有效。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "後跟貼鼴鼠皮並以鞋墊或毛氈填空間，可行。"}},
+"MG26": {
+ "甲": {"goal": 0, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "只綁到梯子搆得到的高度，高處延後處理，未固定高處藤蔓。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "布條編繩防磨損，梯子搆不到處把藤尖彎下綁住，可行。"},
+ "丙": {"goal": 0, "feasible": 0, "efficient": 1, "hallucination": 0, "note": "聲稱靠梯子的額外高度綁高處，違反題目梯子太短的限制。"}},
+"MG28": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以 A4 已知長度摺分並標刻度，與參考解一致。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "以紙張已知長度為基準摺分標記，可行。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "紙條反覆對摺細分並以鉛筆標記，可行（紙條可沿摺痕撕下）。"}},
+"MG29": {
+ "甲": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "站椅子用掃把撥下玩具並以烤盤接住，與參考解一致。"},
+ "乙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 1, "note": "站椅子撥下可行，但提到題目未列的軟墊。"},
+ "丙": {"goal": 1, "feasible": 1, "efficient": 1, "hallucination": 0, "note": "站椅子撥下可行，細繩只作引導的備案也顧及了限制。"}}
+}}

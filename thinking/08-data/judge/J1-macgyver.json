@@ -1,0 +1,465 @@
+{
+ "judge": "J1",
+ "items": {
+  "MG02": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "水沖鬆土、湯匙與桶清出，合理"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "水沖加湯匙桶挖孔，合理"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "同參考解流程"
+   }
+  },
+  "MG04": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "橄欖油加浴帽悶住再梳，與參考解相同"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "少量油加浴帽再梳，合理"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "油加浴帽再梳，合理"
+   }
+  },
+  "MG05": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "鋁箔墊片補空隙並清潔接點，合理"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "鋁箔墊片橋接，合理"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "鋁箔墊片加線或卡片固定，合理"
+   }
+  },
+  "MG07": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "斜面加量角器，tan(角)，合理"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 0,
+    "efficient": 1,
+    "hallucination": 1,
+    "note": "用了題目沒有的平板，未指明用尺"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "以尺為板、筆釘支撐，斜面法可行"
+   }
+  },
+  "MG09": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "木棍加毛巾蓋住，用沙與杯壓邊，可行"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "木棍架毛巾，用杯與蛙鞋壓邊，可行"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "木棍架毛巾，可行"
+   }
+  },
+  "MG10": {
+   "甲": {
+    "goal": 0,
+    "feasible": 0,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "丟石頭打鐘，違反題目說石頭無用的限制，且沒用凳子與繩套"
+   },
+   "乙": {
+    "goal": 0,
+    "feasible": 0,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "仍靠丟石頭，違反限制，未用繩套"
+   },
+   "丙": {
+    "goal": 0,
+    "feasible": 0,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "徒手丟石頭到20呎高，違反限制"
+   }
+  },
+  "MG12": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "尺邊當螺絲起子，並有備案"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "尺邊當螺絲起子"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "尺邊當螺絲起子"
+   }
+  },
+  "MG13": {
+   "甲": {
+    "goal": 1,
+    "feasible": 0,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "切下浮具片後又要把充氣浮具墊在下方，自相矛盾"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "布塞洞減流，浮具片加環氧樹脂補，吹風機加速"
+   },
+   "丙": {
+    "goal": 0,
+    "feasible": 0,
+    "efficient": 1,
+    "hallucination": 1,
+    "note": "用梯子（未列出），布會掉的限制未解，浮具高度也撐不到地面"
+   }
+  },
+  "MG14": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "手套堆雪到毯子再拖倒入，同參考解"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "同參考解，鏟子畫蛇添足但不影響"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "同參考解"
+   }
+  },
+  "MG15": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 0,
+    "hallucination": 0,
+    "note": "多出披桌布步驟，近熱源有風險"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "鋁箔夾在烤盤上加大並傾斜排水，可行"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 1,
+    "note": "可行，但提到桿子不在清單"
+   }
+  },
+  "MG16": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "披薩石圓而厚，可當蓋"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 1,
+    "note": "披薩石當蓋可行，但提到烤箱手套不在清單"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 0,
+    "efficient": 0,
+    "hallucination": 0,
+    "note": "披薩石可當蓋，但用湯匙撬起厚石不安全且多餘"
+   }
+  },
+  "MG17": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "毛巾包魚放入袋中堵洞，同參考解"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "濕毛巾包魚放袋中"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "魚放進沙灘帽提著，可行"
+   }
+  },
+  "MG18": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "站椅子加書徒手調整，可行"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "站椅子徒手調整"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "站椅子加書，另有繩圈鉤桿備案"
+   }
+  },
+  "MG21": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "WD-40、手套、螺絲起子、乾潤滑劑齊全"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "流程完整"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "流程完整，不用螺絲起子也行"
+   }
+  },
+  "MG22": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "梯子加刷子掃下，同參考解"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "同參考解"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "同參考解"
+   }
+  },
+  "MG24": {
+   "甲": {
+    "goal": 0,
+    "feasible": 0,
+    "efficient": 0,
+    "hallucination": 0,
+    "note": "回答做不到，題目可解"
+   },
+   "乙": {
+    "goal": 0,
+    "feasible": 0,
+    "efficient": 0,
+    "hallucination": 0,
+    "note": "回答做不到，題目可解"
+   },
+   "丙": {
+    "goal": 0,
+    "feasible": 0,
+    "efficient": 0,
+    "hallucination": 0,
+    "note": "回答做不到，題目可解"
+   }
+  },
+  "MG25": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "泡棉加絨布墊加護膝貼，可行"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "泡棉加防磨貼加絨布墊，可行"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "防磨貼加泡棉墊，可行"
+   }
+  },
+  "MG26": {
+   "甲": {
+    "goal": 1,
+    "feasible": 0,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "聲稱用6呎梯綁到更高處，忽略梯子太矮的限制"
+   },
+   "乙": {
+    "goal": 0,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "只綁到梯子高度，上方沒有綁牢"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "撕布條編繩，梯子加彎下藤尖處理高處"
+   }
+  },
+  "MG28": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "紙邊長度加折疊標記，可行"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "紙長度加折疊標記，可行"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "紙長度加折疊標記，可行"
+   }
+  },
+  "MG29": {
+   "甲": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 0,
+    "hallucination": 0,
+    "note": "掃帚可行，但線鉤備案複雜且多餘"
+   },
+   "乙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 0,
+    "note": "站椅子用掃帚推下，同參考解"
+   },
+   "丙": {
+    "goal": 1,
+    "feasible": 1,
+    "efficient": 1,
+    "hallucination": 1,
+    "note": "同參考解，但提到的靠墊不在清單"
+   }
+  }
+ }
+}

@@ -1,0 +1,12 @@
+{"arm": "A0", "batch": "gsm8k-1", "items": {
+"GS01": {"analysis": "", "final": "Total parts = 5+6 = 11, each part = 165/11 = 15. Sam has 6*15 = 90, Betty has 5*15 = 75. Difference = 15.\nANSWER: 15"},
+"GS02": {"analysis": "", "final": "Initial 20. Month 1: 3*20 = 60. Month 2: 60-20 = 40. Month 3: 2*(60+40) = 200. Total = 20+60+40+200 = 320.\nANSWER: 320"},
+"GS03": {"analysis": "", "final": "Red: 25*0.6 = 15 remain. Green: 7. Yellow: 12/2 = 6. Blue added: 0.75*8 = 6. Total = 15+7+6+6 = 34.\nANSWER: 34"},
+"GS04": {"analysis": "", "final": "Total chips = 2*55 = 110. Divided among 5 = 22.\nANSWER: 22"},
+"GS05": {"analysis": "", "final": "The new device adds 2 kW per day, so 2*7 = 14 kW extra per week. At $1.50 each, the difference is 14*1.5 = 21.\nANSWER: 21"},
+"GS06": {"analysis": "", "final": "100 invited people each bring 2 friends: 100*2 = 200. Total 300. Plus 10 friends = 310. Plus 8 spouses = 318.\nANSWER: 318"},
+"GS07": {"analysis": "", "final": "Total cost = 18+13+8 = 39. Needs 39-14 = 25 more. At $5/hour, 25/5 = 5 hours.\nANSWER: 5"},
+"GS08": {"analysis": "", "final": "Gum needed = 4*30 = 120 pieces. Packs = 120/15 = 8.\nANSWER: 8"},
+"GS09": {"analysis": "", "final": "Dozens: 1 + 0.5 + 4 = 5.5 dozen. Eaten 1.5 dozen. Left 4 dozen = 48 brownies.\nANSWER: 48"},
+"GS10": {"analysis": "", "final": "Half-gallon = 5-2 = $3. 10 gallon jars = $50. 16 half-gallon jars = $48. Total = $98.\nANSWER: 98"}
+}}

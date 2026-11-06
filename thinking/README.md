@@ -9,6 +9,7 @@
 - 設計 agent 工作流的結構時，它改寫後很好用（[03](03-human-agent-design.md)）。
 - 它可以當成範本衍生不同版本，核心是兩層骨架（[04](04-prototype-and-skeleton.md)）。
 - 用它來抽象它自己，沒有比直接抽象好（[05](05-self-abstraction-experiment.md)）；但用**抽象後的骨架**再做一次，就勝過 Claude 自己的方式，骨架也接近收斂（[06](06-self-abstraction-2.md)）。
+- 拿骨架去解外部問題集（MacGyver、錯誤前提、數學），沒有比一般「先分析再回答」的提示更好；在數學題上不幫忙、只讓輸出變長（[08](08-results.md)）。
 
 ## 文件
 
@@ -23,7 +24,9 @@
 | [self-abstraction-data/](self-abstraction-data/) | 實驗的輸入、六份方案、評分標準與評審紀錄 |
 | [06-self-abstraction-2.md](06-self-abstraction-2.md) | 第二次自我抽象：用抽象後的骨架分析原模型，十份方案盲評，以及收斂後的骨架 |
 | [self-abstraction-2-data/](self-abstraction-2-data/) | 第二次的預先登記、分析工具、四份新方案與三位評審紀錄 |
-| [07-experiment-plan.md](07-experiment-plan.md) | 實驗計畫（未執行）：拿收斂後的骨架去解 MacGyver、錯誤前提問題、GSM8K 等外部問題集，和 Claude 直接解比較 |
+| [07-experiment-plan.md](07-experiment-plan.md) | 實驗計畫：拿收斂後的骨架去解 MacGyver、錯誤前提問題、GSM8K 等外部問題集，和 Claude 直接解比較 |
+| [08-results.md](08-results.md) | 小規模試驗結果：MacGyver、FalseQA、GSM8K，三組 × 70 題；骨架沒有比一般結構化提示好 |
+| [08-data/](08-data/) | 試驗的預先登記、題目、提示、全部答案、評審紀錄與核對紀錄 |
 
 ## 三個版本怎麼搭配
 

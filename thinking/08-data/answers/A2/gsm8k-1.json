@@ -1,0 +1,12 @@
+{"arm": "A2", "batch": "gsm8k-1", "items": {
+"GS01": {"analysis": "Interpretations: split 165 into 11 parts; or solve with algebra. Both agree. One part = 15, Sam has 6 parts, Betty 5, difference 1 part.", "final": "Total parts 5+6=11, so each part is 165/11=15. Sam has 15 more than Betty.\nANSWER: 15"},
+"GS02": {"analysis": "Reading A: first month is 3x20=60, second 60-20=40, third 2x(60+40)=200, plus initial 20. Reading B: exclude the initial 20, but 'now in total' implies including it. Choose A.", "final": "Initial 20. Month 1: 60. Month 2: 60-20=40. Month 3: 2*(60+40)=200. Total 20+60+40+200=320.\nANSWER: 320"},
+"GS03": {"analysis": "Compute each color after events. Only 75% of blue balloons are added. Red 40% burst leaves 60%; half yellow released.", "final": "Red: 25*0.6=15. Green: 7. Yellow: 12/2=6. Blue added: 8*0.75=6. Total 15+7+6+6=34.\nANSWER: 34"},
+"GS04": {"analysis": "Total chips = 2x55=110, divided equally among 5 family members. Only one sensible reading.", "final": "110/5=22 chips each.\nANSWER: 22"},
+"GS05": {"analysis": "Interpretations: 12 kW per day vs per hour; the intended reading is 12 kWh daily at $1.50 per unit, adding 2 more per day. Weekly difference = extra 2 units x 7 days x 1.5.", "final": "Before: 12*7*1.5=126. After: 14*7*1.5=147. Difference 21.\nANSWER: 21"},
+"GS06": {"analysis": "Invitees: 100 emailed, each brings 2 friends (200). Plus 10 called friends, 8 bring spouses (8). Question of counting Alex herself; the problem counts only the guests described.", "final": "100 + 100*2 = 300; 10 + 8 = 18; total 318 seats.\nANSWER: 318"},
+"GS07": {"analysis": "Total cost 18+13+8=39, minus savings 14 leaves 25 needed, at $5 per hour.", "final": "25/5=5 hours.\nANSWER: 5"},
+"GS08": {"analysis": "Total gum for 30 days = 4x30=120 pieces; packs of 15 give exactly 8, no rounding needed.", "final": "120/15=8 packs.\nANSWER: 8"},
+"GS09": {"analysis": "Work in dozens: 1 + 0.5 + 4 = 5.5 dozen, minus 1.5 eaten = 4 dozen. Convert to individual brownies.", "final": "4 dozen = 48 brownies.\nANSWER: 48"},
+"GS10": {"analysis": "Gallon is $5, half-gallon is $5-2=$3. Cost of 10 gallon jars plus 16 half-gallon jars.", "final": "10*5=50; 16*3=48; total 98.\nANSWER: 98"}
+}}
