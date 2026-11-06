@@ -20,6 +20,7 @@ ops-context-kit/
 │   ├── round3-plan.md   第 3 輪預先登記
 │   ├── round3.md        第 3 輪：同一份數據，方法修改 vs. 專家修改
 │   └── round3-data/     第 3 輪的新案例、a3′、a4′ 與評分資料
+├── thinking/            思考模型的評估與衍生版本：原模型評估、失敗驅動縮窄法、人機差異設計法、核心骨架、自我抽象實驗
 ├── concepts.md          概念模型：工作區、環境、任務、session、宣告、事實
 ├── template/            複製到你的工作區就能用的規則集
 │   ├── CLAUDE.md        Claude 入口（@AGENTS.md 自動載入規則）
@@ -80,6 +81,12 @@ python3 evals/mine_sessions.py                # 從你的真實對話挖案例
   - 修正了 guard hook 的 7 個實際誤判，例如 `2>/dev/null` 被當成寫入、`ssh … | sudo tee /etc/…` 沒被攔到。K4 與 K2 的候選修改等第 3 輪驗證。
 - **第 1 輪**的 0.91 對 0.58–0.64 是循環評估造成的（grader 在檢查有沒有照本規則做），保留在 [method/round1.md](method/round1.md) 作為紀錄。
 - template 與工具都測過：安裝、建立任務、注入、總覽、guard（33 個回歸測試）、結構驗證。評估案例通過 selftest，格式也能被 `claude plugin eval` 載入。
+
+## 思考模型（thinking/）
+[thinking/](thinking/README.md) 整理從「創新縮窄法」出發的分析：
+- 原模型是創意搜尋方法，適合在已有成熟解法的領域靠情境資源做出更好的方案；用在優化、調校很弱（[01](thinking/01-evaluation.md)）。
+- 優化 Claude 設定用 [失敗驅動的縮窄法](thinking/02-failure-driven-narrowing.md)；設計 agent 工作流用 [人機差異設計法](thinking/03-human-agent-design.md)。
+- 原模型可抽象成兩層骨架（[04](thinking/04-prototype-and-skeleton.md)）；用它抽象它自己沒有比直接抽象好（[05](thinking/05-self-abstraction-experiment.md)）。
 
 ## 參考
 - [agent-context-kit](https://github.com/siudajakub/agent-context-kit)（MIT）：分層記憶、worklog、hooks、驗證腳本；a2 對照組改編自它的規則。
