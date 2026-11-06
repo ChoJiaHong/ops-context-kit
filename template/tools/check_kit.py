@@ -12,8 +12,9 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MAX_AGENTS_LINES = int(os.environ.get("KIT_AGENTS_MAX_LINES", "80"))
-REQUIRED = ["AGENTS.md", "CLAUDE.md", "TRUTH.md", "tasks/TEMPLATE.md", "tools/task_new.sh",
-            "tools/context.py", "tools/guard.py", ".claude/settings.json"]
+REQUIRED = ["AGENTS.md", "CLAUDE.md", "TRUTH.md", "tasks/TEMPLATE.md", "tools/task_new.sh", "tools/task.py",
+            "tools/context.py", "tools/guard.py", ".claude/settings.json", ".claude/skills/start/SKILL.md",
+            ".claude/skills/handoff/SKILL.md", "lessons/inbox.md"]
 STATUSES = {"active", "waiting", "blocked", "done", "dropped"}
 TASK_FIELDS = ["status", "goal", "done-when", "targets"]
 

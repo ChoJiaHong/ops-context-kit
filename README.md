@@ -39,7 +39,7 @@ ops-context-kit/
 ./install.sh ~/ops            # 或你的 infra repo
 ```
 1. 編輯 `~/ops/TRUTH.md` 的環境表，標出哪些 context 和主機是 prod。
-2. 在 Claude 桌面版開啟這個資料夾，開新 session，直接交代任務。
+2. 在 Claude 桌面版開啟這個資料夾，開新 session，用 `/start <要做的事>` 開始，做完用 `/handoff`。完整用法見 [template/WORKFLOW.md](template/WORKFLOW.md)。
 
 每個 session 會自動：
 - 列出進行中的任務。

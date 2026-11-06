@@ -68,10 +68,39 @@ def age(ts):
     return f"{minutes // 60}h" if minutes < 2880 else f"{minutes // 1440}d"
 
 
+def hook_input():
+    if sys.stdin.isatty():
+        return {}
+    try:
+        return json.load(sys.stdin)
+    except ValueError:
+        return {}
+
+
+def bound_task(session_id):
+    if not session_id:
+        return None
+    try:
+        with open(os.path.join(root(), "tasks", ".bind", session_id), encoding="utf-8") as f:
+            path = os.path.join(root(), f.read().strip())
+        return parse(path) if os.path.exists(path) else None
+    except OSError:
+        return None
+
+
 def session_start(plain=False):
     """plain=True 只列任務，不附 K1/K2 的指示（評估時給非 A3 的 arm 用）。"""
+    sid = hook_input().get("session_id", "")
     tasks = load()
     lines = []
+    if not plain:
+        mine = bound_task(sid)
+        lines.append(f"[session] id: {sid or '（未知）'}")
+        if mine:
+            lines.append(f"[session] 這個 session 綁定的任務：{mine['title']}｜mode: {mine.get('mode', '-')}｜"
+                         f"targets: {mine.get('targets', '-')}｜next: {mine.get('next', '-')}｜{mine['path']}")
+        else:
+            lines.append("[session] 還沒有綁定任務：不是一次問答就能結束的工作，先用 /start（接續既有任務用 tools/task.py bind）。")
     if tasks:
         lines.append(f"[tasks] 進行中的任務 {len(tasks)} 個（{os.path.join(root(), 'tasks')}）：")
         for t in tasks:
@@ -83,7 +112,7 @@ def session_start(plain=False):
     else:
         lines.append("[tasks] 目前沒有進行中的任務。")
     if not plain:
-        lines.append("非一次性的工作先建任務紀錄：tools/task_new.sh <slug> [type]（K1）。")
+        lines.append("工作流：/start 建立並綁定任務 → 照任務的 mode 與 targets 工作 → /handoff 驗證、交接（K1）。")
     print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart",
                                              "additionalContext": "\n".join(lines)}}, ensure_ascii=False))
 
@@ -102,7 +131,7 @@ def board():
         mark = " ⌛" if t["stale"] else ""
         print(f"{icon.get(t['status'], t['status'])}{mark}  {age(t['ts']):>4}  {t['title']}")
         print(f"            goal: {t.get('goal', '-')}")
-        print(f"            targets: {t.get('targets', '-')}｜next: {t.get('next', '-')}")
+        print(f"            mode: {t.get('mode', '-')}｜targets: {t.get('targets', '-')}｜next: {t.get('next', '-')}")
 
 
 def main():

@@ -243,13 +243,47 @@ CASES_NO_PROD_CONFIRM = [
 ]
 
 
-def decide(cmd, **extra):
-    env = dict(os.environ, CLAUDE_PROJECT_DIR=TEMPLATE, **extra)
+# 工作流：session 綁定任務後，guard 依任務的 mode 與 targets 判斷（tools/task.py、/start）
+# (預期, session, 指令)；session look = 只查任務，change = 變更任務（targets: ctx=stg-eks host=stg1）
+CASES_TASK = [
+    ("allow", "look", "kubectl get pods -n app --context stg-eks"),
+    ("allow", "look", "ssh stg1 'df -h; journalctl -u nginx -n 20'"),
+    ("fix", "look", "kubectl --context stg-eks rollout restart deploy/api -n app"),
+    ("fix", "look", "ssh stg1 'sudo -n systemctl reload nginx'"),
+    ("fix", "look", "rm -rf ./build"),
+    ("allow", "change", "kubectl --context stg-eks rollout restart deploy/api -n app"),
+    ("allow", "change", "ssh stg1 'sudo -n systemctl reload nginx'"),
+    ("ask", "change", "ssh stg2 'sudo -n systemctl reload nginx'"),
+    ("ask", "change", "kubectl --context dev-eks scale deploy/api --replicas 2 -n app"),
+    ("ask", "change", "kubectl --context prod-eks rollout restart deploy/api -n app"),
+    ("allow", None, "ssh stg2 'sudo -n systemctl reload nginx'"),
+]
+
+
+def task_workspace():
+    """建一個暫時的工作區：TRUTH.md + 兩個任務 + 兩個 session 綁定。"""
+    import shutil
+    import tempfile
+    d = tempfile.mkdtemp(prefix="kit-task-")
+    shutil.copy(os.path.join(TEMPLATE, "TRUTH.md"), d)
+    os.makedirs(os.path.join(d, "tasks", ".bind"))
+    for sid, name, mode, targets in (("look", "T-20261107-01-look", "look", "-"),
+                                     ("change", "T-20261107-02-change", "change", "ctx=stg-eks ns=app；host=stg1")):
+        with open(os.path.join(d, "tasks", name + ".md"), "w", encoding="utf-8") as f:
+            f.write(f"# {name}\nmode: {mode}\nstatus: active\ngoal: test\ndone-when: test\ntargets: {targets}\n")
+        with open(os.path.join(d, "tasks", ".bind", sid), "w", encoding="utf-8") as f:
+            f.write(f"tasks/{name}.md\n")
+    return d
+
+
+def decide(cmd, session=None, project=None, **extra):
+    env = dict(os.environ, CLAUDE_PROJECT_DIR=project or TEMPLATE, **extra)
     env.pop("KIT_PROD_PATTERN", None)
     if "KIT_PROD_CONFIRM" not in extra:
         env.pop("KIT_PROD_CONFIRM", None)
     out = subprocess.run([sys.executable, os.path.join(TEMPLATE, "tools", "guard.py")],
-                         input=json.dumps({"tool_name": "Bash", "tool_input": {"command": cmd}}),
+                         input=json.dumps({"tool_name": "Bash", "tool_input": {"command": cmd},
+                                           **({"session_id": session} if session else {})}),
                          capture_output=True, text=True, env=env, check=True).stdout.strip()
     if not out:
         return "allow"
@@ -268,6 +302,13 @@ def main():
         if got != want:
             bad += 1
             print(f"FAIL want={want} got={got} {extra}: {cmd!r}")
+    ws = task_workspace()
+    for want, session, cmd in CASES_TASK:
+        runs.append((want, cmd, {"session": session}))
+        got = decide(cmd, session=session, project=ws)
+        if got != want:
+            bad += 1
+            print(f"FAIL want={want} got={got} session={session}: {cmd!r}")
     print(f"{len(runs) - bad}/{len(runs)} passed")
     sys.exit(1 if bad else 0)
 

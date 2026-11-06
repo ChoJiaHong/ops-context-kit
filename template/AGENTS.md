@@ -9,8 +9,8 @@
 
 <!-- rule:K1 -->
 ## 任務紀錄（K1）
-- 不是一次問答就能結束的工作都要有任務紀錄。接手或接續時，先讀使用者指的紀錄或筆記，進度與最終狀態直接寫回那份；沒有既有紀錄才用 `tools/task_new.sh <slug>` 建在 `tasks/`。一個 session 只做一個任務，session 名稱以任務 ID 開頭。
-- 紀錄寫 goal、done-when、targets（ctx/ns、主機、帳號）。在三個時點更新：定出計畫、prod 變更前（寫備份位置）、收尾或停下。
+- 不是一次問答就能結束的工作都要有任務紀錄。接手或接續時，先讀使用者指的紀錄或筆記，進度與最終狀態直接寫回那份；沒有既有紀錄才用 `tools/task.py start` 建在 `tasks/` 並綁定 session（Claude 用 `/start`）。一個 session 只做一個任務，session 名稱以任務 ID 開頭。
+- 紀錄寫 goal、done-when、mode（look 只查／fix 排障／change 變更）、targets（會寫入的 ctx/ns、主機、帳號）、out-of-scope。在三個時點更新：定出計畫、prod 變更前（寫備份位置）、收尾或停下。
 - 其他進行中任務的紀錄不改，只在檔尾附加一行。照工作區慣例：改了叢集就同步對應的 manifest；有共用的變更紀錄就補一行。
 <!-- /rule -->
 
@@ -59,7 +59,8 @@
 ## 收尾（K8）
 - 唯讀檢查同類目標（其他主機、prod 的對應資源）有沒有同樣問題，只報不改。
 - 回覆寫：結果與證據、根因、紀錄與實際不符的地方、留下的變更與回滾方式、需要注意的異常。
-- 任務紀錄寫 result、status 改成 done；長期有用的事實寫回 TRUTH.md；後續工作各自建新任務。
+- 任務紀錄寫 result、status 改成 done；長期有用的事實寫回 TRUTH.md；後續工作各自建新任務（Claude 用 `/handoff`）。
+- 以後每個 session 都該知道的教訓，附加到 `lessons/inbox.md`，不直接改規則檔。
 <!-- /rule -->
 
 <!-- rule:K10 -->

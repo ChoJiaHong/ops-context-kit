@@ -432,6 +432,7 @@ def redis_effect(text):
 class Result:
     def __init__(self):
         self.deny, self.fix, self.irreversible, self.prod, self.unknown = [], [], [], [], []
+        self.writes = []  # [(可能的目標名稱或 None, 說明)]：每一個會寫入的地方
 
 
 class Analyzer:
@@ -487,6 +488,7 @@ class Analyzer:
         return out
 
     def hit(self, values, label, generic=False):
+        self.r.writes.append((values, label))
         if values is None:
             self.r.unknown.append(label)
             return
@@ -1187,12 +1189,46 @@ def remote_mutation(cmd, args, stdin=None):
     return None
 
 
-def classify(cmd):
+def session_task(session_id):
+    """這個 session 綁定的任務（tools/task.py 寫的 tasks/.bind/<id>）：回傳 (任務 ID, mode, 宣告的目標名稱) 或 None。"""
+    if not session_id:
+        return None
+    root = os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
+    try:
+        with open(os.path.join(root, "tasks", ".bind", re.sub(r"[^\w.-]", "_", session_id)), encoding="utf-8") as f:
+            path = os.path.join(root, f.read().strip())
+        fields = {}
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("## "):
+                    break
+                if ":" in line and not line.startswith("#"):
+                    k, v = line.split(":", 1)
+                    fields[k.strip()] = v.strip()
+    except OSError:
+        return None
+    names = set()
+    for part in re.split(r"[;；,，\s]+", fields.get("targets", "")):
+        if part and part != "-":
+            value = part.split("=", 1)[1] if "=" in part else part
+            names.update(v for v in value.split(",") if v and v != "-")
+    task_id = os.path.basename(path)[:13]
+    return task_id, fields.get("mode", "").strip(), names
+
+
+def declared(value, names):
+    return any(re.search(r"(?<![\w-])" + re.escape(n) + r"(?![\w-])", value) for n in names)
+
+
+def classify(cmd, task=None):
     a = Analyzer()
     a.unit(cmd)
     r = a.r
     if r.deny:
         return "deny", f"⛔ 已拒絕：{r.deny[0]}。這個指令不能由 agent 執行；若真的需要，請使用者自己在終端機操作。"
+    if task and task[1] == "look" and (r.writes or r.irreversible):
+        return "deny", (f"↺ 這個 session 是只查模式（任務 {task[0]}），不能執行會改變狀態的指令。"
+                        "改用唯讀指令；需要變更就把發現和建議的變更回報給使用者，由他決定是否開變更任務。")
     state = [w for w in r.fix if not w.startswith("missing-context:")]
     if state:
         return "deny", f"↺ 請修正後重試：{state[0]}；在每個指令上明確帶目標（--context／--project／--profile）。這不需要問使用者（K3）。"
@@ -1201,6 +1237,12 @@ def classify(cmd):
         return "deny", (f"↺ 請修正後重試：這段指令沒有明確指定叢集「{missing[0]}」。加上 --context <ctx>（helm 用 --kube-context），"
                         f"可用的 context 見 TRUTH.md。這不需要問使用者（K3）。")
     reasons = list(r.irreversible)
+    if task and task[1] in ("fix", "change") and task[2]:
+        outside = [label if values is None else "、".join(values)[:60]
+                   for values, label in r.writes if values is None or not any(declared(v, task[2]) for v in values)]
+        outside = [o for o in outside if o not in r.unknown]
+        if outside:
+            reasons.append(f"寫入任務 {task[0]} 沒有宣告的目標（{'；'.join(dict.fromkeys(outside))}）")
     if os.environ.get("KIT_PROD_CONFIRM", "1") != "0":
         if r.prod:
             reasons.insert(0, f"prod 變更（{'、'.join(dict.fromkeys(r.prod))}）")
@@ -1215,7 +1257,7 @@ def main():
     data = json.load(sys.stdin)
     if data.get("tool_name") != "Bash":
         return
-    decision, reason = classify((data.get("tool_input") or {}).get("command") or "")
+    decision, reason = classify((data.get("tool_input") or {}).get("command") or "", session_task(data.get("session_id")))
     if not decision:
         return
     print(json.dumps({"hookSpecificOutput": {
