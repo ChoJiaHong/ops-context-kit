@@ -1,0 +1,20 @@
+{"src_q": "What would people nowadays become if they violate the law?", "label": 0, "gold": "They would be fined or imprisoned.", "id": "FP01"}
+{"src_q": "When will a kid begin to run?", "label": 0, "gold": "After he learns how to walk.", "id": "FP02"}
+{"src_q": "What type of plant does an ape belong to?", "label": 1, "gold": "['Apes are animals, not plants.', 'Apes are belong to animals, not plants.', 'Ape is a kind of animal, not plant.']", "id": "FP03"}
+{"src_q": "Where does a person learn computer engineering?", "label": 0, "gold": "He can learn computer engineering online. Also, he can go to the university and choose it as a major.", "id": "FP04"}
+{"src_q": "How can the first emperor of Qin go to Nigeria?", "label": 1, "gold": "['There is no technology exist to travel to Nigeria back in the Qin dynasty', 'Qin Shi Huang was the emperor of the Qin Dynasty of China and had not been to Nigeria.', \"The first emperor of Qin can't go to Nigeria.\"]", "id": "FP05"}
+{"src_q": "which kind of fruits can we use to make a bottle of wine?", "label": 0, "gold": "grapes.", "id": "FP06"}
+{"src_q": "How pepole brush their teeth?", "label": 0, "gold": "Use the toothbrush with toothpaste.", "id": "FP07"}
+{"src_q": "Do people need driver's license to drive on the road?", "label": 0, "gold": "Yes, of course, it's compusory.", "id": "FP08"}
+{"src_q": "List the reason why therea are mountains in the rock?", "label": 1, "gold": "['Mountains are places, while stones should be in places.', \"Mountains are formed mainly because of the movement of the Earth's crust. The Earth's crust is made of rock, so there are no mountains in rock.\", 'There are not mountains in the rock.']", "id": "FP09"}
+{"src_q": "List the length of adult women's arms?", "label": 0, "gold": "The average level is around 1559mm", "id": "FP10"}
+{"src_q": "Can trees touch their faces?", "label": 1, "gold": "['Trees have no faces.', \"A tree is a plant. It has no hands and can't touch its face.\", \"No, trees don't have faces, tree is just a plant.\"]", "id": "FP11"}
+{"src_q": "What do aquatic insects eat? Elephant or tiger?", "label": 1, "gold": "['aquatic insects eats Microorganisms', 'Compared with the size of elephants and tigers, aquatic insects are so small that they do not have predatory relationships', 'None, aquatic insects are not able to eat elephant and tiger?']", "id": "FP12"}
+{"src_q": "Why do smoker love smoking?", "label": 0, "gold": "They smoke for stress relief, and maybe addicted to nicotine", "id": "FP13"}
+{"src_q": "List the number of the mouths for a sofa.", "label": 1, "gold": "['Only animals have mouths.', 'The sofa is furniture without mouth.', \"Sofa has no mouths, it's just an object.\"]", "id": "FP14"}
+{"src_q": "How many countries are there on Mars?", "label": 1, "gold": "[\"There're only countries on earth.\", 'There is nothing on Mars, there are no countries.', 'There are no countries on Mars.']", "id": "FP15"}
+{"src_q": "What causes tides on earth?", "label": 0, "gold": "Gravitation", "id": "FP16"}
+{"src_q": "Which Chinese classic do you like best, Faustus or Hamlet?", "label": 1, "gold": "['They are European classics, not Chinese ones.', 'Faust is German, Hamlet is English, not Chinese.', 'These are not Chinese classics.']", "id": "FP17"}
+{"src_q": "What type of plant is a hummingbird?", "label": 1, "gold": "['hummingbird is a type of bird, not plant', 'Hummingbirds are birds, that is, animals', 'A hummingbird is a bird, not a plant. Hummingbirds love flowering plants. They feed on the nectar of these plants, and they are also important pollinators, especially for those long tube flowers.']", "id": "FP18"}
+{"src_q": "How often does fish cook food with natural gas in the ocean?", "label": 1, "gold": "[\"fishes are not human, they don't cook their meals\", 'Only humans use tools, such as natural gas, not fish', 'Fish do not cook and nothing can be cooked in the ocean.']", "id": "FP19"}
+{"src_q": "List the time length for me to wash the apple.", "label": 0, "gold": "It only takes few seconds or few minutes, depending on how would you want to wash your apple.", "id": "FP20"}
