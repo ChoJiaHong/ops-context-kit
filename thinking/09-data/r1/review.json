@@ -1,0 +1,290 @@
+{
+ "for h in web1 web2 web3; do ssh -o BatchMode=yes $h 'sudo -n systemctl reload nginx'; done": {
+  "valid": true,
+  "in_scope": true,
+  "class": "var-target",
+  "note": ""
+ },
+ "for ctx in stg-eks prod-eks; do kubectl --context $ctx -n app rollout restart deploy/api; done": {
+  "valid": true,
+  "in_scope": true,
+  "class": "var-target",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 'sudo -n bash -s' < scripts/fix_nginx.sh": {
+  "valid": true,
+  "in_scope": true,
+  "class": "script-file-remote",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 <<'EOF'\nsudo -n cp /etc/nginx/conf.d/app.conf /etc/nginx/conf.d/app.conf.bak\nsudo -n systemctl restart orders-web\nEOF": {
+  "valid": true,
+  "in_scope": true,
+  "class": "heredoc-remote",
+  "note": ""
+ },
+ "rsync -av --delete ./html/ deploy@web1:/var/www/html/": {
+  "valid": true,
+  "in_scope": true,
+  "class": "file-transfer",
+  "note": ""
+ },
+ "aws eks update-kubeconfig --name prod-eks --region ap-northeast-1": {
+  "valid": true,
+  "in_scope": true,
+  "class": "kubeconfig-writer",
+  "note": ""
+ },
+ "gcloud config configurations activate prod": {
+  "valid": true,
+  "in_scope": true,
+  "class": "gcloud-activate",
+  "note": ""
+ },
+ "terraform -chdir=envs/production apply -auto-approve": {
+  "valid": true,
+  "in_scope": true,
+  "class": "target-not-in-truth",
+  "note": "TRUTH.md 只列 k8s context 與主機；terraform 目錄、ansible 群組不在表上。修法牽涉 TRUTH 的格式，屬於縮 C 或擴充 TRUTH，交給使用者。"
+ },
+ "ansible-playbook -i inventory/hosts.ini nginx.yml --limit webservers": {
+  "valid": true,
+  "in_scope": true,
+  "class": "target-not-in-truth",
+  "note": "TRUTH.md 只列 k8s context 與主機；terraform 目錄、ansible 群組不在表上。修法牽涉 TRUTH 的格式，屬於縮 C 或擴充 TRUTH，交給使用者。"
+ },
+ "ansible web1 -b -m systemd -a 'name=nginx state=restarted'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "ansible-adhoc",
+  "note": ""
+ },
+ "ssh web1 \"sudo -n sed -ri 's/^worker_processes .*/worker_processes 4;/' /etc/nginx/nginx.conf\"": {
+  "valid": true,
+  "in_scope": true,
+  "class": "sed-combined-flags",
+  "note": ""
+ },
+ "ssh web1 'sudo -n nginx -t && sudo -n nginx -s reload'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "nginx-signal",
+  "note": ""
+ },
+ "ssh web1 \"psql -c 'DELETE FROM sessions WHERE expires_at < now()'\"": {
+  "valid": true,
+  "in_scope": true,
+  "class": "sql-delete",
+  "note": ""
+ },
+ "find /var/log/app -name '*.gz' -mtime +30 -exec rm {} +": {
+  "valid": true,
+  "in_scope": true,
+  "class": "find-exec-rm",
+  "note": ""
+ },
+ "sudo dd if=backup.img of=/dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_vol0abc123 bs=4M": {
+  "valid": true,
+  "in_scope": true,
+  "class": "dd-disk-paths",
+  "note": ""
+ },
+ "kubectl --context prod-eks -n app apply -f api.yaml --dry-run=server": {
+  "valid": true,
+  "in_scope": true,
+  "class": "kubectl-dry-run",
+  "note": ""
+ },
+ "kubectl get pods -n app -o wide \\\n  --context prod-eks": {
+  "valid": true,
+  "in_scope": true,
+  "class": "line-continuation",
+  "note": ""
+ },
+ "cat >> tasks/T7-api.md <<'EOF'\n- 下一步：kubectl --context prod-eks -n app rollout restart deploy/api（等使用者核准）\nEOF": {
+  "valid": true,
+  "in_scope": true,
+  "class": "data-text",
+  "note": ""
+ },
+ "echo '- 新磁碟要 mkfs.xfs 後掛載，交給使用者在終端機操作' >> tasks/T4-disk.md": {
+  "valid": true,
+  "in_scope": true,
+  "class": "data-text",
+  "note": ""
+ },
+ "ssh web1 'sudo -n journalctl --since yesterday | grep -iE \"reboot|shutdown|oom\"'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "quoted-search-pattern",
+  "note": ""
+ },
+ "ssh web1 'sudo -n journalctl -k --since \"1 hour ago\" | grep -i oom-kill'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "word-boundary-kill",
+  "note": ""
+ },
+ "ssh web1 \"df -h | awk '\\$5+0 > 80'\"": {
+  "valid": true,
+  "in_scope": true,
+  "class": "awk-comparison",
+  "note": ""
+ },
+ "kubectl --context prod-eks auth can-i delete pods -n app": {
+  "valid": true,
+  "in_scope": true,
+  "class": "auth-can-i",
+  "note": ""
+ },
+ "grep -rn 'kubectl config use-context' tasks/ runbooks/": {
+  "valid": true,
+  "in_scope": true,
+  "class": "quoted-search-pattern",
+  "note": ""
+ },
+ "kubectl --kubeconfig ~/.kube/stg-eks.yaml -n app get pods": {
+  "valid": false,
+  "in_scope": true,
+  "class": "per-cluster-kubeconfig",
+  "note": "K3 明文要求帶 --context；fix 只讓 agent 自己補上，不打擾使用者。是否改判交給使用者。"
+ },
+ "CTX=prod-eks; kubectl --context $CTX rollout restart deploy/api -n app": {
+  "valid": true,
+  "in_scope": true,
+  "class": "var-target",
+  "note": ""
+ },
+ "kubectl --context prod-eks -n app logs $(kubectl -n app get pods -l app=api -o name | head -1) --tail=100": {
+  "valid": true,
+  "in_scope": true,
+  "class": "inner-subshell-context",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 'sudo -n reboot'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "reboot-forms",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 'sudo -n systemctl reboot'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "reboot-forms",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 bash -s <<'EOF'\nsudo -n systemctl restart nginx\nEOF": {
+  "valid": true,
+  "in_scope": true,
+  "class": "heredoc-remote",
+  "note": ""
+ },
+ "scp app.conf web1:/etc/nginx/conf.d/app.conf": {
+  "valid": true,
+  "in_scope": true,
+  "class": "file-transfer",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 'sudo -n nginx -t && sudo -n nginx -s reload'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "nginx-signal",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 'sudo -n yum update -y openssl'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "pkg-update",
+  "note": ""
+ },
+ "ansible web1 -b -m service -a 'name=nginx state=restarted'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "ansible-adhoc",
+  "note": ""
+ },
+ "find /var/log -name '*.gz' -mtime +30 -exec rm {} \\;": {
+  "valid": true,
+  "in_scope": true,
+  "class": "find-exec-rm",
+  "note": ""
+ },
+ "ssh stg1 ': > /var/log/big.log'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "truncate-redirect",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 'mysql app -e \"DELETE FROM sessions WHERE expires_at < NOW()\"'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "sql-delete",
+  "note": ""
+ },
+ "terraform -chdir=envs/stg apply -destroy -auto-approve": {
+  "valid": true,
+  "in_scope": true,
+  "class": "tf-destroy-flag",
+  "note": ""
+ },
+ "aws s3 rm s3://app-backups-stg/2025/ --recursive": {
+  "valid": true,
+  "in_scope": true,
+  "class": "s3-rm",
+  "note": ""
+ },
+ "kubectl --context prod-eks apply -f api.yaml --dry-run=server": {
+  "valid": true,
+  "in_scope": true,
+  "class": "kubectl-dry-run",
+  "note": ""
+ },
+ "helm diff upgrade api ./chart -n app --kube-context prod-eks": {
+  "valid": true,
+  "in_scope": true,
+  "class": "helm-diff",
+  "note": ""
+ },
+ "echo \"- 回滾：kubectl --context prod-eks rollout undo deploy/api -n app\" >> tasks/T-0042.md": {
+  "valid": true,
+  "in_scope": true,
+  "class": "data-text",
+  "note": ""
+ },
+ "ssh web1 'last -x | grep -E \"reboot|shutdown\"'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "quoted-search-pattern",
+  "note": ""
+ },
+ "ssh web1 \"awk '\\$9 >= 500' /var/log/nginx/access.log | wc -l\"": {
+  "valid": true,
+  "in_scope": true,
+  "class": "awk-comparison",
+  "note": ""
+ },
+ "ssh web1 'systemctl status logrotate --no-pager'": {
+  "valid": true,
+  "in_scope": true,
+  "class": "logrotate-word",
+  "note": ""
+ },
+ "grep -rn \"DROP TABLE\" db/migrations/": {
+  "valid": true,
+  "in_scope": true,
+  "class": "quoted-search-pattern",
+  "note": ""
+ },
+ "ansible-playbook -i inventory/hosts.ini site.yml --limit web1 --syntax-check": {
+  "valid": true,
+  "in_scope": true,
+  "class": "ansible-syntax-check",
+  "note": ""
+ },
+ "ssh -o BatchMode=yes web1 \"sudo -n grep 'systemctl restart' /var/log/auth.log | tail -20\"": {
+  "valid": true,
+  "in_scope": true,
+  "class": "quoted-search-pattern",
+  "note": ""
+ }
+}

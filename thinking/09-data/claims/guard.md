@@ -23,8 +23,18 @@
 
 ## 不涵蓋（縮 C 的累積）
 
-（尚無）
+1. 刻意混淆（編碼後 eval、拼接指令名稱）。
+2. 目標不在 TRUTH.md 名單上的不算 prod：ansible 群組、terraform 環境、資料庫主機要列進 TRUTH.md 才認得（terraform／ansible 另外看 prod、production、prd、live 這些字）。
+3. 遠端的變更指令是「列出來的才認得」，不在清單上的會放行。
 
 ## 紀錄
 
-（試驗開始後逐輪填入）
+### 第 1 輪
+
+- 反駁者：A 組（主張框架）、B 組（一般審查），各交 25 個，全部重現。核對後 49 個成立；1 個（`kubectl --kubeconfig <單一叢集檔> get pods` 被要求補 --context）判定為符合 K3，交給使用者決定是否改判。
+- 在範圍內的 S1：A 組 15 個（13 類），B 組 16 個（14 類），重疊 8 類，合計 19 類。既有 39 個測試和 method/ 三輪審查都沒涵蓋。
+- 處理：
+  - 修 S：改成逐段切指令、認出指令名稱再判斷（引號裡的資料、寫進檔案的 heredoc 不再當成指令）；解析迴圈與變數的目標；heredoc、`bash -s < 腳本`、pipe 進遠端 shell；scp／rsync；ansible ad-hoc；kubectl exec；補上多種變更與不可逆寫法。19 類裡 18 類修好。
+  - 縮 C：ansible 群組名稱不在 TRUTH.md（不涵蓋第 2 條）。
+  - 回歸測試：evals/guard_test.py 新增 69 個（CASES_R1），共 108 個全過。
+- 交給使用者：(1) 單一叢集 kubeconfig 是否改判；(2) TRUTH.md 沒列的名稱是否一律當 prod（K4 寫「不確定就當成 prod」，guard 目前當成非 prod）。
