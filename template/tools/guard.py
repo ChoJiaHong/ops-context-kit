@@ -15,10 +15,17 @@ prod 名單來自 TRUTH.md「環境」表格中 prod 欄為 yes 的列；也可�
 第 1 輪思想實驗後的修改（method/round1.md）：
 - 「沒帶 --context」從「問使用者」改成「擋下讓 agent 自己補上」：這是可以自己修正的錯，不該打斷使用者。
 - 補上 truncate、find -delete、logrotate -f 等清除檔案的寫法。
+
+第 2 輪後的修改（method/round2.md）：唯讀指令被誤判成 prod 變更
+- ssh 只看送到遠端的那段指令；本機的 pipe、`> /tmp/x` 重導向不算遠端變更。
+- `2>/dev/null`、寫到 /tmp、`logrotate -d`（預演）不算變更。
+- prod 判斷看實際目標：kubectl／helm 看 --context，ssh 看主機名，不再搜整段指令文字。
+回歸測試：evals/guard_test.py
 """
 import json
 import os
 import re
+import shlex
 import sys
 
 SEG = r"[^;&|\n]*"  # 只在同一段指令內比對，避免跨過 pipe 誤判
@@ -57,15 +64,20 @@ IRREVERSIBLE = [
     (r"\bjournalctl\b" + SEG + r"--vacuum", "清除系統日誌"),
 ]
 
-MUTATING = [
-    r"\bkubectl\b" + SEG + r"\s(apply|create|replace|patch|edit|set|scale|annotate|label|delete|drain|cordon|uncordon"
-    r"|rollout\s+(restart|undo))\b",
-    r"\bhelm\b" + SEG + r"\s(install|upgrade|rollback|uninstall)\b",
+KUBE_MUTATING = (r"\s(apply|create|replace|patch|edit|set|scale|annotate|label|delete|drain|cordon|uncordon"
+                 r"|rollout\s+(restart|undo))\b")
+HELM_MUTATING = r"\s(install|upgrade|rollback|uninstall)\b"
+OTHER_MUTATING = [
     r"\b(terraform|tofu)\b" + SEG + r"\s(apply|destroy|import)\b",
     r"\bansible-playbook\b(?!" + SEG + r"\s(--check|-C)\b)",
-    r"\bssh\b" + SEG + r"(systemctl\s+(start|stop|restart|reload|enable|disable)|sed\s+-i|\btee\b|\brm\s|\bmv\s|\bcp\s"
-    r"|\bkill|\btruncate\b|\blogrotate\b|\b(apt|apt-get|yum|dnf)\s+(install|remove|upgrade)|>\s*/)",
 ]
+# 只套用在 ssh 送到遠端執行的那段指令上（本機的 pipe、重導向不算）。
+# 寫到 /tmp、/dev/null 不算變更；logrotate -d 是預演。
+REMOTE_MUTATING = (r"(systemctl\s+(start|stop|restart|reload|enable|disable)\b|\bsed\s+(-\w+\s+)*-i|\bsed\s+--in-place"
+                   r"|\btee\s+(-a\s+)?(?!/tmp/|/dev/null)\S|\brm\s|\bmv\s|\bcp\s|\b(kill|pkill|killall)\b|\btruncate\b"
+                   r"|(?<![/\w.-])logrotate(?![\w.-])(?![^;&|]*\s(-d|--debug)\b)|\b(apt|apt-get|yum|dnf)\s+(install|remove|upgrade)\b"
+                   r"|(?<![0-9&])>>?\s*(?!/tmp/|/dev/null|&)\S)")
+SSH_ARG_FLAGS = set("bcDEeFIiJLlmOopQRSWw")
 
 
 def prod_pattern():
@@ -110,6 +122,65 @@ def missing_context(cmd):
     return None
 
 
+def ssh_calls(cmd):
+    """回傳 [(主機, 遠端指令)]。解析失敗（例如 heredoc、引號不成對）時回傳 None，改用保守的全文比對。"""
+    try:
+        lex = shlex.shlex(cmd, posix=True, punctuation_chars=True)
+        lex.whitespace_split = True
+        toks = list(lex)
+    except ValueError:
+        return None
+    calls, i = [], 0
+    while i < len(toks):
+        if os.path.basename(toks[i]) != "ssh":
+            i += 1
+            continue
+        i += 1
+        while i < len(toks) and toks[i].startswith("-") and len(toks[i]) > 1:
+            flag = toks[i]
+            i += 2 if (len(flag) == 2 and flag[1] in SSH_ARG_FLAGS) else 1
+        if i >= len(toks):
+            break
+        host = toks[i].split("@")[-1]
+        i += 1
+        remote = []
+        while i < len(toks) and not re.fullmatch(r"[;&|<>()]+", toks[i]):
+            remote.append(toks[i])
+            i += 1
+        calls.append((host, " ".join(remote)))
+    return calls
+
+
+def prod_changes(cmd):
+    """回傳這個指令裡會變更 prod 的目標名稱。"""
+    prod = prod_pattern()
+    hits = []
+    for seg in re.split(r"[;&|\n]+", cmd):
+        kube = re.search(r"\bkubectl\b", seg) and re.search(KUBE_MUTATING, seg)
+        helm = re.search(r"\bhelm\b", seg) and re.search(HELM_MUTATING, seg)
+        if kube or helm:
+            ctx = re.search(r"--(?:kube-)?context[= ](\S+)", seg)
+            target = ctx.group(1) if ctx else seg  # 沒帶 context 的情況前面已經擋下
+            m = prod.search(target)
+            if m:
+                hits.append(m.group(0))
+    if any(re.search(p, cmd) for p in OTHER_MUTATING):
+        m = prod.search(cmd)
+        if m:
+            hits.append(m.group(0))
+    calls = ssh_calls(cmd)
+    if calls is None:  # 解析不了：保守地看整段
+        if re.search(r"\bssh\b", cmd) and re.search(REMOTE_MUTATING, cmd):
+            m = prod.search(cmd)
+            if m:
+                hits.append(m.group(0))
+    else:
+        for host, remote in calls:
+            if re.search(REMOTE_MUTATING, remote) and prod.search(host):
+                hits.append(host)
+    return list(dict.fromkeys(hits))
+
+
 def classify(cmd):
     for pat, why in CATASTROPHIC:
         if re.search(pat, cmd, re.I):
@@ -122,10 +193,9 @@ def classify(cmd):
         return "deny", (f"↺ 請修正後重試：這段指令沒有明確指定叢集「{seg[:80]}」。加上 --context <ctx>（helm 用 --kube-context），"
                         f"可用的 context 見 TRUTH.md。這不需要問使用者（K3）。")
     reasons = [why for pat, why in IRREVERSIBLE if re.search(pat, cmd, re.I)]
-    if any(re.search(p, cmd) for p in MUTATING):
-        hit = prod_pattern().search(cmd)
-        if hit:
-            reasons.insert(0, f"prod 變更（{hit.group(0)}）")
+    hits = prod_changes(cmd)
+    if hits:
+        reasons.insert(0, f"prod 變更（{'、'.join(hits)}）")
     if reasons:
         return "ask", (f"⚠ R3 需要使用者確認：{'；'.join(dict.fromkeys(reasons))}。不要換寫法繞過；"
                        f"停下來說明「做什麼、影響範圍、怎麼回滾」，讓使用者決定（K4）。")

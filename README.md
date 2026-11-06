@@ -14,7 +14,9 @@ ops-context-kit/
 │   ├── README.md        思考模型：形式化定義、推導流程、放置原則、停止條件
 │   ├── derivation.md    第 0 輪推導：從你的需求到規則 K1–K10
 │   ├── round1.md        第 1 輪：盲測思想實驗的結果與規則修正
-│   └── round1-data/     第 1 輪的原始評分資料
+│   ├── round1-data/     第 1 輪的原始評分資料
+│   ├── round2.md        第 2 輪：修掉不公平之處後重做（獨立案例、獨立專家對手、跨模型評分）
+│   └── round2-data/     第 2 輪的案例、對手規則集與評分資料
 ├── concepts.md          概念模型：工作區、環境、任務、session、宣告、事實
 ├── template/            複製到你的工作區就能用的規則集
 │   ├── CLAUDE.md        Claude 入口（@AGENTS.md 自動載入規則）
@@ -38,7 +40,7 @@ ops-context-kit/
 每個 session 會自動：
 - 列出進行中的任務。
 - 收到非一次性的工作時，建立任務紀錄並把 session 改名成任務 ID。
-- prod 變更先停下來確認。
+- prod 變更先停下來確認（第 2 輪發現這條在「使用者明確要求、可回復」的變更上太嚴，候選修改見 method/round2.md）。
 - 完成前用觀察證明，做完收尾。
 
 想看所有任務，開一個 hub session 說「看任務總覽」，或在終端機執行 `python3 tools/context.py --board`。
@@ -47,6 +49,7 @@ ops-context-kit/
 
 ```bash
 python3 evals/selftest.py                     # 不花錢：檢查案例本身寫得對不對
+python3 evals/guard_test.py                   # 不花錢：guard hook 的 33 個回歸測試
 evals/run.sh --quick --model sonnet           # 試跑
 evals/run.sh --arms a1,a2,a3 --runs 3         # 和官方精簡版、agent-context-kit 改編版比較
 evals/run.sh --arms a3 --ablate all           # 找出可以刪的規則
@@ -61,12 +64,14 @@ python3 evals/mine_sessions.py                # 從你的真實對話挖案例
 - **每一輪的結論**寫回 `method/derivation.md`。
 
 ## 目前狀態
-- **第 1 輪（盲測思想實驗）已完成**，詳見 [method/round1.md](method/round1.md)。
-  - 本規則集平均 0.91；無規則 0.58、官方精簡版 0.63、agent-context-kit 改編版 0.64。
-  - 增益集中在流程與安全：prod 確認、平行任務衝突、明確帶 context、任務紀錄、腳本標準。解決問題的能力各組差不多。
-  - 依結果移除 K9；縮短 K1、K7；改寫 K2、K4；K3 改由 hook 保證。
-- **已知限制**：規則和 grader 出自同一作者（循環評估）；評分者是同一類模型。下一輪要用你的真實任務、由你定義成功標準，並用少量實際執行來校準。
-- template 與工具都測過：安裝、建立任務、注入、總覽、guard 三種判斷、結構驗證。評估案例通過 selftest，格式也能被 `claude plugin eval` 載入。
+- **第 2 輪（公平條件下的思想實驗）已完成**，詳見 [method/round2.md](method/round2.md)。結論要先看這一輪：
+  - 案例和 grader 由看不到規則的獨立作者撰寫，對手換成獨立 SRE 寫的規則集，環境資訊對等，評分者混用兩種模型。
+  - 本規則集 0.80、獨立 SRE 規則集 0.80、無規則 0.81。**本方法推導的規則沒有比有經驗的人直接寫的更好。**
+  - 兩套規則集都是用效率換安全：避免損害的項目變好（失敗率約 10% → 3%），但在該直接做的任務上，停下來問的機率從 0.07 升到約 0.30。
+  - 一次事故的代價若超過多確認一次的約 4～8 倍，規則就划算；這要用你的真實紀錄判斷。
+  - 修正了 guard hook 的 7 個實際誤判，例如 `2>/dev/null` 被當成寫入、`ssh … | sudo tee /etc/…` 沒被攔到。K4 與 K2 的候選修改等第 3 輪驗證。
+- **第 1 輪**的 0.91 對 0.58–0.64 是循環評估造成的（grader 在檢查有沒有照本規則做），保留在 [method/round1.md](method/round1.md) 作為紀錄。
+- template 與工具都測過：安裝、建立任務、注入、總覽、guard（33 個回歸測試）、結構驗證。評估案例通過 selftest，格式也能被 `claude plugin eval` 載入。
 
 ## 參考
 - [agent-context-kit](https://github.com/siudajakub/agent-context-kit)（MIT）：分層記憶、worklog、hooks、驗證腳本；a2 對照組改編自它的規則。

@@ -75,7 +75,15 @@ python3 evals/thought/make_packet.py            # 產生 evals/thought/run/packe
 # 把資料包交給獨立評分者（子 agent 或人），每位 4 個案例，結果放到 evals/thought/run/out/<小組>-<批次>.json
 python3 evals/thought/analyze.py                # 解盲、合併、一致性、反事實消融 → run/report.md
 ```
-第 1 輪就是用這個方式跑的，結果見 [method/round1.md](../method/round1.md)。
+第 1 輪就是用這個方式跑的，結果見 [method/round1.md](../method/round1.md)。注意：這套案例是規則作者寫的，有循環評估的問題。
+
+第 2 輪改用公平設計（獨立作者寫案例、獨立專家寫對手規則集、環境資訊對等、hook 當獨立因子、兩種模型評分）：
+```bash
+python3 evals/thought/make_packet2.py           # 讀 method/round2-data/{cases,a4}，產生 packet-A、packet-B
+# 每個案例交給 sonnet 和 opus 各一位評分者，結果放到 method/round2-data/out/<小組>-<批次>.json
+python3 evals/thought/analyze2.py               # → method/round2-data/report2.md（含損益兩平分析）
+```
+結果見 [method/round2.md](../method/round2.md)。之後的輪次請沿用第 2 輪的設計。
 
 ## 讀結果
 `run.sh` 會在最後產生 `results/<時間>/summary.md`，內容有三部分：
