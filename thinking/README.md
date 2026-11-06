@@ -12,7 +12,7 @@
 - 拿骨架去解外部問題集（MacGyver、錯誤前提、數學），沒有比一般「先分析再回答」的提示更好；在數學題上不幫忙、只讓輸出變長（[08](08-results.md)）。
 - 前面測的都是單次提示。把雙迴圈改寫成「迭代有範圍的主張」，由獨立反駁者搭配能自動判定的評估器多輪執行，第一次用在 guard.py 上：找出大量既有測試漏掉的嚴重問題，三輪沒有收斂，指出 guard 只能當盡力而為的第二層（[09](09-double-loop.md)）。
 - 對象換成 claude.md 集後先整理現況：結構化做法已經成熟，但都依檔案路徑觸發，沒有依操作目標觸發；規則有沒有用，社群憑感覺判斷、沒有實測，這正是雙迴圈可以補的地方（[10](10-claude-md.md)）。
-- 再往上抽象，模型只剩「雙向迴圈」：向下具體化到能檢驗，向上抽象化到再拿掉就不成立，兩個方向交替（[11](11-double-loop-pure.md)）。
+- 最終抽象只剩「雙向迴圈」：一定是兩個相反的方向，才能持續移動；方向是什麼、何時轉向、何時停，全部交給執行的 AI 決定（[11](11-double-loop-pure.md)）。
 
 ## 文件
 
@@ -34,7 +34,7 @@
 | [09-data/](09-data/) | 主張紀錄、三輪反駁者的反例、核對紀錄、評估器與計分腳本 |
 | [double-loop/SKILL.md](double-loop/SKILL.md) | 雙迴圈的 skill 草稿（尚未放進 template） |
 | [10-claude-md.md](10-claude-md.md) | claude.md 集的現況：各工具的結構、md 在工作流的位置、infra 用的結構、子 agent 控制、社群做法、提示詞正規化、Jira／Teams 自動化、多 session 隔離，以及下一步實驗方向 |
-| [11-double-loop-pure.md](11-double-loop-pure.md) | 純粹的雙向迴圈：抽象 ↔ 具體兩個方向交替，與作者確認的最抽象形式 |
+| [11-double-loop-pure.md](11-double-loop-pure.md) | 雙向迴圈的最終抽象、方向的例子、從原模型到最終形式的路徑；skill 草稿在 [double-loop/bidirectional-loop/](double-loop/bidirectional-loop/SKILL.md) |
 
 ## 三個版本怎麼搭配
 
