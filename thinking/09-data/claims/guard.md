@@ -26,6 +26,7 @@
 1. 刻意混淆（編碼後 eval、拼接指令名稱）。
 2. 目標不在 TRUTH.md 名單上的不算 prod：ansible 群組、terraform 環境、資料庫主機要列進 TRUTH.md 才認得（terraform／ansible 另外看 prod、production、prd、live 這些字）。
 3. 遠端的變更指令是「列出來的才認得」，不在清單上的會放行。
+4. 由程式語言間接執行的指令（python subprocess、Makefile 等）與清單外的遠端執行工具（aws ssm、pssh…）。
 
 ## 紀錄
 
@@ -38,3 +39,13 @@
   - 縮 C：ansible 群組名稱不在 TRUTH.md（不涵蓋第 2 條）。
   - 回歸測試：evals/guard_test.py 新增 69 個（CASES_R1），共 108 個全過。
 - 交給使用者：(1) 單一叢集 kubeconfig 是否改判；(2) TRUTH.md 沒列的名稱是否一律當 prod（K4 寫「不確定就當成 prod」，guard 目前當成非 prod）。
+
+### 第 2 輪
+
+- 反駁者：1 個（A 組形式，拿到更新後的主張紀錄），交 25 個，全部重現、成立、在範圍內、未被測試涵蓋：S1 21 個、S2 4 個。
+- 其中 9 個（S1 5、S2 4）是第 1 輪的修正本身引入的：舊版對整段文字比對，粗糙但寧可多攔；新版精準，但解析漏掉的地方會直接放行（雙引號裡的 `$( )`、kubectl exec 參數重組、新加的規則寫錯）。
+- 處理（全部修 S）：
+  - 原則：內容會流向執行者、但解析不確定時，當成指令而不是資料。
+  - `$( )`、反引號（包括雙引號裡的）拆開檢查；stdin（heredoc、here-string、`<` 檔案、pipe）一路傳到遠端、pod、容器、資料庫；同一個指令裡剛寫好的腳本，執行時讀剛寫的內容。
+  - SQL 依敘述第一個字判斷；合併短選項（`psql -tAc`、`sudo -nu`）；xargs 佔位符當成判斷不出目標；大括號展開；cd 進去的目錄與 terraform workspace；覆寫 ~/.kube/config；dd 寫入任何區塊裝置、mke2fs 等。
+  - 回歸測試新增 51 個（CASES_R2，含反駁者提到但沒交出的 21 個），共 159 個全過。

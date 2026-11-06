@@ -129,6 +129,61 @@ CASES_R1 = [
     ('ask', "cat fix.sh | ssh -o BatchMode=yes web1 'sudo -n bash -s'"),
 ]
 
+# 雙迴圈試驗 1 第 2 輪
+CASES_R2 = [
+    ('ask', 'for h in web1 web2 web3; do echo "== $h: $(ssh -o BatchMode=yes $h \'sudo -n systemctl reload nginx && echo reloaded\' 2>&1)"; done'),
+    ('fix', 'POD="$(kubectl -n app get pod -l app=api -o jsonpath=\'{.items[0].metadata.name}\')"; kubectl --context prod-eks -n app logs "$POD" --tail=100'),
+    ('ask', "kubectl --context prod-eks -n db exec postgres-0 -- psql -U app -d app -c 'DELETE FROM sessions WHERE expires_at < now()'"),
+    ('ask', "kubectl --context prod-eks -n app exec -i api-0 -- sh <<'EOF'\nrm -rf /var/cache/app/*\nEOF"),
+    ('ask', "ssh -o BatchMode=yes web1 'sudo -n -u postgres psql -d app' <<'SQL'\nDELETE FROM sessions WHERE expires_at < now();\nSQL"),
+    ('ask', 'ssh -o BatchMode=yes web1 "sudo -n -u postgres psql -d app -tAc \'DELETE FROM sessions WHERE expires_at < now()\'"'),
+    ('ask', 'ssh -o BatchMode=yes web1 \'sudo -n bash -s -- orders-web\' <<\'EOF\'\nsystemctl restart "$1"\nEOF'),
+    ('ask', "cat > /tmp/restart_api.sh <<'EOF'\nset -euo pipefail\nkubectl --context prod-eks -n app rollout restart deploy/api\nkubectl --context prod-eks -n app rollout status deploy/api --timeout=120s\nEOF\nbash -n /tmp/restart_api.sh && bash /tmp/restart_api.sh"),
+    ('ask', 'ssh -o BatchMode=yes web1 "crontab -l | grep -v cleanup.sh | crontab -"'),
+    ('ask', "ssh -o BatchMode=yes web1 'sudo -n firewall-cmd --permanent --add-port=8443/tcp && sudo -n firewall-cmd --reload'"),
+    ('ask', "ssh -o BatchMode=yes web1 'sudo -n rsync -a --delete /srv/releases/2026-11-06/ /var/www/html/'"),
+    ('ask', "ssh -o BatchMode=yes web1 'cd /srv/orders && sudo -n docker compose -f compose.prod.yml up -d'"),
+    ('ask', "ssh -o BatchMode=yes web1 'sudo -n docker exec orders-web rm -rf /app/tmp/cache'"),
+    ('ask', "printf '%s\\n' web1 web2 web3 | xargs -I{} ssh -o BatchMode=yes {} 'sudo -n systemctl reload nginx'"),
+    ('ask', "ansible all -i 'web1,web2,web3,' -b -m shell -a 'systemctl reload nginx'"),
+    ('ask', 'kubectl --context prod-eks cp ./app.conf api-0:/etc/app/app.conf -n app'),
+    ('ask', 'cd infra/prod-eks && terraform apply -auto-approve'),
+    ('fix', 'KUBECONFIG=~/.kube/config:/tmp/prod-eks.yaml kubectl config view --flatten > ~/.kube/config'),
+    ('deny', 'sudo dd if=/dev/zero of=/dev/vg_data/lv_data bs=1M count=100'),
+    ('deny', "ssh -o BatchMode=yes web1 'sudo -n mke2fs -F -t ext4 /dev/nvme1n1'"),
+    ('ask', "for h in web{1..3}; do ssh -o BatchMode=yes $h 'sudo -n systemctl reload nginx'; done"),
+    ('allow', 'kubectl logs $(kubectl --context prod-eks -n app get pod -l app=api -o name | head -1) -n app --context prod-eks --tail=100'),
+    ('allow', 'rsync -avn --delete ./html/ deploy@web1:/var/www/html/'),
+    ('allow', "ssh -o BatchMode=yes web1 'mount | grep /data; swapon --show; free -m'"),
+    ('allow', 'ssh -o BatchMode=yes web1 "mysql app -e \'SHOW CREATE TABLE orders\\G\'"'),
+    ('ask', "ssh -o BatchMode=yes web1 'sudo -n bash -s' <<< 'systemctl restart nginx'"),
+    ('ask', 'ssh web1 "bash -lc \'systemctl restart nginx\'"'),
+    ('ask', 'CMD=\'sudo -n systemctl restart nginx\'; ssh web1 "$CMD"'),
+    ('ask', "ssh web1 -o BatchMode=yes 'sudo -n systemctl restart nginx'"),
+    ('ask', 'ssh web1 \'sudo -nu postgres psql -c "DROP TABLE x"\''),
+    ('ask', 'ssh web1 "su - postgres -c \'psql -c \\"DELETE FROM t\\"\'"'),
+    ('ask', 'ssh web1 \'flock /tmp/l -c "systemctl restart nginx"\''),
+    ('ask', 'cd infra && terraform workspace select prod && terraform apply -auto-approve'),
+    ('ask', 'TF_WORKSPACE=prod terraform apply'),
+    ('ask', 'kubectl --context stg-eks apply --prune --all -l app=api -f k8s/'),
+    ('ask', 'ssh web1 "mongosh app --eval \'db.sessions.deleteMany({})\'"'),
+    ('ask', "ssh web1 'sudo -n docker container restart api'"),
+    ('allow', "ssh web1 'crontab -l -u deploy'"),
+    ('allow', 'ssh web1 \'u=$(df / | awk "NR==2{print \\$5+0}"); (( u > 80 )) && echo high\''),
+    ('allow', 'ssh web1 "psql -c \'SET statement_timeout=5000; SELECT 1\'"'),
+    ('allow', "ansible web1 -m fetch -a 'src=/etc/nginx/nginx.conf dest=/tmp/'"),
+    ('allow', "ssh stg1 'mkfs.ext4 -n /dev/sdb1'"),
+    ('allow', "ssh stg1 'wipefs --no-act /dev/sdb'"),
+    ('ask', "pdsh -w web[1-3] 'sudo -n systemctl reload nginx'"),
+    ('ask', 'aws-vault exec prod -- kubectl --context prod-eks rollout restart deploy/api -n app'),
+    ('ask', 'terragrunt apply --terragrunt-working-dir live/prod/api'),
+    ('allow', 'kubectl --context prod-eks get pods -n app -oyaml | grep -i image'),
+    ('allow', "ssh -o BatchMode=yes web1 'sudo -n nginx -T 2>/dev/null | grep -n client_max_body_size'"),
+    ('allow', 'ssh web1 "psql -tAc \'SELECT count(*) FROM sessions\'"'),
+    ('allow', 'bash -n /tmp/restart_api.sh'),
+    ('allow', "cat > /tmp/check.sh <<'EOF'\nfor h in web1 web2; do ssh $h 'df -h /'; done\nEOF\nbash /tmp/check.sh"),
+]
+
 # KIT_PROD_CONFIRM=0：prod 上的可回復變更不再要求確認，不可逆操作仍然要
 CASES_NO_PROD_CONFIRM = [
     ("allow", "kubectl --context prod-eks rollout restart deploy/api -n app"),
@@ -158,7 +213,7 @@ def decide(cmd, **extra):
 
 def main():
     bad = 0
-    runs = [(want, cmd, {}) for want, cmd in CASES + CASES_R1]
+    runs = [(want, cmd, {}) for want, cmd in CASES + CASES_R1 + CASES_R2]
     runs += [(want, cmd, {"KIT_PROD_CONFIRM": "0"}) for want, cmd in CASES_NO_PROD_CONFIRM]
     for want, cmd, extra in runs:
         got = decide(cmd, **extra)
