@@ -13,6 +13,7 @@
 - 前面測的都是單次提示。把雙迴圈改寫成「迭代有範圍的主張」，由獨立反駁者搭配能自動判定的評估器多輪執行，第一次用在 guard.py 上：找出大量既有測試漏掉的嚴重問題，三輪沒有收斂，指出 guard 只能當盡力而為的第二層（[09](09-double-loop.md)）。
 - 對象換成 claude.md 集後先整理現況：結構化做法已經成熟，但都依檔案路徑觸發，沒有依操作目標觸發；規則有沒有用，社群憑感覺判斷、沒有實測，這正是雙迴圈可以補的地方（[10](10-claude-md.md)）。
 - 最終抽象只剩「雙向迴圈」：一定是兩個相反的方向，才能持續移動；方向是什麼、何時轉向、何時停，全部交給執行的 AI 決定（[11](11-double-loop-pure.md)）。
+- 用它檢視 ops-context-kit：kit 在執行階段很強，入口、出口、學習都缺；任務檔的 targets 可以變成中樞，同時驅動規則載入、憑證隔離和 guard 的目標白名單（[12](12-kit-loop.md)）。
 
 ## 文件
 
@@ -35,6 +36,7 @@
 | [double-loop/SKILL.md](double-loop/SKILL.md) | 雙迴圈的 skill 草稿（尚未放進 template） |
 | [10-claude-md.md](10-claude-md.md) | claude.md 集的現況：各工具的結構、md 在工作流的位置、infra 用的結構、子 agent 控制、社群做法、提示詞正規化、Jira／Teams 自動化、多 session 隔離，以及下一步實驗方向 |
 | [11-double-loop-pure.md](11-double-loop-pure.md) | 雙向迴圈的最終抽象、方向的例子、從原模型到最終形式的路徑；skill 草稿在 [double-loop/bidirectional-loop/](double-loop/bidirectional-loop/SKILL.md) |
+| [12-kit-loop.md](12-kit-loop.md) | 用雙向迴圈檢視 ops-context-kit：四組方向的紀錄、五個優化方向、kit 的新定位（以任務檔為中心的 session 生命週期系統） |
 
 ## 三個版本怎麼搭配
 
