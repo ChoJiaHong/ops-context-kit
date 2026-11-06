@@ -49,3 +49,31 @@
   - `$( )`、反引號（包括雙引號裡的）拆開檢查；stdin（heredoc、here-string、`<` 檔案、pipe）一路傳到遠端、pod、容器、資料庫；同一個指令裡剛寫好的腳本，執行時讀剛寫的內容。
   - SQL 依敘述第一個字判斷；合併短選項（`psql -tAc`、`sudo -nu`）；xargs 佔位符當成判斷不出目標；大括號展開；cd 進去的目錄與 terraform workspace；覆寫 ~/.kube/config；dd 寫入任何區塊裝置、mke2fs 等。
   - 回歸測試新增 51 個（CASES_R2，含反駁者提到但沒交出的 21 個），共 159 個全過。
+
+### 第 3 輪
+
+- 反駁者：1 個（A 組形式），交 25 個，全部重現、成立、在範圍內、未被測試涵蓋：S1 18 個、S2 7 個。7 個由第 2 輪的修正引入。
+- 兩項屬於解讀，判定成立並交給使用者確認：`terraform workspace select` 改到同目錄共用的狀態，歸入 K3（擋下，改用 TF_WORKSPACE；第 2 輪的測試原本期待 ask，已改判）；刪除 stg 的 pod 不在 K4 的不可逆清單，不再打擾（不可逆只認 PV／PVC、namespace、CRD、--all、-f）。
+- 處理（全部修 S）：變數依順序取值、`$(cat 檔案)`、EXPLAIN ANALYZE、COPY 方向、redis／git／aws／apt 的選項參數、sed -i.bak、mv 的來源、cat /dev/null 清空、重導向寫入區塊裝置、mkfs 依工具判斷 dry-run 與目標、wipefs 只在 -a 時拒絕、通過 bastion 的 kubectl 看 --context、helm del、terraform force-unlock 與 -replace、ansible 的 inventory 路徑、non-prod 不算 prod、live 不再當 prod。
+- 回歸測試新增 43 個（CASES_R3），共 202 個全過。
+
+## 目前狀態：已停止（滿 3 輪），沒有收斂
+
+| 輪 | 反駁者 | 成立 | S1 | S2 | 由上一輪修正引入 | 測試數 |
+|---|---|---|---|---|---|---|
+| 1 | A（主張框架） | 24 | 15 | 9 | — | 39 → 108 |
+| 1 | B（一般審查） | 25 | 16 | 9 | — | （同上） |
+| 2 | A 形式 | 25 | 21 | 4 | 9 | 159 |
+| 3 | A 形式 | 25 | 18 | 7 | 7 | 202 |
+
+每輪的嚴重反例沒有下降，約三分之一來自上一輪的修正。主張的邊界不是某個條件，而是 S 的結構：用字串判斷指令的黑名單，面對的是一個開放的語言，補洞補不完。
+
+修正後的主張（縮 C）：**guard 是盡力而為的第二層。** 它勝過 Sₑ（Sₑ 只能全部問或全部放，分不出 prod 與唯讀），但不能保證攔下所有 prod 變更。要保證，需要換 S（見交給使用者第 1 項）。
+
+## 交給使用者
+
+1. guard 的定位：(a) 盡力而為的第二層，寫進說明；(b) 對 prod 目標改成白名單（只放行認得的唯讀指令，其他一律問）；(c) 把保證移到權限層（agent 用唯讀的 kubeconfig／service account 連 prod，prod 主機的 sudo 只開白名單）。
+2. TRUTH.md 沒列的名稱是否一律當 prod（K4 寫「不確定就當成 prod」，guard 目前當成非 prod）。
+3. 單一叢集的 kubeconfig 檔（`--kubeconfig ~/.kube/stg-eks.yaml`）沒帶 --context，是否仍要擋下補上。
+4. 非 prod 的 kubectl delete：現在只有 PV／PVC、namespace、CRD、--all、-f 算不可逆，刪 stg 的 pod 不再打擾。
+5. `terraform workspace select` 現在擋下，改用 TF_WORKSPACE。

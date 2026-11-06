@@ -13,7 +13,7 @@
    - 災難指令：rm -rf /、mkfs、dd 寫入區塊裝置
 
 prod 名單來自 TRUTH.md「環境」表格中 prod 欄為 yes 的列；也可以用環境變數 KIT_PROD_PATTERN（regex）覆寫。
-terraform、ansible、helmfile 的目標是目錄、變數檔或群組，除了名單也看 prod／production／prd／live 這些字。
+terraform、ansible、helmfile 的目標是目錄、變數檔或群組，除了名單也看 prod／production／prd 這些字（non-prod、pre-prod 不算）。
 設 KIT_REQUIRE_CONTEXT=0 可以關掉「kubectl 一定要帶 --context」這一條。
 
 怎麼判斷：先把指令切成一段段（; && || | 換行、子 shell），每段認出指令名稱與參數，再依指令套規則。
@@ -240,7 +240,7 @@ def segments(toks):
 
 # ---------------------------------------------------------------- 名單與規則
 
-GENERIC_PROD = re.compile(r"(?<![a-z])(prod|prd|production|live)(?![a-z])", re.I)
+GENERIC_PROD = re.compile(r"(?<![a-z])(?<!non-)(?<!non_)(?<!pre-)(?<!pre_)(prod|prd|production)(?![a-z])", re.I)
 
 
 def prod_pattern():
@@ -325,9 +325,9 @@ KUBE_MUTATING = {"apply", "create", "replace", "patch", "edit", "set", "scale", 
                  "debug"}
 HELM_GLOBAL_ARGS = {"--kube-context", "-n", "--namespace", "--kubeconfig", "--repository-config",
                     "--repository-cache", "--registry-config", "--kube-apiserver", "--kube-token", "--kube-as-user"}
-HELM_CLUSTER = {"install", "upgrade", "uninstall", "delete", "rollback", "list", "ls", "status", "get", "history",
-                "test", "diff"}
-HELM_MUTATING = {"install", "upgrade", "rollback", "uninstall", "delete"}
+HELM_CLUSTER = {"install", "upgrade", "uninstall", "delete", "del", "un", "rollback", "list", "ls", "status", "get",
+                "history", "test", "diff"}
+HELM_MUTATING = {"install", "upgrade", "rollback", "uninstall", "delete", "del", "un"}
 ANSIBLE_ARGS = {"-i", "--inventory", "-m", "--module-name", "-a", "--args", "-u", "--user", "-f", "--forks", "-e",
                 "--extra-vars", "-l", "--limit", "-T", "--timeout", "-M", "--module-path", "--become-user", "-c",
                 "--connection", "-P", "--poll", "-B", "--background", "--private-key", "--vault-password-file"}
@@ -349,6 +349,13 @@ SAFE_WRITE = re.compile(r"^(/tmp/|/var/tmp/|/dev/(null|stdout|stderr|fd/|tty))")
 SAFE_DEVICE = re.compile(r"^/dev/(null|zero|stdout|stderr|tty|u?random|fd/)")
 KUBECONFIG_FILE = re.compile(r"(^|/)\.kube/config$")
 POWER = {"reboot", "shutdown", "poweroff", "halt"}
+AWS_GLOBAL_ARGS = {"--region", "--profile", "--output", "--endpoint-url", "--query", "--color", "--ca-bundle",
+                   "--cli-read-timeout", "--cli-connect-timeout", "--project", "--account", "--configuration",
+                   "--format", "--verbosity", "--zone", "--subscription", "-o"}
+REDIS_ARGS = {"-h", "-p", "-a", "-n", "-u", "--user", "--pass", "-s", "-r", "-i", "--pattern", "--count", "-d",
+              "--tls", "--cacert"}
+KUBE_IRREVERSIBLE_KINDS = re.compile(r"^(pv|pvc|persistentvolumes?|persistentvolumeclaims?|ns|namespaces?|crds?"
+                                     r"|customresourcedefinitions?)([./]|$)", re.I)
 UNKNOWN = object()  # 看不到內容的 stdin
 
 
@@ -380,15 +387,23 @@ def sql_effect(text):
     text = re.sub(r"--[^\n]*|/\*.*?\*/", " ", text, flags=re.S)
     mutating = irreversible = False
     for stmt in text.split(";"):
+        m = re.match(r"\s*explain\s+(\([^)]*\)\s*)?", stmt, re.I)
+        if m:  # EXPLAIN ANALYZE 會真的執行
+            if not re.search(r"\banalyze\b", stmt[:m.end() + 40], re.I):
+                continue
+            stmt = re.sub(r"^\s*explain\s+(\([^)]*\)\s*)?(analyze\s+)?(verbose\s+)?", "", stmt, flags=re.I)
         words = stmt.strip().split()
         if not words:
             continue
         first = words[0].lower().lstrip("(")
+        if re.search(r"\bpg_(terminate|cancel)_backend\s*\(", stmt, re.I):
+            mutating = True
         if first in ("insert", "update", "delete", "drop", "truncate", "alter", "create", "grant", "revoke",
-                     "replace", "merge", "rename", "upsert") or (first == "copy" and re.search(r"\bfrom\b", stmt, re.I)):
+                     "replace", "merge", "rename", "upsert") or re.match(r"\s*copy\s+[\w.\"]+(\s*\([^)]*\))?\s+from\b",
+                                                                        stmt, re.I):
             mutating = True
         if re.match(r"\s*(drop\s+(database|table|schema|index|view)|truncate\b|delete\s+from"
-                    r"|alter\s+table\s+\S+\s+drop)\b", stmt, re.I):
+                    r"|alter\s+table\s+(if\s+exists\s+)?(only\s+)?\S+\s+drop)\b", stmt, re.I):
             irreversible = True
     if re.search(r"\.(deleteMany|deleteOne|remove|drop|dropDatabase|findOneAndDelete)\s*\(", text):
         mutating = irreversible = True
@@ -482,8 +497,8 @@ class Analyzer:
                 return
 
     def remote_change(self, where, why):
-        if where[0] == "remote":
-            self.hit(where[1], f"判斷不出主機的遠端變更（{why}）")
+        if where[0] == "remote":  # where[2]：目標是 inventory 路徑等，也看 prod 這類字
+            self.hit(where[1], f"判斷不出主機的遠端變更（{why}）", generic=len(where) > 2 and where[2])
         elif where[0] == "pod":
             self.hit(where[1], f"判斷不出 context 的 pod 內變更（{why}）")
 
@@ -494,6 +509,23 @@ class Analyzer:
                 self.hit(local_targets, why, generic)
         else:
             self.remote_change(where, why)
+
+    def expand(self, text):
+        """把 $VAR、$(cat 檔案)、$(< 檔案) 換成內容；換不出來回傳 None。"""
+        def cat(m):
+            body = self.read_script(m.group(2))
+            if body is None:
+                raise LookupError
+            return body
+        try:
+            text = re.sub(r"\$\((cat|<)\s+([^)\s]+)\s*\)|`(cat)\s+([^`\s]+)\s*`",
+                          lambda m: cat(m) if m.group(2) else self.read_script(m.group(4)) or "", text)
+        except LookupError:
+            return None
+        if "$(" in text or "`" in text:
+            return None
+        vals = self.resolve(text)
+        return vals[0] if vals else None
 
     def read_script(self, path):
         if path is None:
@@ -515,9 +547,8 @@ class Analyzer:
     def unit(self, text, where=("local",), depth=0, stdin=None):
         if depth > 6 or not text:
             return
-        segs = segments(lex(text))
-        self.collect_vars(segs)
-        for seg in segs:
+        for seg in segments(lex(text)):
+            self.collect_vars([seg])  # 依順序：同名變數用的是當下的值
             self.segment(seg, where, depth, stdin)
 
     def seg_stdin(self, seg, inherited):
@@ -546,16 +577,19 @@ class Analyzer:
         if code is not None:
             self.unit(code, where, depth + 1)
         cmd = os.path.basename(values[i]) if i < len(values) else ""
-        if cmd.startswith("$"):  # 指令放在變數裡
-            vals = self.resolve(values[i])
-            for v in vals or []:
-                self.unit(" ".join([v] + values[i + 1:]), where, depth + 1, inherited)
+        if cmd.startswith(("$", "`")):  # 指令放在變數或 $(cat 檔案) 裡
+            text = self.expand(" ".join(values[i:]))
+            if text is None:
+                if where[0] != "local":
+                    self.remote_change(where, "看不到要執行的指令")
+            else:
+                self.unit(text, where, depth + 1, inherited)
             return
         args = values[i + 1:]
         prefix = values[:i]
         stdin = self.seg_stdin(seg, inherited)
         self.record_files(seg, cmd, args, stdin)
-        self.redirect_checks(seg, cmd, where)
+        self.redirect_checks(seg, cmd, args, where)
         if not cmd:
             return
         self.catastrophic(cmd, args)
@@ -630,13 +664,18 @@ class Analyzer:
             body = self.files.get(t, "") + "\n" + content if t in appending else content
             self.files[t] = self.files[os.path.normpath(t)] = body
 
-    def redirect_checks(self, seg, cmd, where):
+    def redirect_checks(self, seg, cmd, args, where):
         for op, target in seg.redirects:
+            target = self.expand(target) or target
             if op not in (">", ">>", "&>", "&>>", ">|") or not target or target.startswith("&"):
                 continue
             if KUBECONFIG_FILE.search(target) or (target.startswith("$KUBECONFIG")):
                 self.r.fix.append("不要覆寫共用的 ~/.kube/config（其他 session 也在用）；寫到獨立檔案，再用 --kubeconfig 指定")
-            if op in (">", ">|", "&>") and not SAFE_WRITE.match(target) and cmd in ("", ":", "true"):
+            if target.startswith("/dev/") and not SAFE_DEVICE.match(target):
+                self.r.deny.append("寫入區塊裝置")
+            empty = cmd in ("", ":", "true") or (cmd == "cat" and args == ["/dev/null"]) or (
+                cmd in ("echo", "printf") and not [a for a in args if not re.fullmatch(r"-[neE]+", a) and a != ""])
+            if op in (">", ">|", "&>") and not SAFE_WRITE.match(target) and empty:
                 self.r.irreversible.append("清空檔案內容")
             if where[0] != "local" and not SAFE_WRITE.match(target):
                 self.remote_change(where, "寫入檔案")
@@ -649,19 +688,36 @@ class Analyzer:
                 self.r.deny.append("rm -r 目標是根目錄或家目錄")
         if "--no-preserve-root" in args:
             self.r.deny.append("--no-preserve-root")
-        dry = any(a in ("-n", "-N", "--no-act", "--dry-run") for a in args)
-        if (re.fullmatch(r"mkfs(\.\w+)?|mke2fs|mkswap|mkdosfs|mkntfs|mkexfatfs", cmd) or cmd in ("wipefs", "blkdiscard")) \
-                and not dry:
-            self.r.deny.append("格式化或抹除區塊裝置")
+        pos = [a for a in args if not a.startswith("-")]
+        target = self.resolve(pos[-1]) if pos else []
+        on_device = target is None or any(t.startswith("/dev/") for t in target)
+        if re.fullmatch(r"mkfs(\.\w+)?|mke2fs|mkswap|mkdosfs|mkntfs|mkexfatfs", cmd):
+            dry = ("-n" in args and re.fullmatch(r"mke2fs|mkfs\.ext\d", cmd)) or ("-N" in args and cmd == "mkfs.xfs") \
+                or "--dry-run" in args
+            if on_device and not dry:
+                self.r.deny.append("格式化區塊裝置")
+        if cmd == "wipefs" and set(args) & {"-a", "--all", "-o", "--offset"} and not set(args) & {"-n", "--no-act"}:
+            self.r.deny.append("抹除區塊裝置的簽章")
+        if cmd in ("blkdiscard",) or (cmd == "shred" and on_device):
+            self.r.deny.append("抹除區塊裝置")
         if cmd == "sgdisk" and any(a in ("-Z", "--zap-all", "-o", "--clear") for a in args):
             self.r.deny.append("清除分割表")
-        if cmd == "dd" and any(a.startswith("of=/dev/") and not SAFE_DEVICE.match(a[3:]) for a in args):
-            self.r.deny.append("dd 寫入區塊裝置")
+        if cmd == "parted" and set(pos) & {"mklabel", "mktable", "rm"}:
+            self.r.deny.append("清除分割表")
+        if cmd == "dd":
+            for a in args:
+                if a.startswith("of="):
+                    outs = self.resolve(a[3:])
+                    if outs is None:
+                        self.r.unknown.append("判斷不出 dd 寫入的目標")
+                    elif any(o.startswith("/dev/") and not SAFE_DEVICE.match(o) for o in outs):
+                        self.r.deny.append("dd 寫入區塊裝置")
 
     def global_state(self, cmd, args, seg):
         own_kubeconfig = any(a.startswith("--kubeconfig") for a in args) or any(
             t.value.startswith("KUBECONFIG=") for t in seg.words)
-        pos = [a for a in args if not a.startswith("-")]
+        pos = positionals(args, AWS_GLOBAL_ARGS) if cmd in ("aws", "gcloud", "az") else \
+            [a for a in args if not a.startswith("-")]
         why = None
         if cmd == "kubectl" and pos[:1] == ["config"] and len(pos) > 1 and pos[1] in (
                 "use-context", "use", "set-context", "delete-context", "rename-context", "set-cluster",
@@ -683,13 +739,19 @@ class Analyzer:
             why = "不要修改 az 全域設定，改用 --subscription"
         elif cmd == "az" and pos[:2] == ["aks", "get-credentials"] and "--file" not in args and "-f" not in args:
             why = "get-credentials 會改寫共用的 kubeconfig；改用 --file <獨立檔案>"
-        elif cmd in ("cp", "mv", "ln", "install", "tee") and any(KUBECONFIG_FILE.search(a) for a in pos):
+        elif (cmd in ("cp", "ln", "install") and pos[-1:] and KUBECONFIG_FILE.search(pos[-1])) or (
+                cmd in ("mv", "tee") and any(KUBECONFIG_FILE.search(a) for a in pos)):
             why = "不要覆寫共用的 ~/.kube/config（其他 session 也在用）；寫到獨立檔案，再用 --kubeconfig 指定"
+        elif cmd in ("terraform", "tofu") and len(pos) > 2 and pos[0] == "workspace" and pos[1] in ("select", "new"):
+            why = "workspace select 會改到同一個目錄所有 session 共用的狀態；改用 TF_WORKSPACE=<名稱> 放在指令前面"
+        elif cmd == "eksctl" and pos[:2] == ["utils", "write-kubeconfig"] and not own_kubeconfig:
+            why = "write-kubeconfig 會改寫共用的 kubeconfig；改用 --kubeconfig <獨立檔案>"
         if why:
             self.r.fix.append(why)
 
     def irreversible(self, cmd, args, wrappers):
-        pos = [a for a in args if not a.startswith("-")]
+        pos = positionals(args, AWS_GLOBAL_ARGS) if cmd in ("aws", "gcloud", "az") else \
+            [a for a in args if not a.startswith("-")]
         if cmd == "rm" and any("r" in short_flags(a) or "R" in short_flags(a) or a == "--recursive" for a in args):
             self.r.irreversible.append("遞迴刪除檔案")
         if cmd == "rm" and "xargs" in wrappers:
@@ -710,6 +772,10 @@ class Analyzer:
             self.r.irreversible.append("AWS 刪除／終止資源")
         if cmd in ("gcloud", "az") and "delete" in pos:
             self.r.irreversible.append("雲端刪除資源")
+        if cmd == "crontab" and "-r" in args:
+            self.r.irreversible.append("刪除 crontab")
+        if cmd == "shred":
+            self.r.irreversible.append("shred 抹除檔案")
         if cmd == "journalctl" and any(a.startswith("--vacuum") for a in args):
             self.r.irreversible.append("清除系統日誌")
 
@@ -768,7 +834,7 @@ class Analyzer:
         if cmd == "sqlite3":
             code += positionals(args, {"-cmd", "-init", "-separator", "-newline", "-nullvalue"})[1:]
         if cmd == "redis-cli":
-            code.append(" ".join(a for a in args if not a.startswith("-")))
+            code.append(" ".join(positionals(args, REDIS_ARGS)))
         unknown = False
         for f in files:
             body = self.read_script(f)
@@ -820,11 +886,14 @@ class Analyzer:
             return
         if verb == "cp" and not (rest and ":" in rest[-1]):
             return
-        if verb in ("delete", "drain"):
+        if verb == "drain" or (verb == "delete" and (
+                any(a in ("--all", "-A", "--all-namespaces", "-f", "--filename", "-k", "--kustomize")
+                    or a.startswith(("--filename=", "-f=", "--all")) for a in before)
+                or any(KUBE_IRREVERSIBLE_KINDS.match(k) for r in rest[:1] for k in r.split(",")))):
             self.r.irreversible.append(f"kubectl {verb}")
         if verb == "apply" and any(a.startswith("--prune") for a in before):
             self.r.irreversible.append("kubectl apply --prune")
-        if where[0] == "local":
+        if where[0] == "local" or has_ctx:  # 有 --context 就看 context，不看所在主機
             self.hit(targets, f"判斷不出 kubectl 的 context（{ctx}）")
         else:
             self.remote_change(where, f"kubectl {verb}")
@@ -837,13 +906,15 @@ class Analyzer:
             elif a.startswith("--kube-context="):
                 ctx, has_ctx = a.split("=", 1)[1], True
         pos = positionals(args, HELM_GLOBAL_ARGS, clusters=False)
+        if pos[:1] == ["secrets"]:  # helm-secrets 外掛：helm secrets upgrade …
+            pos = pos[1:]
         sub = pos[0] if pos else None
         if sub in HELM_CLUSTER and not has_ctx and os.environ.get("KIT_REQUIRE_CONTEXT", "1") != "0":
             self.r.fix.append("missing-context:helm " + " ".join(args)[:60])
         if sub in HELM_MUTATING and not any(a.startswith("--dry-run") for a in args):
-            if sub in ("uninstall", "delete"):
+            if sub in ("uninstall", "delete", "del", "un"):
                 self.r.irreversible.append("helm 移除 release")
-            if where[0] == "local":
+            if where[0] == "local" or has_ctx:
                 self.hit(self.resolve(ctx) if ctx else None, f"判斷不出 helm 的 context（{ctx}）")
             else:
                 self.remote_change(where, f"helm {sub}")
@@ -860,7 +931,9 @@ class Analyzer:
             or pos[:2] == ["workspace", "delete"]
         if destroy:
             self.r.irreversible.append("terraform 刪除資源／state")
-        if destroy or sub in ("apply", "import", "taint", "untaint") or pos[:2] in (
+        if sub == "taint" or (sub == "apply" and any(a.startswith("-replace") for a in args)):
+            self.r.irreversible.append("terraform 刪除並重建資源")
+        if destroy or sub in ("apply", "import", "taint", "untaint", "force-unlock") or pos[:2] in (
                 ["state", "mv"], ["state", "push"], ["state", "replace-provider"]):
             where_text = args + prefix + self.cwd + self.tf_workspace + [os.environ.get("TF_WORKSPACE", "")]
             self.hit([" ".join(where_text)], "terraform", generic=True)
@@ -886,8 +959,8 @@ class Analyzer:
                     margs = val
                 elif a in ("-l", "--limit"):
                     limit = val
-                elif a in ("-i", "--inventory") and "," in val:
-                    inline += [h for h in val.split(",") if h]
+                elif a in ("-i", "--inventory"):
+                    inline += [h for h in val.split(",") if h] if "," in val else [val]
                 k += 2
                 continue
             if not a.startswith("-") and pattern is None:
@@ -904,7 +977,7 @@ class Analyzer:
             return
         short = module.split(".")[-1]
         if short in ("command", "shell", "raw"):
-            self.unit(margs, ("remote", hosts), depth + 1)
+            self.unit(margs, ("remote", hosts, True), depth + 1)
         elif short not in ANSIBLE_READONLY:
             self.hit(hosts, f"ansible -m {module}", generic=True)
 
@@ -927,7 +1000,8 @@ class Analyzer:
     def ssh(self, args, depth, stdin):
         k = 0
         while k < len(args) and args[k].startswith("-") and len(args[k]) > 1:
-            k += 2 if (len(args[k]) == 2 and args[k][1] in SSH_ARG_FLAGS) else 1
+            a = args[k]
+            k += 2 if (re.fullmatch(r"-[A-Za-z]+", a) and a[-1] in SSH_ARG_FLAGS) else 1
         if k >= len(args):
             return
         host_expr = args[k].split("@")[-1]
@@ -939,7 +1013,8 @@ class Analyzer:
             remote = remote[1:]
         where = ("remote", self.resolve(host_expr))
         if remote:
-            self.unit(" ".join(remote), where, depth + 1, stdin)
+            text = self.expand(" ".join(remote)) if "$" in " ".join(remote) or "`" in " ".join(remote) else None
+            self.unit(text if text is not None else " ".join(remote), where, depth + 1, stdin)
         elif isinstance(stdin, str):
             self.unit(stdin, where, depth + 1)
         elif stdin is UNKNOWN:
@@ -1053,8 +1128,7 @@ def remote_mutation(cmd, args, stdin=None):
     if cmd in ("apachectl", "apache2ctl", "httpd") and verb in ("restart", "graceful", "stop", "start",
                                                                 "graceful-stop"):
         return f"{cmd} {verb}"
-    if cmd == "sed" and any(("i" in short_flags(a) and not a.startswith("--")) or a.startswith("--in-place")
-                            for a in args):
+    if cmd == "sed" and any(re.match(r"-[a-zA-Z]*i", a) or a.startswith("--in-place") for a in args):
         return "sed -i"
     if cmd in ("perl", "ruby") and any(re.fullmatch(r"-\w*i\S*", a) for a in args):
         return f"{cmd} -i"
@@ -1066,12 +1140,20 @@ def remote_mutation(cmd, args, stdin=None):
         return cmd
     if cmd == "mount" and (pos or set(args) & {"-a", "--all"} or any("remount" in a for a in args)):
         return "mount"
-    if cmd == "swapon" and not set(args) & {"--show", "-s", "--summary"} and args:
-        return "swapon"
-    if cmd in ("cp", "mv", "install", "mkdir", "touch") and not (pos and SAFE_WRITE.match(pos[-1])):
+    if cmd in ("cp", "install", "mkdir", "touch") and not (pos and SAFE_WRITE.match(pos[-1])):
+        return cmd
+    if cmd == "mv" and not all(SAFE_WRITE.match(p) for p in pos):
+        return cmd
+    if cmd in ("mkswap", "swapon") and not set(args) & {"--show", "-s", "--summary"} and args:
         return cmd
     if cmd == "logrotate" and not ({"-d", "--debug"} & set(args)):
         return "logrotate"
+    if cmd in ("apt", "apt-get", "aptitude", "yum", "dnf", "zypper", "apk"):
+        if set(args) & {"-s", "--simulate", "--dry-run", "--just-print", "--no-act", "--assumeno"}:
+            return None
+        p = positionals(args, {"-o", "-c", "-t", "--option", "--config-file", "--target-release", "-R",
+                               "--installroot", "--setopt", "--enablerepo", "--disablerepo"})
+        verb = p[0] if p else ""
     if cmd in ("apt", "apt-get", "aptitude") and verb in ("install", "remove", "purge", "upgrade", "dist-upgrade",
                                                           "full-upgrade", "autoremove", "reinstall"):
         return f"{cmd} {verb}"
@@ -1097,8 +1179,11 @@ def remote_mutation(cmd, args, stdin=None):
         return "sysctl"
     if cmd in ("hostnamectl", "timedatectl", "localectl") and verb.startswith("set"):
         return cmd
-    if cmd in ("git",) and verb in ("pull", "checkout", "reset", "clean", "merge", "rebase", "stash"):
-        return f"git {verb}"
+    if cmd == "git":
+        p = positionals(args, {"-C", "-c", "--git-dir", "--work-tree", "--namespace"})
+        if p[:1] and p[0] in ("pull", "checkout", "switch", "reset", "clean", "merge", "rebase", "restore") or (
+                p[:1] == ["stash"] and p[1:2] not in (["list"], ["show"])):
+            return f"git {p[0]}"
     return None
 
 

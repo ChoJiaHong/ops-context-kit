@@ -5,6 +5,7 @@
 
 allow = 不攔；fix = 擋下請 agent 自己修正；ask = 要求使用者確認；deny = 直接拒絕。
 第 2 輪評分者指出、也實際重現的誤判，標註 (r2)。
+CASES_R1–R3：雙迴圈試驗 1（thinking/09-double-loop.md）三輪反駁者找到、經重現的反例，以及確認不會多打擾的日常指令。
 """
 import json
 import os
@@ -163,7 +164,7 @@ CASES_R2 = [
     ('ask', 'ssh web1 \'sudo -nu postgres psql -c "DROP TABLE x"\''),
     ('ask', 'ssh web1 "su - postgres -c \'psql -c \\"DELETE FROM t\\"\'"'),
     ('ask', 'ssh web1 \'flock /tmp/l -c "systemctl restart nginx"\''),
-    ('ask', 'cd infra && terraform workspace select prod && terraform apply -auto-approve'),
+    ('fix', 'cd infra && terraform workspace select prod && terraform apply -auto-approve'),  # 第 3 輪改判：workspace select 是共用狀態（K3）
     ('ask', 'TF_WORKSPACE=prod terraform apply'),
     ('ask', 'kubectl --context stg-eks apply --prune --all -l app=api -f k8s/'),
     ('ask', 'ssh web1 "mongosh app --eval \'db.sessions.deleteMany({})\'"'),
@@ -182,6 +183,53 @@ CASES_R2 = [
     ('allow', 'ssh web1 "psql -tAc \'SELECT count(*) FROM sessions\'"'),
     ('allow', 'bash -n /tmp/restart_api.sh'),
     ('allow', "cat > /tmp/check.sh <<'EOF'\nfor h in web1 web2; do ssh $h 'df -h /'; done\nEOF\nbash /tmp/check.sh"),
+]
+
+# 雙迴圈試驗 1 第 3 輪
+CASES_R3 = [
+    ('ask', 'ssh -o BatchMode=yes web1 "redis-cli -n 0 --scan --pattern \'session:*\' | xargs -r redis-cli -n 0 DEL"'),
+    ('ask', 'ssh -o BatchMode=yes web1 "sudo -n sed -i.bak \'s/worker_connections 768/worker_connections 2048/\' /etc/nginx/nginx.conf"'),
+    ('ask', "ssh -o BatchMode=yes web1 'sudo -n mv /etc/cron.d/orders-cleanup /tmp/'"),
+    ('ask', "ssh -o BatchMode=yes stg1 'cat /dev/null > /var/log/big.log'"),
+    ('ask', "ssh -o BatchMode=yes web1 'sudo -n git -C /srv/orders pull --ff-only'"),
+    ('ask', "ssh -o BatchMode=yes bastion 'kubectl --context prod-eks -n app rollout restart deploy/api'"),
+    ('fix', 'cd infra && terraform workspace select prod && terraform plan -out=/tmp/prod.plan'),
+    ('ask', 'ssh -o BatchMode=yes web1 "sudo -n -u postgres psql -d app -c \'EXPLAIN ANALYZE DELETE FROM sessions WHERE expires_at < now()\'"'),
+    ('ask', "ansible all -i inventories/production -b -m shell -a 'systemctl restart nginx'"),
+    ('ask', 'terraform -chdir=envs/prod force-unlock -force 6b1f2c3d-1111-2222-3333-444455556666'),
+    ('ask', 'helm del api --kube-context prod-eks -n app'),
+    ('fix', 'aws --region ap-northeast-1 eks update-kubeconfig --name prod-eks'),
+    ('deny', "ssh -o BatchMode=yes stg1 'sudo -n mkfs.xfs -f -n ftype=1 /dev/nvme1n1'"),
+    ('deny', 'DEV=/dev/nvme1n1; sudo dd if=/dev/zero of=$DEV bs=1M count=10'),
+    ('deny', 'ssh -o BatchMode=yes stg1 "sudo -n sh -c \'zcat /backup/data.img.gz > /dev/nvme1n1\'"'),
+    ('ask', 'terraform -chdir=envs/stg apply -replace=aws_db_instance.main -auto-approve'),
+    ('ask', "for h in web1 web2 web3; do ssh -o BatchMode=yes $h 'sudo -n systemctl reload nginx'; done; for h in stg1; do ssh -o BatchMode=yes $h 'nginx -v'; done"),
+    ('ask', 'cat > /tmp/fix.sh <<\'EOF\'\nsudo -n systemctl restart orders-web\nEOF\nssh -o BatchMode=yes web1 "$(cat /tmp/fix.sh)"'),
+    ('allow', "ssh -o BatchMode=yes stg1 'sudo -n mkswap /swapfile && sudo -n swapon /swapfile'"),
+    ('allow', "ssh -o BatchMode=yes stg1 'sudo -n wipefs /dev/nvme1n1'"),
+    ('allow', 'kubectl --context stg-eks delete pod api-7d9f8c6b5-x2k4q -n app'),
+    ('allow', 'terraform -chdir=envs/non-prod apply -auto-approve'),
+    ('allow', 'terragrunt apply --terragrunt-working-dir live/stg/api'),
+    ('allow', 'cp ~/.kube/config /tmp/kc-prod && kubectl --kubeconfig /tmp/kc-prod config use-context prod-eks'),
+    ('allow', 'ssh -o BatchMode=yes web1 "sudo -n -u postgres psql -d app -c \'COPY (SELECT id, status FROM orders LIMIT 100) TO STDOUT WITH CSV HEADER\'" > /tmp/orders.csv'),
+    ('deny', 'parted -s /dev/sdb mklabel gpt'),
+    ('deny', "ssh stg1 'sudo -n shred -n1 /dev/sdb'"),
+    ('ask', "ssh stg1 'crontab -r'"),
+    ('ask', 'ssh web1 "psql -c \'ALTER TABLE IF EXISTS orders DROP COLUMN legacy\'"'),
+    ('ask', 'ssh web1 "psql -c \'SELECT pg_terminate_backend(123)\'"'),
+    ('ask', 'helm secrets upgrade api ./chart --kube-context prod-eks'),
+    ('ask', "ssh web1 'sudo -n apt-get -o Dpkg::Options::=--force-confold install -y nginx'"),
+    ('ask', "ssh -qo BatchMode=yes web1 'sudo -n systemctl restart nginx'"),
+    ('fix', 'eksctl utils write-kubeconfig --cluster prod-eks'),
+    ('allow', "ssh web1 'cd /srv/app && git stash list'"),
+    ('allow', "ssh web1 'sudo -n apt-get -s upgrade'"),
+    ('ask', 'kubectl --context stg-eks delete pvc data-0 -n app'),
+    ('ask', 'kubectl --context stg-eks delete -f k8s/stg/'),
+    ('ask', 'kubectl --context prod-eks delete pod api-0 -n app'),
+    ('allow', 'mkfs.ext4 disk.img'),
+    ('ask', "ssh web1 'sudo -n mkswap /swapfile'"),
+    ('deny', 'DEV=/dev/sdb; mkfs.ext4 $DEV'),
+    ('ask', 'dd if=a.img of=$OUT'),
 ]
 
 # KIT_PROD_CONFIRM=0：prod 上的可回復變更不再要求確認，不可逆操作仍然要
@@ -213,7 +261,7 @@ def decide(cmd, **extra):
 
 def main():
     bad = 0
-    runs = [(want, cmd, {}) for want, cmd in CASES + CASES_R1 + CASES_R2]
+    runs = [(want, cmd, {}) for want, cmd in CASES + CASES_R1 + CASES_R2 + CASES_R3]
     runs += [(want, cmd, {"KIT_PROD_CONFIRM": "0"}) for want, cmd in CASES_NO_PROD_CONFIRM]
     for want, cmd, extra in runs:
         got = decide(cmd, **extra)

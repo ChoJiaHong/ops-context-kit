@@ -10,6 +10,7 @@
 - 它可以當成範本衍生不同版本，核心是兩層骨架（[04](04-prototype-and-skeleton.md)）。
 - 用它來抽象它自己，沒有比直接抽象好（[05](05-self-abstraction-experiment.md)）；但用**抽象後的骨架**再做一次，就勝過 Claude 自己的方式，骨架也接近收斂（[06](06-self-abstraction-2.md)）。
 - 拿骨架去解外部問題集（MacGyver、錯誤前提、數學），沒有比一般「先分析再回答」的提示更好；在數學題上不幫忙、只讓輸出變長（[08](08-results.md)）。
+- 前面測的都是單次提示。把雙迴圈改寫成「迭代有範圍的主張」，由獨立反駁者搭配能自動判定的評估器多輪執行，第一次用在 guard.py 上：找出大量既有測試漏掉的嚴重問題，三輪沒有收斂，指出 guard 只能當盡力而為的第二層（[09](09-double-loop.md)）。
 
 ## 文件
 
@@ -27,6 +28,9 @@
 | [07-experiment-plan.md](07-experiment-plan.md) | 實驗計畫：拿收斂後的骨架去解 MacGyver、錯誤前提問題、GSM8K 等外部問題集，和 Claude 直接解比較 |
 | [08-results.md](08-results.md) | 小規模試驗結果：MacGyver、FalseQA、GSM8K，三組 × 70 題；骨架沒有比一般結構化提示好 |
 | [08-data/](08-data/) | 試驗的預先登記、題目、提示、全部答案、評審紀錄與核對紀錄 |
+| [09-double-loop.md](09-double-loop.md) | 雙迴圈改寫成「迭代有範圍的主張」：角色、證據等級、觸發與停止；試驗 1（guard.py）的結果 |
+| [09-data/](09-data/) | 主張紀錄、三輪反駁者的反例、核對紀錄、評估器與計分腳本 |
+| [double-loop/SKILL.md](double-loop/SKILL.md) | 雙迴圈的 skill 草稿（尚未放進 template） |
 
 ## 三個版本怎麼搭配
 
