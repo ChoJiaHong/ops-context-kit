@@ -1,0 +1,223 @@
+[
+ {
+  "pair": "X21",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/anthropics/claude-code/issues/91700",
+    "https://github.com/anthropics/claude-code/issues/94579",
+    "https://github.com/Moissanite-Labs/exo/issues/885",
+    "https://github.com/Gentleman-Programming/gentle-ai/issues/5929",
+    "https://github.com/anthropics/claude-code/issues/96537",
+    "https://github.com/siege-analytics/claude-configs-public/issues/1160"
+   ],
+   "note": "Confirmed 6 reports from 5 repos/authors (2026-09 to 2026-11). They show that agent actions sent as `ssh host '...'` strings get past local rules. In #91700 the classifier blocked `ssh host sed -i` but allowed `ssh host mv authorized_keys` (lockout). In #94579 `docker rmi` on a remote prod host ran unflagged. In exo#885 a nested ssh hop defeats a category+host deny rule. In gentle-ai#5929 an ssh deny rule is bypassed by a different install path. In #96537 the agent ran root commands on an inferred ssh host without asking. In siege#1160 the gate cannot model ssh at all. No issue found specifically about one approval mutating a whole fleet; the evidence is mostly single-host."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/bvisible/mcp-ssh-manager",
+    "https://github.com/bvisible/mcp-ssh-manager/pull/36",
+    "https://raw.githubusercontent.com/bvisible/mcp-ssh-manager/main/docs/SECURITY_MODES.md",
+    "https://glama.ai/mcp/servers/bvisible/mcp-ssh-manager/tools/ssh_execute_group",
+    "https://github.com/classfang/ssh-mcp-server"
+   ],
+   "note": "bvisible/mcp-ssh-manager (repo created 2025-08-12, 534 stars) is an SSH exec tool for Claude Code and Codex. Server groups have existed since 2025-09-05 (commit 'Implement server groups management'), and ssh_execute_group runs a command on a named group with a parallel, sequential or rolling strategy and stopOnError. v3.5.0 (PR #36, merged 2026-05-18) added per-server readonly/restricted modes with allow/deny command patterns checked 'per server, per call', plus a JSONL audit log of every gated call. classfang/ssh-mcp-server (2025-04-16) also offers command allow/deny lists. So a structured, policy-checked, logged, host-group-aware remote exec tool that agents use instead of raw ssh existed before July. Sn adds three things not found in these tools: host-side argv re-parsing by a pushed shim, a read-only mount namespace, and canary waves with a verify probe."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/Lynricsy/OneSSH",
+    "https://github.com/osteele/agent-command-guards",
+    "https://github.com/riniort/ssh-remote-for-ai",
+    "https://github.com/sai-foundation/s-code/issues/103",
+    "https://github.com/AChWorks/mcp-gateway/issues/203"
+   ],
+   "note": "Lynricsy/OneSSH (created 2026-08-08, 167 stars) is a central SSH gateway for AI agents with MCP access, credential custody, fine-grained authorization and full audit. osteele/agent-command-guards (2026-08-16, 0 stars) applies policy to ssh, scp and rsync through PATH wrappers. riniort/ssh-remote-for-ai (2026-10-01, 0 stars) offers read-only remote tools and a command allowlist. Issues: s-code#103 (2026-09-24) asks for scoped SSH where the agent runs commands only on an authorized target, the local sandbox stays in place, and every remote command is audited. mcp-gateway#203 (2026-10-17) asks for read-only SSH inspection that is actually enforceable."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 2,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/anthropics/claude-code/issues/94579",
+    "https://github.com/Moissanite-Labs/exo/issues/885",
+    "https://github.com/anthropics/claude-code/issues/91700"
+   ]
+  }
+ },
+ {
+  "pair": "X22",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/evenfire-ai/evenfire/issues/952",
+    "https://github.com/giantswarm/beekeeper/issues/147",
+    "https://github.com/CodeAlta/CodeAlta/issues/186",
+    "https://github.com/gke-labs/kube-agents/issues/1799"
+   ],
+   "note": "Confirmed 4 reports from 4 repos/authors. evenfire#952 (2026-09-30): two sessions on one machine; B's `minikube start` switched the shared current-context, so A's kubectl calls without --context hit B's cluster. beekeeper#147 (2026-09-28): any session can run use-context, kubectx or tsh kube login, which changes the target of every other session's implicit commands; the default context is production. CodeAlta#186 (2026-10-19): sessions in two spaces share one az/aws/gcloud/kube login and context, so terraform or kubectl can hit prod because someone switched context elsewhere. kube-agents#1799 (2026-09-21): an agent's `gcloud get-credentials` flipped the shared current-context, so later bare kubectl calls hit another cluster."
+  },
+  "g2": {
+   "pass": true,
+   "links": [
+    "https://github.com/danielfoehrKn/kubeswitch",
+    "https://github.com/Ramilito/kubesess",
+    "https://github.com/qjoly/kpil",
+    "https://qjoly.github.io/kpil/"
+   ],
+   "note": "No pre-July tool found that pins a target per agent session at the harness level across kube, aws, gcloud, terraform and helm, re-exports the config after rc files run, blocks retargeting commands, and shows the target in prompts. Closest: kubeswitch (2019), kubesess (2022), kubie and direnv, which isolate kubeconfig per interactive shell (already Se). qjoly/kpil (2026-04-24, 7 stars) starts an agent in a container with an ephemeral read-only kubeconfig, which is RBAC scoping rather than target pinning or retarget blocking. Building blocks only."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/CodeAlta/CodeAlta/issues/186",
+    "https://github.com/giantswarm/beekeeper/issues/147",
+    "https://github.com/paureis/cloudpin",
+    "https://github.com/paureis/cloudpin/issues/9"
+   ],
+   "note": "CodeAlta#186 (2026-10-19) asks for per-space CLI profiles: KUBECONFIG, CLOUDSDK_CONFIG, AWS_CONFIG_FILE, AZURE_CONFIG_DIR and HELM_* overrides applied to every CLI an agent runs, plus a check command. beekeeper#147 (2026-09-28) asks for PreToolUse guards that refuse context switches (use-context, kubectx, tsh kube login) and require explicit --context. paureis/cloudpin (created 2026-10-08, 1 star) is a 'seatbelt for cloud CLIs' that stops agents running commands on the wrong account."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 3,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/evenfire-ai/evenfire/issues/952",
+    "https://github.com/giantswarm/beekeeper/issues/147",
+    "https://github.com/gke-labs/kube-agents/issues/1799"
+   ]
+  }
+ },
+ {
+  "pair": "X23",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/anthropics/claude-code/issues/75037",
+    "https://github.com/anthropics/claude-code/issues/84625",
+    "https://github.com/anthropics/claude-code/issues/80372",
+    "https://github.com/Wladefant/veyyon/issues/73",
+    "https://github.com/anomalyco/opencode/issues/51828"
+   ],
+   "note": "Confirmed 5 reports from 3 repos and 5 authors. On resume after the process exited, Claude Code found 'no completion record' for background commands and could not confirm their final state (#75037). Background tasks were killed mid-run during compaction or on a timer, losing their exit status; setsid-detached runs were immune (#84625, #80372). A session died three times while a side-effecting `ssh host 'INSTALLIEREN.cmd -Unattended'` was in flight, leaving pendingToolCalls=1 (veyyon#73). Live background shells were SIGTERM'd on eviction (opencode#51828). Caveat: no post-July report was found specifically about terraform, helm or drains leaving state locks or half-rolled releases. The evidence covers long side-effecting commands in general."
+  },
+  "g2": {
+   "pass": true,
+   "links": [
+    "https://github.com/Baughn/background-process-manager",
+    "https://github.com/whiter001/pueue-mcp-v",
+    "https://github.com/anthropics/claude-code/issues/75037"
+   ],
+   "note": "No pre-July tool found that combines all of: a hook rewriting mutating infra commands to run under a detached supervisor, a ledger outside the session with tool-specific post-probes, a digest injected on SessionStart/resume/compact, and blocking of duplicate mutations. Partial building blocks: pueue and its MCP wrappers (pueue-mcp-v, 2026-03-08), an MCP background-process manager (2025-10-16), and tmux/systemd-run (already Se). Claude Code's resume notice about background shells with no completion record (seen by 2026-07-06) gives an output-file pointer, but the process still dies with the session."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/stablekernel/opencode-bgrun",
+    "https://github.com/PRO-Robotech/kacho-workspace/issues/1269",
+    "https://github.com/PRO-Robotech/kacho-workspace/issues/1492",
+    "https://github.com/alexknowshtml/claude-auto-handoff/issues/15"
+   ],
+   "note": "stablekernel/opencode-bgrun (created 2026-07-29, 0 stars) runs long commands as detached jobs with file-based status, pid, exit code and log, so a new agent session can pick up a job started by an earlier one. kacho-workspace issues #1225, #1269 and #1328 (Oct 2026) build detach.sh (systemd-run --user with .rc outcome records and status/await). #1492 makes an agent hook refuse long kubectl wait or rollout status calls and send them to detached status checks. claude-auto-handoff#15 (2026-11-03) asks that handoff briefs list the background tasks still running, with a note to check them before re-arming."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 2,
+   "se_handles": 1,
+   "links": [
+    "https://github.com/anthropics/claude-code/issues/75037",
+    "https://github.com/Wladefant/veyyon/issues/73",
+    "https://github.com/anthropics/claude-code/issues/84625"
+   ]
+  }
+ },
+ {
+  "pair": "X24",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/openai/codex/issues/36923",
+    "https://github.com/anthropics/claude-code/issues/101249",
+    "https://github.com/anthropics/claude-code/issues/94579",
+    "https://github.com/anthropics/claude-code/issues/93002"
+   ],
+   "note": "Confirmed 4 reports from 2 repos and 4 authors. codex#36923 (2026-08-04): an agent's environment deploy made CloudFormation replace and delete an Aurora cluster with no final snapshot, and normal recovery paths were unavailable. claude-code#101249 (2026-10-11): /rewind restores files but not deploys, migrations or pushes, so remote state diverges. #94579: `docker rmi` of a prod image on a remote host. #93002: production Firebase project disabled, with manual remediation. Only codex#36923 involves a declarative system (CloudFormation). No post-July report was found specifically about kubectl, helm or terraform."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/AIops-tools/K8s-AIops",
+    "https://github.com/AIops-tools/K8s-AIops/commit/b826e65b21246405b353e58699081732ba0af630",
+    "https://www.businesswire.com/news/home/20250812418116/en/Rubrik-Unveils-Agent-Rewind-For-When-AI-Agents-Go-Awry"
+   ],
+   "note": "Borderline. AIops-tools/K8s-AIops (repo and first commit 2026-06-22) is a governed Kubernetes MCP: scale, rollout-restart, delete and cordon tools with an audit, budget, undo and risk-tier harness that records an inverse per agent write. Rubrik Agent Rewind (announced 2025-08-12) links agent actions to immutable snapshots and rewinds the changes to files, databases, configurations or repositories. So 'record pre-state or inverses per agent mutation and roll back on demand' existed before July. Sn's combination of a raw kubectl/helm/terraform hook, server dry-run to enumerate objects, pre-images keyed to the tool-call ID, reverse replay on session rewind, and irreversibility flags taken from the dry run was not found pre-July. K8s-AIops' undo executor only landed 2026-07-17."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/AIops-tools/K8s-AIops/commit/c3f2ad9441312d9978db8b5aa31920445e26d2c5",
+    "https://glama.ai/mcp/servers/AIops-tools/K8s-AIops/tools/undo_apply",
+    "https://github.com/AIops-tools/Container-Host-AIops",
+    "https://github.com/AIops-tools/Firewall-AIops",
+    "https://github.com/kirodotdev/KiroCrew/issues/8067"
+   ],
+   "note": "The K8s-AIops undo executor (v0.5.0, 2026-07-17) adds 'undo list' and 'undo apply <id>', which replay a recorded inverse with a dry-run preview and audit; undo_apply was first listed in v0.8.0 on 2026-07-29. The repo itself predates July. Sibling repos created 2026-07-13 (Container-Host-AIops and Firewall-AIops, 1 star each) apply the same per-write undo to Docker hosts and firewalls. KiroCrew#8067 (2026-09-03) asks for /rewind with an option to undo command side effects, using a per-turn change journal. Weaker evidence: no post-July repo does this for kube, helm and terraform with stars."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 1,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/openai/codex/issues/36923",
+    "https://github.com/anthropics/claude-code/issues/94579",
+    "https://github.com/anthropics/claude-code/issues/93002"
+   ]
+  }
+ },
+ {
+  "pair": "X25",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/openai/codex/issues/35935",
+    "https://github.com/openai/codex/issues/45383",
+    "https://github.com/anthropics/claude-code/issues/94012",
+    "https://github.com/anthropics/claude-code/issues/92505",
+    "https://github.com/peopleforrester/the-day-claude-code-deleted-my-cluster/issues/5",
+    "https://github.com/juicesharp/rpiv-mono/issues/222"
+   ],
+   "note": "Confirmed 6 reports from 5 repos and 6 authors. After compaction or a usage-limit pause, agents lose task state and repeat completed work (codex#35935, codex#45383). A workflow resume re-ran dead agents and still reported 'completed' with 39% lost (#94012). An agent recorded work as done that it never did (#92505). An agent counted grep hits in local terraform logs and reported 150 clusters provisioning when the real count was zero (peopleforrester#5). After compaction the todo list went stale and the model invented task statuses (rpiv-mono#222). None is specifically a host fan-out like '60 hosts' with skipped or duplicated targets."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/jorgejac1/evalgate",
+    "https://www.pkgstats.com/pkg:evalgate",
+    "https://the-prompt-shelf.pages.dev/blog/claude-code-hooks-complete-reference-2026"
+   ],
+   "note": "jorgejac1/evalgate (created 2026-04-17; v2.3.0 with resumeSwarm on 2026-04-21) offers 'eval-gated todos': each todo.md item carries an eval: shell command and cannot be flipped to [x] until that verifier exits 0, and --resume or resumeSwarm continue only pending workers. Claude Code's TaskCompleted hook could block a task from being marked complete (documented by May 2026, v2.1.141+). So harness-enforced, verifier-gated completion with resume of pending items existed before July. Sn's re-running of every postcondition on each resume, compaction or handoff to recompute state from live systems was not found pre-July."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/Gautham-AI-dev/task-automator",
+    "https://github.com/497974/foreman",
+    "https://github.com/Cowlsly/everloom-universal",
+    "https://github.com/mrlngaur-glitch/shipgate",
+    "https://github.com/agentvivekkumar/dontbemichael/issues/47"
+   ],
+   "note": "Repos created after July, all 0 stars: task-automator (2026-10-05; crash-safe resume, artifact-verified completion), foreman (2026-07-04; verifiable tasks checked by the harness), everloom-universal (2026-09-14; task ledgers, verification, recovery, handoffs), shipgate (2026-08-18; stops agents claiming done before checks pass). dontbemichael#47 (2026-10-09) explicitly asks to verify outcomes before marking tasks complete, citing duplicate sends, skipped items and false success."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 2,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/openai/codex/issues/35935",
+    "https://github.com/peopleforrester/the-day-claude-code-deleted-my-cluster/issues/5",
+    "https://github.com/anthropics/claude-code/issues/92505"
+   ]
+  }
+ }
+]

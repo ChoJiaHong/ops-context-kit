@@ -1,0 +1,226 @@
+[
+  {
+    "pair": "X06",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/kagent-dev/tools/issues/82",
+        "https://github.com/rtk-ai/rtk/issues/5000",
+        "https://github.com/rtk-ai/rtk/issues/3786",
+        "https://github.com/00200200/usagetrim/issues/56",
+        "https://github.com/9atatimer/Skills/issues/59",
+        "https://github.com/gke-demos/kode-gopher/issues/69"
+      ],
+      "note": "Confirmed, 5 repos, different authors. kagent#82 (2026-09-16): cluster-wide kubectl get listings pushed one agent turn to several million input tokens and ran it out of context; asks that truncation be marked with totals. rtk#5000 (2026-11-04): the kubectl summary hid CrashLoopBackOff and not-ready pods, so the agent reports the cluster healthy. rtk#3786 (2026-08-31) and usagetrim#56 (2026-09-27): terraform/terragrunt plans run to thousands of lines and 10-30k tokens and fill the context. 9atatimer#59 (2026-09-26): ls | head truncation in terraform state work led to a false 'only copy of live state' claim. kode-gopher#69 (2026-11-04): raw PodList dumps go past the 256 KiB limit and the result is dropped."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/rtk-ai/rtk",
+        "https://github.com/rtk-ai/rtk/issues/857",
+        "https://github.com/rtk-ai/rtk/issues/1882",
+        "https://github.com/mksglu/context-mode"
+      ],
+      "note": "RTK (repo created 2026-01-22, ~86k stars) is a hook-driven CLI proxy. It recognizes known commands and replaces raw output with command-specific compact summaries. Before July it already had kubectl get pods/services filters with an Issues list of unhealthy pods, plus log dedup (rtk#857, 2026-03-26). It also kept raw output in a tee file (rtk#1882, 2026-05-14). context-mode (created 2026-02-23, ~34k stars) keeps raw tool output out of context in a searchable SQLite FTS index, which is a queryable handle. Sn's 'risky items never elided' invariant and its refusal to run mutations until risky items are paged through are new policy on top of the same mechanism. The core mechanism is not new."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/00200200/usagetrim",
+        "https://github.com/00200200/usagetrim/issues/56",
+        "https://github.com/traxito/TokenTrim",
+        "https://github.com/rtk-ai/rtk/issues/3786",
+        "https://github.com/rtk-ai/rtk/issues/5000",
+        "https://github.com/illuwa/ctx-diet"
+      ],
+      "note": "usagetrim (created 2026-09-20, 43 stars): command-output compactor with retrieval from a local cache. Its issue #56 asks for a terraform plan compactor that keeps warning banners and the Plan summary and loses zero changed attributes. TokenTrim (2026-07-09, 7 stars): command-specific digests, including JSON-native terraform resource_changes, kubectl logs/describe and helm. rtk#3786 asks for a terraform/terragrunt digest. rtk#5000 asks that unhealthy pods never be hidden, which is close to Sn's invariant. ctx-diet (2026-07-25, 3 stars) is a generic output-compression hook."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 2,
+      "se_handles": 1,
+      "links": [
+        "https://github.com/rtk-ai/rtk/issues/5000",
+        "https://github.com/kagent-dev/tools/issues/82",
+        "https://github.com/9atatimer/Skills/issues/59"
+      ]
+    }
+  },
+  {
+    "pair": "X07",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/giantswarm/beekeeper/issues/147",
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/gke-labs/kube-agents/issues/3725",
+        "https://github.com/anthropics/claude-code/issues/94579",
+        "https://github.com/SpyrosPsarras/epaflix/issues/856",
+        "https://github.com/gke-labs/kube-agents/issues/1799"
+      ],
+      "note": "Confirmed across several repos and authors. beekeeper#147 (2026-09-28): any session's use-context or kubectx changes the target of every other session's implicit commands, and the default context is prod. evenfire#952 (2026-09-30): minikube start in one session flipped the shared current-context, so the other session's bare kubectl hit the wrong cluster. kube-agents#3725 (2026-10-22): agent kubectl writes with no --context landed on a sibling cluster through a stale current-context. claude-code#94579 (2026-09-15): the auto-mode classifier judges command text and missed a destructive docker rmi run over ssh on a prod host. epaflix#856 (2026-08-08): a synced kubeconfig can change the active context under a running session."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/andresleecom/kube-guard",
+        "https://github.com/Telemaco019/kubesafe"
+      ],
+      "note": "kube-guard (repo created 2026-06-05; commits of 2026-06-04 add per-context policies, a guarded /kctx switch and context leasing) is a Claude Code PreToolUse hook. It classifies each kubectl/helm verb and resolves the command's target context, using current-context when --context is omitted, per its SECURITY.md. It maps contexts to levels: prod is readonly and denies mutations. That is Sn's core 'resolve effective target + tier x verb class' decision, for Kubernetes. kubesafe (2024-08-27, 345 stars) does the same for humans: protected commands on safe contexts. Sn's extensions to AWS, Terraform and SSH, the per-session KUBECONFIG copy and the declared-target list are additions to an existing mechanism."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/karlkfi/claude-prod-guard",
+        "https://github.com/karlkfi/claude-bouncer",
+        "https://github.com/giantswarm/beekeeper/issues/147",
+        "https://github.com/konraddzbik/termdesk/issues/173",
+        "https://github.com/ShaharCHH/kube-deck",
+        "https://github.com/dfgh012316/infra-handrail"
+      ],
+      "note": "claude-prod-guard (created 2026-07-04, 1 star; now claude-bouncer, created 2026-08-22, 13 stars) guards mutating kubectl/helm/terraform/gcloud/aws commands aimed at production or relying on ambient context that a parallel session can repoint. beekeeper#147 asks for a PreToolUse hook that resolves --context or the kubeconfig's current context, allows reads and refuses prod writes. termdesk#173 (2026-10-24) asks for host environment tiers with read/write/risky verb classes. kube-deck (2026-10-11) and infra-handrail (2026-10-31, 'named targets') have 0 stars."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 3,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/gke-labs/kube-agents/issues/3725",
+        "https://github.com/anthropics/claude-code/issues/94579"
+      ]
+    }
+  },
+  {
+    "pair": "X08",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/openai/codex/issues/35935",
+        "https://github.com/aaif-goose/goose/issues/11808",
+        "https://github.com/pydantic/pydantic-ai/issues/10926",
+        "https://github.com/anthropics/claude-code/issues/74599",
+        "https://github.com/cymoo/lovia/issues/284"
+      ],
+      "note": "Confirmed for the general failure, but none of the issues is specific to cluster or cloud ops. codex#35935 (2026-07-29): after compaction the agent lost its task state and re-ran commands it had already completed. goose#11808 (2026-09-03): a shell or git push tool call runs again on resume if the process died before its result was saved. pydantic-ai#10926 (2026-10-21): an approved side-effecting tool ran twice after a crash. claude-code#74599 (2026-07-05): resumeFromRunId re-executes agent calls that had succeeded. Searches for helm, terraform or multi-cluster rollouts resumed with duplicated or skipped steps found nothing."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/qazasd2518995/helmsman",
+        "https://github.com/prashkn/agent-durable-execution-engine",
+        "https://github.com/julep-ai/julep"
+      ],
+      "note": "Harness-side journals of side-effecting tool calls, kept outside the model context and consulted on resume, existed before July. helmsman (created 2026-06-29) is a long-horizon agent harness with write-ahead logging and idempotent tool replay. prashkn/agent-durable-execution-engine (2026-05-17) has a WAL with idempotent, replayable, resumable tool calls. Julep (2024-04-04, 6.5k stars) is durable agents whose flows crash, resume and retry safely. Durable execution in general is well-known practice. Sn's new part is postcondition probes and drift labels against live infra state on resume, not the journal itself."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/246mayank/durable-harness",
+        "https://github.com/cymoo/lovia/issues/284",
+        "https://github.com/aaif-goose/goose/issues/11808",
+        "https://github.com/qigao/TurboAgent/issues/74"
+      ],
+      "note": "durable-harness (created 2026-10-28, 0 stars) is an agent runtime that resumes from a write-ahead journal so side-effecting tool calls take effect once. lovia#284 (2026-10-22) asks to commit intent before execution and stop blind replay of side-effecting calls on resume. goose#11808 asks to persist a 'dispatched' record before execution. TurboAgent#74 (2026-10-12) tracks a Tool Journal with crash recovery. None of them uses ops postcondition probes."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 2,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/aaif-goose/goose/issues/11808",
+        "https://github.com/pydantic/pydantic-ai/issues/10926",
+        "https://github.com/openai/codex/issues/35935"
+      ]
+    }
+  },
+  {
+    "pair": "X09",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/directionally-local/autopilot/issues/1125",
+        "https://github.com/gke-labs/kube-agents/issues/1724",
+        "https://github.com/anthropics/claude-code/issues/94579",
+        "https://github.com/anthropics/claude-code/issues/107823",
+        "https://github.com/Systemorph/MeshWeaver/issues/2210",
+        "https://github.com/MehdiTAZI/modern-data-platform-reference/issues/38"
+      ],
+      "note": "Confirmed across several repos. autopilot#1125 (2026-11-03): permission rules see only command text, so with auto-approve or a broad allow nothing stops terraform destroy and similar commands. kube-agents#1724 (2026-09-17): human approval of agent mutations turns into rubber-stamping, and the prompt needs to show the action set and blast radius. claude-code#94579: the auto-mode text classifier let a destructive prod command through. claude-code#107823 (2026-11-06): the agent deleted AWS Identity Center permissions without a prompt. MeshWeaver#2210 (2026-08-25): a helm upgrade emptied prod ConfigMap keys unseen. MehdiTAZI#38: a plan with deletes or force-replacements is applied without a guard (CI). None reports a phone or remote-control approval case specifically."
+    },
+    "g2": {
+      "pass": true,
+      "links": [
+        "https://github.com/Dicklesworthstone/destructive_command_guard",
+        "https://github.com/andresleecom/kube-guard",
+        "https://scalr.com/learning-center/using-claude-code-with-terraform-a-least-privilege-setup"
+      ],
+      "note": "No pre-July agent-side tool was found that intercepts an agent's mutating command, auto-runs its dry-run twin, applies policy to the normalized change set and binds approval to the plan artifact. destructive_command_guard (2026-01-07) and the Scalr hook pattern match command strings. kube-guard (2026-06) only treats an explicit --dry-run as a read. Plan-level policy and approval exist in Atlantis, TFC/Sentinel and Spacelift, but only in CI pipelines, and the Se already names them. Repository searches for pre-July 'dry-run/plan approval' agent tools returned nothing. Caveat: if pipeline-side plan approval is taken as the same core idea, this would fail."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/CarlosOliveira-23/plangate",
+        "https://github.com/kordloom/switchtender",
+        "https://github.com/tchxm/PlanReview",
+        "https://github.com/dfgh012316/infra-handrail",
+        "https://github.com/gke-labs/kube-agents/issues/1724"
+      ],
+      "note": "plangate (created 2026-11-02, 1 star) gates agent commands on the real structured plan or diff, not the command text. It runs terraform plan -out and normalizes the result to create/update/delete/replace across terraform, CloudFormation, Azure, kubectl, docker and databases. switchtender (2026-09-29, 2 stars) binds approvals to exactly what runs. PlanReview (2026-09-17, 0 stars) applies Cedar policies to every change. infra-handrail (2026-10-31) has a plan gate. kube-agents#1724 asks for approval of a proposed action set with blast radius."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 1,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/Systemorph/MeshWeaver/issues/2210",
+        "https://github.com/anthropics/claude-code/issues/107823",
+        "https://github.com/anthropics/claude-code/issues/94579"
+      ]
+    }
+  },
+  {
+    "pair": "X10",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/giantswarm/beekeeper/issues/147",
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/gke-labs/kube-agents/issues/1799",
+        "https://github.com/gke-labs/kube-agents/issues/3725",
+        "https://github.com/SpyrosPsarras/epaflix/issues/856",
+        "https://github.com/lakisyaman/cloak/issues/3"
+      ],
+      "note": "Confirmed across several repos and authors. Shared kubeconfig state across sessions retargets other sessions: beekeeper#147 (use-context, kubectx, tsh kube login), evenfire#952 (minikube start). gcloud get-credentials or a stale current-context sent agent kubectl to a sibling cluster: kube-agents#1799 and #3725, with a sibling-cluster audit log in #3725. epaflix#856: a synced ~/.kube/config can switch context under a running session. cloak#3: a global context switch in one agent session sent the other's delete to prod (psql). No AWS-profile case in parallel agent sessions was found."
+    },
+    "g2": {
+      "pass": true,
+      "links": [
+        "https://github.com/kubie-org/kubie",
+        "https://github.com/gke-labs/kube-agents",
+        "https://github.com/agentic-dev3o/sandbox-shell"
+      ],
+      "note": "Searches found no pre-July tool that builds a per-agent-session credential home with only the pinned context, mints short-lived role credentials and hides the real ~/.kube and ~/.aws so other targets are unreachable. The pieces existed: kubie's per-shell single-context kubeconfig (kubie-org/kubie, 2020), which the Se already names, plus devcontainers, Seatbelt credential sandboxes and the kube-agents credential broker (2026-05-07, unpinned per #1799). Caveat: this is a composition of known parts, and a 'devcontainer with one mounted kubeconfig' practice could be argued as prior art."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/danieloa/glovebox",
+        "https://github.com/shkrwnd/agent-cerberus",
+        "https://github.com/SpyrosPsarras/epaflix/issues/856",
+        "https://github.com/evenfire-ai/evenfire/issues/952"
+      ],
+      "note": "glovebox (created 2026-08-28, 8 stars) is a disposable container where Claude gets only the handed-over kubeconfig and mints a scoped read-only kubeconfig, so the host config is not used. agent-cerberus (2026-07-18, 1 star) runs Claude Code in a container with zero credentials and issues temporary credentials per call through a host broker. epaflix#856 asks for a repo-only KUBECONFIG containing one context so the other clusters are 'simply not reachable'. evenfire#952 suggests a private KUBECONFIG copy per session."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 2,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/gke-labs/kube-agents/issues/3725",
+        "https://github.com/gke-labs/kube-agents/issues/1799"
+      ]
+    }
+  }
+]

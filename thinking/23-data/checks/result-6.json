@@ -1,0 +1,229 @@
+[
+ {
+  "pair": "X26",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/openai/codex/issues/35935",
+    "https://github.com/anthropics/claude-code/issues/107511",
+    "https://github.com/leshchenko1979/opencrabs/issues/482",
+    "https://github.com/marzukia/jarate/issues/291",
+    "https://github.com/unxmaal/mcm-engine/issues/206"
+   ],
+   "note": "5 confirmed reports from 5 repos and 5 authors, all created 2026-07-29 to 2026-11-05. Each one shows a resumed or compacted agent trusting a summary: codex#35935 re-ran completed build and verify steps after auto-compaction for about 2 hours and used up the weekly quota. claude-code#107511 is a session continued from a compaction summary that falsely claimed every procedure step was done. opencrabs#482 is a compaction summary that invented a COMPLETED deliverable that had never been written. jarate#291 is a post-compact resume that redid finished work. mcm-engine#206 shows unverified claims repeated as fact after compaction (a run said to be finishing had been paused hours earlier). Caveat: these come from coding and agent-ops work. I found no ops-specific case (cluster upgrade, cert rotation) of a non-idempotent step being re-run."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/smartmemory/stratum",
+    "https://github.com/eidos-agi/stepproof",
+    "https://github.com/eidos-agi/stepproof/issues/1",
+    "https://github.com/fabs133/agora",
+    "https://github.com/stricttools/orxtra",
+    "https://the-prompt-shelf.pages.dev/blog/claude-code-hooks-complete-reference-2026-v2"
+   ],
+   "note": "Prior art from before July 2026 already gates agent step completion on harness-checked postconditions instead of the model's own report. smartmemory/stratum (created 2026-04-19): an MCP state-machine dispatch server for Claude Code and Codex with typed YAML specs, postconditions, gates and auditable traces. eidos-agi/stepproof (2026-04-20): 'Enforce runbooks by turning every risky step into a verifiable checkpoint'; issue #1 (2026-04-22) shows a verifier evidence contract checked before a step advances. fabs133/agora (2026-05-01): postcondition gates over a task DAG. stricttools/orxtra (2026-06-17): task pre- and postconditions. Claude Code's TaskCompleted hook (listed as blockable in a reference covering v2.1.141+, May 2026) lets the harness refuse a task being marked completed until a check passes. What Sn adds: re-running every probe on resume or handoff to rebuild progress from live state, and flagging drift. That resembles Ansible-style reconciliation, which Se already names. I could read these only through their descriptions and issues (README fetch was blocked), so whether they re-probe on resume is unverified."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/Peanuts1605/done-yet",
+    "https://github.com/sylvesterkaczmarek/worldstate-check",
+    "https://github.com/christian140903-sudo/postcondition-mcp",
+    "https://github.com/yadukpb/verified-tool",
+    "https://github.com/unxmaal/mcm-engine/issues/206"
+   ],
+   "note": "Repos created after July 2026 that check an agent's 'done' against observed state: done-yet (2026-07-15, 0 stars, 'Postcondition checks for agents that say a task is done'), worldstate-check (2026-08-09, 1 star, deterministic postcondition verification from independent observed state), postcondition-mcp (2026-07-17, 0 stars), verified-tool (2026-09-29, 0 stars). Explicit request: mcm-engine#206 (2026-10-30) asks that handoffs carry verified and unverified claims, each with how to check it, and that resume run the checks first, stored as structured state rather than as summary text. None of these is the full harness-owned checklist that re-probes on resume. All have 0 or 1 stars."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 2,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/openai/codex/issues/35935",
+    "https://github.com/leshchenko1979/opencrabs/issues/482",
+    "https://github.com/anthropics/claude-code/issues/107511"
+   ],
+   "note": "codex#35935 (re-runs completed work after compaction): Sn would rebuild progress from probes on resume, yes; Se (todo plus summary) is what failed. opencrabs#482 (summary fabricated a completed artifact): an existence probe on the artifact fails, so Sn yes, Se no. claude-code#107511 (falsely claimed review steps 're-read diff' and 'grep callers'): those steps leave no queryable state, which is outside P*, so Sn no, Se no."
+  }
+ },
+ {
+  "pair": "X27",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/jikig-ai/soleur/issues/7797",
+    "https://github.com/jonhill90/Hill90/issues/832",
+    "https://github.com/ray-manaloto/dotfiles-legacy/issues/474",
+    "https://github.com/StellarEdgeServices/otterquote-platform/issues/1873",
+    "https://github.com/bbm-academy-org/bbm-portal/issues/300",
+    "https://github.com/bitskc/jev-agent-kit/issues/55"
+   ],
+   "note": "5 confirmed incidents from 5 repos and 5 authors, all after 2026-07-01, where command output put live credentials into agent transcripts and forced rotation. soleur#7797: bash -x printed Sentry and BetterStack tokens. Hill90#832: a busybox wget error echoed the Grafana admin password. dotfiles-legacy#474: a zsh probe printed 4 tokens; the issue notes that every existing layer (gitleaks and others) guards files and commits, not values reaching the transcript. otterquote#1873: a Doppler write endpoint echoed all 49 prod secrets into a subagent transcript. bbm-portal#300: repeated transcript leaks, including a password in a Playwright snapshot, and it argues for filtering output rather than commands. jev-agent-kit#55 lists uncovered dump surfaces, including kubectl get secret -o yaml and docker inspect."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/Musubi42/shhh",
+    "https://github.com/OpenHands/software-agent-sdk/pull/3463",
+    "https://github.com/OpenHands/software-agent-sdk/pull/3278",
+    "https://github.com/josephrobertlopez/secrets-router",
+    "https://github.com/pratikbin/opencode-redactor",
+    "https://github.com/agentdefsec-labs/agentblindfold",
+    "https://github.com/seangalliher/ProbOS/issues/1560"
+   ],
+   "note": "The same mechanism existed before July 2026. Musubi42/shhh (2026-05-22): 'Local hook that swaps secrets for typed placeholders before tool output reaches Claude Code, Codex or Cursor. The agent keeps reasoning; the raw value stays on your disk.' OpenHands Software Agent SDK has a per-conversation secret registry: secrets are referenced as env vars in commands and any occurrence in output is masked. PR #3278 (2026-05-16) expands secrets in tool parameters; PR #3463 (2026-06-02) masks injected secrets in tool output. ProbOS#1560 cites this as prior art, with the arXiv paper from Nov 2025. Also: secrets-router (2026-03-26, agents see opaque handles), opencode-redactor (2026-02-09, masks secrets in tool outputs before they reach the LLM), agentblindfold (2026-06-02, redacts terminal output). Sn's extras (parsing K8s Secret data and Terraform sensitive maps, hash-matching against Vault) refine the detection, not the core mechanism."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/Iampattanayak/agent-secrets",
+    "https://github.com/Mrinanka/aegiscontext",
+    "https://github.com/CrimsonWorks-Inc/agent-vault",
+    "https://github.com/6fears7/nospy-ai",
+    "https://github.com/maxgfr/secretgate",
+    "https://github.com/t1t4nium/hermes-agent-env-secret-redactor",
+    "https://github.com/seangalliher/ProbOS/issues/1560",
+    "https://github.com/ChristianPresley/zigguro/issues/1143",
+    "https://github.com/openclaw/openclaw/issues/185518"
+   ],
+   "note": "Post-July repos with substantially the same placeholder or handle mechanism: agent-secrets (2026-09-17, 1 star, 'placeholder airlock' keeping secrets out of model context and transcripts), aegiscontext (2026-10-31, 1 star, swaps keys for placeholders before the model sees them), agent-vault (2026-09-25, 0 stars, the agent sends a placeholder and never holds the secret), nospy-ai (2026-10-01, 13 stars, redacts and then restores secrets), secretgate (2026-07-13, 3 stars), hermes env-secret-redactor (2026-08-17, 2 stars, exact-value masking). Explicit requests: ProbOS#1560 (mask known credential values in tool output before it reaches a model), zigguro#1143 (secret-store values replaced by [REDACTED:secret:...] in model input, transcript and audit), openclaw#185518 (redact tool output before the backend writes its transcript)."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 3,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/jikig-ai/soleur/issues/7797",
+    "https://github.com/jonhill90/Hill90/issues/832",
+    "https://github.com/StellarEdgeServices/otterquote-platform/issues/1873"
+   ],
+   "note": "All 3 leaks came through command output of values that a secret manager (Doppler) or env injection had already delivered at runtime. That is exactly the gap Se leaves. Sn's output interceptor would mask them by known format (sntryu_ token), by exact or hash match against the secret-manager values (Doppler set, Grafana password), or by entropy. Se's file deny rules and gitleaks would not."
+  }
+ },
+ {
+  "pair": "X28",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/lakisyaman/cloak/issues/3",
+    "https://github.com/joshualeestone/kosmos/issues/3085",
+    "https://github.com/gke-labs/kube-agents/issues/1799",
+    "https://github.com/ikoro-labs/forge/issues/27"
+   ],
+   "note": "4 confirmed reports from 4 repos and 4 authors, all after 2026-07-01. cloak#3: one user-global active-context file, so agent B's context switch made agent A's next psql 'delete' hit prod silently. kosmos#3085: one of about 7 Claude sessions on a shared box ran 'vercel login' and broke deploys for every agent; the issue names gh auth switch and gcloud auth login and config set as the same class ('repoints other panes'). kube-agents#1799: a gcloud get-credentials flipped the shared kubeconfig current-context, so later bare kubectl calls went to another cluster. forge#27: a session switching the global gh account broke the other projects' sessions. Caveat: only kube-agents#1799 is about kubeconfig itself; the others are the same shared-global-CLI-state mechanism on psql, Vercel, gh and gcloud."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/kubie-org/kubie",
+    "https://github.com/Ramilito/kubesess",
+    "https://github.com/99designs/aws-vault",
+    "https://github.com/sozercan/kindctl",
+    "https://github.com/dagger/container-use"
+   ],
+   "note": "Borderline. The core mechanism, a per-session copy of KUBECONFIG and cloud config holding one fixed context and exported through env vars that every child process inherits, is what these tools already do: kubie (2020-02-07) and kubesess (2022-07-26) give each shell its own kubeconfig, and aws-vault (2015-08-11) scopes AWS credentials to one process. sozercan/kindctl (2026-06-10) already applies this to agents: 'Agent-friendly ... per-repo/worktree local Kubernetes without global kubeconfig pollution' (kind only). dagger/container-use (2025-05-23) gives each coding agent its own isolated environment, the devcontainer class that Se names. Sn's real additions are packaging: one launcher that bundles kube, AWS, gcloud, TF and Helm; sandbox deny on global configs; and the bundle name shown in the title and prompts. Se names kubie and others but says agent subprocesses don't reliably inherit them. I found no evidence of that failure, and a process launched inside a kubie shell inherits KUBECONFIG."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/lakisyaman/cloak/issues/3",
+    "https://github.com/JoyoMDEV/session-tui/issues/15",
+    "https://github.com/ikoro-labs/forge/issues/27",
+    "https://github.com/somaz94/kube-ctx"
+   ],
+   "note": "Explicit post-July requests: cloak#3 (2026-09-26), 'Support a per-session Context override so parallel sessions can use different Contexts'. session-tui#15 (2026-10-05) asks to apply a session's context to the agent's environment: export variables into the agent shell and the claude process, with a separate GH_CONFIG_DIR per context instead of the global gh auth switch. forge#27 (2026-10-24) asks for a per-project gh config dir. Repo: somaz94/kube-ctx (2026-08-13, 3 stars) does per-terminal context isolation with production guards; it is not agent-specific. I found no post-July repo with the full multi-tool agent capsule."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 1,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/lakisyaman/cloak/issues/3",
+    "https://github.com/gke-labs/kube-agents/issues/1799",
+    "https://github.com/joshualeestone/kosmos/issues/3085"
+   ],
+   "note": "kube-agents#1799 (get-credentials flipped current-context): a capsule KUBECONFIG with a fixed context plus write denial handles it, so Sn yes; worktrees don't, Se no. cloak#3 (cloak state.json for psql contexts) and kosmos#3085 (vercel login): neither tool is in Sn's bundle (kube, AWS, gcloud, TF, Helm), so Sn as specified doesn't handle them unless extended; Se no."
+  }
+ },
+ {
+  "pair": "X29",
+  "g1": {
+   "pass": false,
+   "links": [
+    "https://github.com/atengk/mcp-server-ssh/issues/33"
+   ],
+   "note": "Many searches turned up no post-July issue reporting this problem: an agent looping ssh host by host, near-identical outputs flooding context or quota, or outlier hosts lost to truncation. Search terms covered ssh loops, many hosts, fleet, ansible or pssh output, outliers and truncation. The closest is atengk/mcp-server-ssh#33 (2026-10-30), a feature request saying an AI agent today must issue 'dozens of individual round-trips' to manage multiple servers. It does not describe context flooding or lost outliers. 0 or 1 confirmed reports, below the threshold of 3."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/bahamas10/sshp",
+    "https://www.linuxlinks.com/sshp-parallel-ssh-executor/",
+    "https://github.com/clustershell/clustershell",
+    "https://linux.die.net/man/1/clush"
+   ],
+   "note": "Grouping hosts by identical output is a long-standing feature of parallel-ssh tools. sshp (repo created 2021-04-10) has join mode (-j): 'Instead of grouping the output by host, it is grouped by the output itself to show which hosts had the same output.' ClusterShell (2012) has clush -b/--dshbak, which 'waits for command completion and then displays gathered output results' (dshbak-style coalescing), plus clubak. Staged rollout with halting (one canary, then 10%, then the rest, stopping on failure) is standard Ansible serial plus max_fail_percentage. Sn's additions: normalizing hostnames, IPs and timestamps before grouping; a diff against the majority; raw-output handles; and halting when output diverges from the canary cluster. These refine an existing mechanism and package it as an agent tool."
+  },
+  "g3": {
+   "pass": false,
+   "links": [
+    "https://github.com/atengk/mcp-server-ssh/issues/33",
+    "https://github.com/equwal/sshp-ai",
+    "https://github.com/akadorkin/mia-assist"
+   ],
+   "note": "Several post-July agent fleet-SSH tools exist: inhuman/mcp-ssh-fleet (2026-07-08), PeckBoard/ssh-fleet (2026-07-14), letkite-lite (2026-09-25), akadorkin/mia-assist (2026-10-20, status, drift and plan/apply), all with 0 stars. None says it clusters identical outputs. atengk#33 asks for batch exec with aggregated stats, per-host truncation and a circuit breaker; that is batching (Se's mechanism), not clustering. equwal/sshp-ai (2026-10-04, 0 stars) wraps sshp for agents and might use join mode, but I could not verify that, so I don't count it."
+  },
+  "g4": {
+   "cases": 0,
+   "sn_handles": 0,
+   "se_handles": 0,
+   "links": [],
+   "note": "I found no concrete post-July failure reports of this problem to evaluate."
+  }
+ },
+ {
+  "pair": "X30",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/openai/codex/issues/36923",
+    "https://github.com/mento-protocol/monitoring-monorepo/issues/1549",
+    "https://github.com/directionally-local/autopilot/issues/1125",
+    "https://github.com/INTENTIUS/terragucci/issues/933"
+   ],
+   "note": "4 reports from 4 repos and 4 authors, all after 2026-07-01. codex#36923 (2026-08-04) is an actual incident: Codex ran an environment deploy that made CloudFormation replace an Aurora/RDS cluster and delete it, skipping the final snapshot, with no effect-level approval. That tool is CloudFormation via Copilot, outside the listed P* tools but with the same shape. mento#1549 (2026-07-23): an agent-run deploy script did terraform apply -auto-approve, which could apply unseen platform changes; it asks to show the plan, require a human decision and apply the exact saved plan. autopilot#1125 (2026-11-03): permission rules 'only see command text', so terraform destroy and similar commands pass under allow or auto mode. terragucci#933 (2026-10-12): pipeline-side review doesn't cover a local agent running apply -auto-approve or destroy. Caveat: only 1 is an actual destruction incident; the other 3 are gap or design reports."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/venkateswarisudalai/agentgate/pull/7",
+    "https://github.com/venkateswarisudalai/agentgate",
+    "https://github.com/StephenBickel/gatefile",
+    "https://github.com/runatlantis/atlantis",
+    "https://github.com/gjarzebak95/claude-code-devops-kit"
+   ],
+   "note": "agentgate (created 2026-05-01; 'freezes before any risky action and waits for human approval'), PR #7 dated 2026-05-05: 'iac-scan' parses terraform show -json plan output and kubectl --dry-run=server output into a blast-radius card before the agent runs the change. The card has create/update/destroy/replace counts and flags data_loss_risk on stateful types (RDS, S3, PVC), kubernetes_destructive (Namespace, PVC, CRD), IAM changes and prod targets, all feeding a policy engine. That is the same effect-not-command gating. Caveat: the PR is still open (unmerged), and binding approval to a plan hash is not shown. gatefile (2026-03-16): 'review exact file and shell changes, approve the hash, then apply'. That is hash-bound approval for agent side effects, but on an agent-declared plan, not a native dry run. Atlantis (2018) is Se's plan-bound apply. claude-code-devops-kit (2026-01-14) had /tf-plan and '/tf-apply with safety checks' skills; its PreToolUse apply guard only arrived 2026-08-30. Sn's remaining distinct pieces are hash-binding for Helm and kubectl via recompute-and-compare, and the policy auto-approval of zero-destroy plans in the interactive loop."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/rune-task-runner/rune/issues/49",
+    "https://github.com/mento-protocol/monitoring-monorepo/issues/1549",
+    "https://github.com/kordloom/switchtender"
+   ],
+   "note": "rune#49 (2026-10-28) is an explicit request: 'Bind human approval and apply to the exact reviewed plan artifact'. Approval would bind to the plan's SHA-256 digest, the target, the args and the tool version, and a regenerated plan must not inherit approval. mento#1549 (2026-07-23) asks to apply the exact saved plan after a human confirms a non-empty plan. Repo: kordloom/switchtender (2026-09-29, 2 stars), a governed gate for Terraform, OpenTofu and Ansible where 'approvals bind the inventory snapshot, image, commit, and plan, AI agents wait for a person'."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 1,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/openai/codex/issues/36923",
+    "https://github.com/mento-protocol/monitoring-monorepo/issues/1549",
+    "https://github.com/INTENTIUS/terragucci/issues/933"
+   ],
+   "note": "terragucci#933: a local terraform apply or destroy by the agent would be caught by Sn's PreToolUse hook, planned, and destroys flagged and not auto-approved, so Sn yes; Se's PR pipeline doesn't reach local runs, Se no. codex#36923: the mutation went through AWS Copilot and CloudFormation, which are not among Sn's tools (it would need a change-set adapter), so Sn no as specified; Se no. mento#1549: terraform ran inside a wrapper script (pnpm bridge:deploy), so a hook matching on command text would not see it, Sn no; Se no."
+  }
+ }
+]

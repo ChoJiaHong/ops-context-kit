@@ -1,0 +1,217 @@
+[
+  {
+    "pair": "X11",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/kagent-dev/tools/issues/82",
+        "https://github.com/00200200/usagetrim/issues/52",
+        "https://github.com/rtk-ai/rtk/issues/3786",
+        "https://github.com/rtk-ai/rtk/issues/5000"
+      ],
+      "note": "4 confirmed, 3 repos and 4 authors. kagent#82 (2026-09-16): cluster-wide kubectl get through an agent tool reached millions of input tokens and used up the context window. It also warns that silent truncation leads the model to draw conclusions from partial data. usagetrim#52 (2026-09-27): kubectl describe and logs use 8-25k tokens and bury CrashLoopBackOff and OOMKilled. rtk#3786 (2026-08-31): terraform/terragrunt plan produces thousands of lines when a few dozen matter. rtk#5000 (2026-11-04): a compacted kubectl get pods summary hides CrashLoopBackOff pods, so the agent reports the cluster as healthy (the 'drops the one line that matters' half of P)."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/rtk-ai/rtk",
+        "https://github.com/rtk-ai/rtk/issues/857",
+        "https://github.com/rtk-ai/rtk/issues/1882",
+        "https://github.com/ppgranger/token-saver",
+        "https://github.com/mksglu/context-mode",
+        "https://github.com/dineshba/tf-summarize"
+      ],
+      "note": "Same core mechanism existed before July. rtk-ai/rtk (created 2026-01-22, ~85.8k stars) is a hook-driven wrapper that recognises known commands and returns command-specific digests. Its kubectl get pods summary is built from kubectl JSON and lists problem pods; kubectl logs are deduplicated (state shown in issue #857, 2026-03-26). Its tee feature saves the full output and returns the file path (#1882, 2026-05-14). ppgranger/token-saver (created 2026-02-17) has 36 specialized processors, including terraform and kubectl, that keep errors and diffs. mksglu/context-mode (created 2026-02-23) keeps full tool output out of context in a queryable SQLite FTS store. tf-summarize (created 2022-01-13) builds plan summaries from plan JSON. Sn's fixed 'never truncate destroys/failures' rules and its journalctl/helm coverage are refinements of this."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/00200200/usagetrim/issues/52",
+        "https://github.com/00200200/usagetrim",
+        "https://github.com/rtk-ai/rtk/issues/3786",
+        "https://github.com/ErenOzgu/plan-explainer"
+      ],
+      "note": "usagetrim#52 (2026-09-27) explicitly asks for kubectl/helm output folding that keeps every Warning/BackOff/OOMKilled verbatim, with retrieval of the omitted text. The usagetrim repo itself (created 2026-09-20, 43 stars) compacts output with retrieval from a local cache. rtk#3786 (2026-08-31) asks for a terraform plan digest. ErenOzgu/plan-explainer (created 2026-10-17, 0 stars) applies rule-based plan facts, including 'what cannot be undone'."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 3,
+      "se_handles": 1,
+      "links": [
+        "https://github.com/kagent-dev/tools/issues/82",
+        "https://github.com/rtk-ai/rtk/issues/3786",
+        "https://github.com/rtk-ai/rtk/issues/5000"
+      ]
+    }
+  },
+  {
+    "pair": "X12",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/ikuwow/dotfiles/issues/509",
+        "https://github.com/mento-protocol/monitoring-monorepo/issues/1549",
+        "https://github.com/jikig-ai/soleur/issues/9776",
+        "https://github.com/ivanversluis/homelabs/issues/310"
+      ],
+      "note": "4 confirmed, 4 repos and authors. ikuwow#509 (2026-10-28): the agent ran terraform destroy -auto-approve (12 resources) and the auto-mode classifier let it through. mento#1549 (2026-07-23): a deploy script's --yes passes -auto-approve, so unseen infra changes get applied; the issue asks to apply the exact saved plan the operator reviewed. soleur#9776 (2026-10-08): autonomous mode auto-approves any Bash command that passes string patterns, including terraform destroy. homelabs#310 (2026-10-07): the standard apply target uses -auto-approve, so an outdated or unexpected plan can be applied without a final review."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/safoinme/palisade"
+      ],
+      "note": "safoinme/palisade (created 2026-03-18, last pushed 2026-03-20, 0 stars) is the same core mechanism. It intercepts terraform/kubectl through a hook or shim, runs the plan or dry-run, converts it to JSON and computes its SHA-256 hash. It issues HMAC-signed approval tokens bound to plan hash + workspace + policy-bundle hash + expiry, enforces the saved plan ('prevents plan/apply divergence'), and auto-decides through OPA policies. Its docs threat table says: 'Agent applies a different plan than what was reviewed -> Plan-hash-bound approval tokens'. Sn adds a cross-session inbox and helm diff coverage. Low visibility, but it predates July."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/kordloom/switchtender",
+        "https://github.com/mento-protocol/monitoring-monorepo/issues/1549",
+        "https://github.com/honua-io/honua-devops/issues/218"
+      ],
+      "note": "kordloom/switchtender (created 2026-09-29, 2 stars): 'Approve exactly what runs... approvals bind the inventory snapshot, image, commit, and plan' for Terraform/OpenTofu/Ansible, aimed at AI agents. mento#1549 (2026-07-23) explicitly asks to 'apply the exact saved plan that the operator reviewed' with human approval. honua-devops#218 (2026-10-08) asks to ship the issuer for the signed provision-approval receipt that the apply/destroy gate already requires."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 3,
+      "se_handles": 1,
+      "links": [
+        "https://github.com/ikuwow/dotfiles/issues/509",
+        "https://github.com/mento-protocol/monitoring-monorepo/issues/1549",
+        "https://github.com/jikig-ai/soleur/issues/9776"
+      ]
+    }
+  },
+  {
+    "pair": "X13",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/giantswarm/beekeeper/issues/147",
+        "https://github.com/lakisyaman/cloak/issues/3",
+        "https://github.com/jiridanek/rhoai-in-kind/issues/62"
+      ],
+      "note": "4 confirmed, 4 repos and authors. evenfire#952 (2026-09-30): two sessions on one machine; minikube start switches the shared current-context, so session A's kubectl reaches B's cluster. beekeeper#147 (2026-09-28): 'Any session can switch that current context... which changes the target of every other session's implicit commands'. cloak#3 (2026-09-26): a user-global active context lets parallel agents send a delete to prod (P*: any CLI with a mutable current target in $HOME). rhoai-in-kind#62 (2026-08-07): an agent-run deploy applied to whatever the ambient current-context was, which was a real production cluster."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/kubie-org/kubie",
+        "https://github.com/Ramilito/kubesess",
+        "https://github.com/MacroPower/dotfiles/commit/e61108790a1bbcc7e38a8e378c66cf404715eb62",
+        "https://github.com/agentydragon/ducktape/commit/f042801fe3b7155bc2dd295608133f6716a5272c"
+      ],
+      "note": "Same core idea existed before July: a per-session copy of the CLI config, an env var pointing every child process at it, and removal at session end. kubie (created 2020-02-07) and kubesess (2022-07-26) do this per shell. At the agent-harness level: MacroPower/dotfiles commit 2026-05-30 has a Claude launcher wrapper that points $KUBECONFIG at a per-session file so kubectl subprocesses inherit the session's context, plus a SessionEnd hook that removes the per-session dir. agentydragon/ducktape commit 2026-02-17 ('Move kubeconfig into per-session directory') does this in its Claude hooks, with SessionStart writing CLAUDE_ENV_FILE. These are low-visibility personal setups that cover only kubeconfig. Sn's multi-CLI overlay (gcloud/az/aws), shared token caches and pinned-target confirmation are extensions. Borderline call."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/lakisyaman/cloak/issues/3",
+        "https://github.com/sauyon/dotfiles/commit/ba04a9b11c4c710228174199a4a219fc8e969924",
+        "https://github.com/sauyon/dotfiles/commit/c29f431ade90338ec4a4f51b8fc9363077ea56ea",
+        "https://github.com/franroa/chezmoi/commit/9be06c46eca7a6b30549ecc43701610ae4214b02",
+        "https://github.com/paureis/cloudpin"
+      ],
+      "note": "cloak#3 (2026-09-26) explicitly asks for a session-scoped context override so parallel agent sessions cannot change each other's target. sauyon/dotfiles commits (2026-07-10 to 2026-09-03) add a SessionStart hook that writes KUBECONFIG=$KCS_DIR/$SESSION_ID:$BASE to CLAUDE_ENV_FILE (a per-session overlay). franroa/chezmoi (2026-10-30) adds a per-session kubeconfig via CLAUDE_ENV_FILE. paureis/cloudpin (created 2026-10-08, 1 star) pins accounts per workspace and asks before a switch (the pinned-target part only)."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 2,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/giantswarm/beekeeper/issues/147",
+        "https://github.com/lakisyaman/cloak/issues/3"
+      ]
+    }
+  },
+  {
+    "pair": "X14",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/giantswarm/beekeeper/issues/123",
+        "https://github.com/anthropics/claude-code/issues/95680",
+        "https://github.com/StellarEdgeServices/otterquote-platform/issues/1873",
+        "https://github.com/SpyrosPsarras/epaflix/issues/712"
+      ],
+      "note": "4 confirmed, 4 repos and authors. beekeeper#123 (2026-09-27): agents read kubectl get secret -o yaml, sops -d and op read output into transcripts; a sweep found several hundred such reads, and written rules failed to stop them. claude-code#95680 (2026-09-20): secrets read back from command stdout spread unredacted to every on-disk store. otterquote#1873 (2026-09-08): a Doppler endpoint echo put all 49 prod secret values into a subagent transcript. epaflix#712 (2026-08-03): a full Kubernetes Secret read through an agent tool exposed API keys and forced rotation."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/steflsd/ficta",
+        "https://github.com/steflsd/ficta/commit/428ead9cbd4f3affd4d70057e591cbee46432ce8",
+        "https://github.com/Musubi42/shhh",
+        "https://github.com/josephrobertlopez/secrets-router",
+        "https://github.com/stacklok/codegate"
+      ],
+      "note": "Same core idea before July: the model sees stable placeholders and real values are restored only for execution. steflsd/ficta (created 2026-06-22, v0.1.0-beta.1 released 2026-06-23) replaces secrets with deterministic, stable placeholders (equal values get equal placeholders), keeps a placeholder-to-value vault and restores real values in tool-call arguments. Musubi42/shhh (created 2026-05-22) is a local hook that swaps secrets in tool output for typed placeholders before they reach Claude Code, Codex or Cursor. secrets-router (created 2026-03-26) gives agents opaque handles. stacklok/codegate (created 2024-11-11) encrypts secrets going to the LLM and decrypts them in responses. Sn's refinements: sensitivity taken from tool schemas instead of pattern matching, substitution at the exec layer, keyed-hash suffixes."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/talos-hq/clud/issues/2211",
+        "https://github.com/JustYannicc/signalbox/issues/592",
+        "https://github.com/Iampattanayak/agent-secrets",
+        "https://github.com/Mrinanka/aegiscontext",
+        "https://github.com/Elixion-ai/claudepass"
+      ],
+      "note": "clud#2211 (2026-10-26) asks for a reversible secret redactor (secret <-> REDACTED-<uuid> placeholders, decoded at execution by the daemon). signalbox#592 (2026-10-16): agents use secrets by writing a placeholder and the runtime fills it in at the boundary. Post-July repos: Iampattanayak/agent-secrets (2026-09-17, 1 star), a placeholder airlock for Claude Code; Mrinanka/aegiscontext (2026-10-31, 1 star); Elixion-ai/claudepass (2026-09-09, 2 stars), where agents see handles, never values."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 1,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/giantswarm/beekeeper/issues/123",
+        "https://github.com/SpyrosPsarras/epaflix/issues/712",
+        "https://github.com/StellarEdgeServices/otterquote-platform/issues/1873"
+      ]
+    }
+  },
+  {
+    "pair": "X15",
+    "g1": {
+      "pass": false,
+      "links": [
+        "https://github.com/anthropics/claude-code/issues/90348",
+        "https://github.com/anthropics/claude-code/issues/78480",
+        "https://github.com/rollacode/codeterm-releases/issues/38",
+        "https://github.com/rysweet/amplihack-rs/issues/1390"
+      ],
+      "note": "The general failure (a usage limit stops an agent mid-operation and leaves state half-applied) is reported by 3 authors. claude-code#90348 (2026-08-28) and #78480 (2026-07-17), both by powell-clark, cover a release or migration left half-done. codeterm#38 (2026-08-01) covers a mid-mutation stop with uncommitted worktree edits. amplihack#1390 (2026-08-27) covers four sessions killed mid-step with orphaned subprocesses. None reports an infra critical section left disrupted (drained or cordoned node, scaled-down replicas, held state lock). Only the release/migration reports from one author come close to ops. Several targeted searches (session/usage/weekly limit combined with kubernetes, terraform, uncordon, drain, state lock) found no ops-specific reports. Strict reading: fail."
+    },
+    "g2": {
+      "pass": true,
+      "links": [
+        "https://github.com/cheapestinference/claude-auto-retry",
+        "https://github.com/gcardinale/Tare",
+        "https://github.com/nSimonFR/gleaner",
+        "https://github.com/mixpeek/amux"
+      ],
+      "note": "No pre-July tool found that admits critical sections against remaining quota. Closest: gcardinale/Tare (created 2026-06-29, 0 stars) does budget-aware preflight and routing across models (per-model headroom). nSimonFR/gleaner (2026-05-11) and CSalcedoDataBI/agentic-board (2026-06-26) are quota-aware dispatchers that start backlog tasks when quota is idle. amux (2026-02-18) and claude-auto-retry recover after a usage limit. Monitors (ccusage, usage bars, Claude-Code-Usage-Monitor) only display or predict. None estimates a section's cost from earlier iterations, reserves quota across sessions, or refuses to enter a section and parks at a safe point."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/rollacode/codeterm-releases/issues/38",
+        "https://github.com/anthropics/claude-code/issues/90348",
+        "https://github.com/Peaches99/cc-usage-awareness"
+      ],
+      "note": "codeterm#38 (2026-08-01) explicitly asks for this: 'Before a mutating task starts, the scheduler evaluates a configurable provider-session reserve. If remaining allowance is below it, decline the mutation... A mutation that cannot possibly finish within remaining allowance should never have been started.' claude-code#90348 (2026-08-28) asks for protection against the limit landing mid-operation. Peaches99/cc-usage-awareness (created 2026-08-11, 2 stars) exposes plan quota to the agent (partial)."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 2,
+      "se_handles": 1,
+      "links": [
+        "https://github.com/anthropics/claude-code/issues/90348",
+        "https://github.com/rollacode/codeterm-releases/issues/38",
+        "https://github.com/rysweet/amplihack-rs/issues/1390"
+      ]
+    }
+  }
+]

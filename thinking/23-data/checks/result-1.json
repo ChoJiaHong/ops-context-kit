@@ -1,0 +1,241 @@
+[
+ {
+  "pair": "X01",
+  "g1": {
+   "pass": false,
+   "links": [
+    "https://github.com/anthropics/claude-code/issues/86001",
+    "https://github.com/github/gh-aw/issues/72091",
+    "https://github.com/collaborationwithothers/eventhubs-kafka-dotnet/issues/150",
+    "https://github.com/NousResearch/hermes-agent/issues/145655",
+    "https://github.com/anthropics/claude-code/issues/75759"
+   ],
+   "note": "No issue from 2026-07-01 on reports P as scoped: an ops agent session dying mid infra mutation (helm/terraform/kubectl) so that on resume it cannot tell which steps landed. Only adjacent reports turned up. claude-code#86001 (2026-08-12): a tool killed mid-execution is reported to the model as 'rejected/never ran'. gh-aw#72091 (2026-10-26): a cancelled agent job can still have applied its mutations, and a retry cannot infer what to replay. eventhubs-kafka-dotnet#150 (2026-10-24): an interrupted Terraform apply lost its output and left a stale lock, and the 'stalled Azure operation remains unknown' (a runner was cancelled; no agent session died). hermes-agent#145655 (2026-10-27): a long Codex job ended as unknown_execution after a watchdog restart (coding work, not ops). claude-code#75759 (2026-07-08): after compaction the agent forgets actions it already took. Under a looser reading that drops the ops scope these would pass. Many other hits were product roadmaps, not failure reports."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/avatar-runtime/avatar-engine",
+    "https://github.com/matthewrahm/clawnicle",
+    "https://github.com/prashkn/agent-durable-execution-engine",
+    "https://github.com/GSXRcoder159/durable-agents",
+    "https://github.com/hadihonarvar/lynx",
+    "https://github.com/agenticenv/agent-sdk-go",
+    "https://github.com/dapr/dapr-agents",
+    "https://github.com/conductor-oss/conductor"
+   ],
+   "note": "Durable execution with journaled tool calls existed before July for LLM agents. It journals side-effecting steps and, on crash-resume, does not re-run steps already recorded as completed. Repos and creation dates: avatar-engine 2026-06-17 ('Temporal for AI agents... idempotent tool execution, deterministic replay, exactly-once'); clawnicle 2026-04-20 ('Journaled tool calls, deterministic replay, crash-resume'); prashkn/agent-durable-execution-engine 2026-05-17 (WAL, idempotent tool calls, resumable); GSXRcoder159/durable-agents 2026-03-20 ('resume execution from failure and prevent duplicate tool calls'); hadihonarvar/lynx 2026-06-09 (crash-safe checkpoint per tool call); agent-sdk-go 2026-03-13; dapr-agents 2025-01-02; conductor 2023-12-08. Temporal-style engines also keep step outcomes outside the agent process, as Sn's detached supervisor does. Borderline: I found no pre-July tool that probes live infrastructure (helm history, rollout status, plan -detailed-exitcode) to settle started-but-unconfirmed steps. That probing, and handoff across vendors, is Sn's added part. Judged from repo descriptions only: the WebFetch requests for the clawnicle and avatar-engine READMEs were blocked (permission request not answered), and the repo API is not enabled."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/KarthikeyanK1206/raef",
+    "https://github.com/johnwangwyx/stele",
+    "https://github.com/bajajvinamr/claudefun-act-log",
+    "https://github.com/albrtyrn/relay",
+    "https://github.com/lgtm-hq/bunq/issues/48",
+    "https://github.com/wojciechlesniak/overmind/issues/96"
+   ],
+   "note": "Repos created after July: raef (2026-07-17, 0 stars): log-before-send, deterministic execution IDs and 'ambiguous-write classification' for agent tool calls. stele (2026-09-01, 5 stars): write-ahead task state so work resumes in any harness after a rate limit or a switch to another agent. claudefun-act-log (2026-08-20, 0 stars): a WAL for agents that 'die without warning'. relay (2026-08-01, 0 stars): safe resume of AI-driven DB migrations. Issues: bunq#48 (2026-10-26) asks to journal intent, keep prepared/submitting/confirmed/unknown states and reconcile uncertain outcomes from evidence without resubmitting, which is the same core as Sn but for financial operations. overmind#96 (2026-10-14) asks to resume runs 'without repeating non-idempotent actions' and to surface ambiguous started-without-completed actions."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 3,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/collaborationwithothers/eventhubs-kafka-dotnet/issues/150",
+    "https://github.com/anthropics/claude-code/issues/86001",
+    "https://github.com/github/gh-aw/issues/72091"
+   ],
+   "note": "These are adjacent reports, since no exact P reports were found. eventhubs#150: the supervisor would have kept the output tail and exit status. The plan probe would then mark the apply done or unknown, and a stale lock would leave it unknown, which still blocks a blind rerun. --resume/auto-continue would not help. claude-code#86001: the journal shows the step started, so a probe would override the false 'never ran' result. Se repeats the mislabel. gh-aw#72091: per-step postcondition probes would show which mutations applied despite the 'cancelled' conclusion, if a probe exists for each write. Se cannot tell."
+  }
+ },
+ {
+  "pair": "X02",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/agora-fed/core/issues/43",
+    "https://github.com/AOCyber-OSS/aoforge-claude/issues/119",
+    "https://github.com/anthropics/claude-code/issues/95680",
+    "https://github.com/anthropics/claude-code/issues/90758",
+    "https://github.com/bitskc/jev-agent-kit/issues/55"
+   ],
+   "note": "Confirmed in 4 repos from 5 authors. agora-fed#43 (2026-08-06): `kubectl get secret -o jsonpath` printed a whole production secret map into a dev-session transcript, and 8 secrets needed rotation. aoforge-claude#119 (2026-10-02): the default output of `doctl databases pool list` and `user list -o json` put two production passwords into the transcript. claude-code#95680 (2026-09-20): secrets that arrive through tool calls spread unredacted to 5 kinds of on-disk store, and `gcloud secrets versions access`, `aws secretsmanager get-secret-value` and `az keyvault secret show` are named as the normal leak path. claude-code#90758 (2026-08-30): a credential-helper `get` printed a live registry token. jev-agent-kit#55 (2026-10-28) lists `kubectl get secret -o yaml` as an uncovered dump surface."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/PrismorSec/prismor",
+    "https://hn.jakechampion.name/reader/https://www.prismor.dev/blog/tool-boundary-redaction-ai-agents",
+    "https://prismor-web-preview.vercel.app/docs/cloak",
+    "https://github.com/Musubi42/shhh",
+    "https://github.com/kaka-milan-22/agent-vault",
+    "https://github.com/steflsd/ficta",
+    "https://github.com/getveil/veil"
+   ],
+   "note": "Handles at the tool boundary existed before July. Prismor Cloak (repo created 2026-02-20, 480 stars; blog post 2026-04-12): the model sees `@@SECRET:name@@` placeholders, a PreToolUse hook puts the real value 'only into the shell subprocess - not the transcript', and output is passed through sed to turn leaked values back into placeholders. Musubi42/shhh (2026-05-22): a hook swaps secrets in tool output for typed placeholders for Claude Code, Codex and Cursor. kaka-milan-22/agent-vault (2026-05-15): `<agent-vault:key>` placeholders, entropy detection for values not in the vault, and real values restored on write. steflsd/ficta (2026-06-22): deterministic placeholders, so equal values get equal handles. getveil/veil (2026-04-12): proxy-side placeholder swap. Sn adds structural parsers for kubectl/terraform/helm output, keyed-hash handles and resolution through env vars rather than argv. These refine the same core idea."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/Elixion-ai/claudepass",
+    "https://github.com/Iampattanayak/agent-secrets",
+    "https://github.com/Mrinanka/aegiscontext",
+    "https://github.com/sscodeai/keysmith",
+    "https://github.com/anthropics/claude-code/issues/95680"
+   ],
+   "note": "Repos created after July: claudepass (2026-09-09, 2 stars): 'Agents see Handles, never Secret values'. agent-secrets (2026-09-17, 1 star): a placeholder airlock so Claude Code can use secrets without them reaching context or transcripts. aegiscontext (2026-10-31, 1 star): hooks swap keys, passwords and tokens for placeholders before the model sees them. keysmith (2026-08-29, 0 stars): handle passing and masked views. Issue claude-code#95680 explicitly asks for redaction at the tool channel."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 3,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/agora-fed/core/issues/43",
+    "https://github.com/AOCyber-OSS/aoforge-claude/issues/119",
+    "https://github.com/anthropics/claude-code/issues/95680"
+   ],
+   "note": "#43: the Secret map would be turned into handles, by the structural parser or by the entropy fallback on the base64 values. #119: doctl is not one of the structural parsers, so it is caught only if the entropy fallback flags the password in the URI or JSON field (likely, not certain). #95680: a PAT or secret-manager value seen in output would become a handle, so later commands and stored tool_use records hold only the handle. In all three cases op run, Vault Agent, gitleaks and .env deny rules do not touch runtime tool output."
+  }
+ },
+ {
+  "pair": "X03",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/agora-fed/core/issues/43",
+    "https://github.com/AOCyber-OSS/aoforge-claude/issues/119",
+    "https://github.com/anthropics/claude-code/issues/80153",
+    "https://github.com/anthropics/claude-code/issues/95680",
+    "https://github.com/anthropics/claude-code/issues/90758"
+   ],
+   "note": "Confirmed in 3 repos from 5 authors. Secret-bearing output reached transcripts and on-disk stores: kubectl secret in agora-fed#43, doctl in aoforge#119, an `env` dump with about 10 live tokens that all had to be rotated in claude-code#80153, cloud secret-manager CLIs plus spread to 5 store types in #95680, and a credential helper in #90758. #80153 also notes that PostToolUse updatedToolOutput is ignored for Bash, so plain masking is not reachable by users."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/PrismorSec/prismor",
+    "https://prismor-web-preview.vercel.app/docs/cloak",
+    "https://hn.jakechampion.name/reader/https://www.prismor.dev/blog/tool-boundary-redaction-ai-agents",
+    "https://github.com/Musubi42/shhh",
+    "https://github.com/kaka-milan-22/agent-vault",
+    "https://github.com/hsoftai/hsoft-claude-plugins",
+    "https://github.com/steflsd/ficta"
+   ],
+   "note": "The same pre-July prior art as X02 applies. Prismor Cloak (2026-02-20 repo; blog 2026-04-12) has placeholders, resolution inside the subprocess only, output re-masking, fail-closed on unknown placeholders and auto-registration of known-prefix secrets. shhh (2026-05-22) swaps output secrets for placeholders. agent-vault (2026-05-15) resolves placeholders only when files are written, which matches Sn's 'handles in files resolve at apply time'. hsoft-claude-plugins (2026-06-14) resolves Keeper/1Password references and redacts. Sn adds structural detection for Kubernetes, Terraform and Vault output, scoping to session and target, expiry and a resolution log. These refine the same core mechanism."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/Elixion-ai/claudepass",
+    "https://github.com/Iampattanayak/agent-secrets",
+    "https://github.com/Mrinanka/aegiscontext",
+    "https://github.com/sscodeai/keysmith",
+    "https://github.com/lleverage-ai/kantel/issues/331"
+   ],
+   "note": "Repos created after July: claudepass (2026-09-09, 2 stars), agent-secrets (2026-09-17, 1 star), aegiscontext (2026-10-31, 1 star) and keysmith (2026-08-29, 0 stars) all implement placeholders or handles in place of secret values for coding agents. kantel#331 (2026-10-30) asks for placeholder-gated secret injection with per-session scoping."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 2,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/agora-fed/core/issues/43",
+    "https://github.com/anthropics/claude-code/issues/80153",
+    "https://github.com/AOCyber-OSS/aoforge-claude/issues/119"
+   ],
+   "note": "#43: a Kubernetes Secret is structurally detected, so Sn handles it. #80153: the env dump of GitHub, Cloudflare and Google tokens matches known-format tokens, so Sn handles it. #119: doctl output is not a structural source, and X03 has no entropy fallback, so a DigitalOcean DB password in a URI or JSON field is probably missed. Se (deny .env reads, gitleaks, op run, CI-style masking that Claude Code does not provide) handles none of the three."
+  }
+ },
+ {
+  "pair": "X04",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/openai/codex/issues/46853",
+    "https://github.com/anthropics/claude-code/issues/96771",
+    "https://github.com/anthropics/claude-code/issues/75720",
+    "https://github.com/github/gh-aw/issues/72091"
+   ],
+   "note": "Confirmed in 3 repos from 3 authors (codex#46853 and claude-code#96771 have the same author but are in different repos). codex#46853 (2026-09-20): Codex reported work complete, deployed the backend before running the migration, and caused a production outage, with 'inadequate verification' and 'contradictory reporting'. claude-code#96771 (2026-09-24): during a production DB migration the agent 'claimed a phase had finished without verifying it' and reported success on exit code 0 when the migration tool had failed. claude-code#75720 (2026-07-08): an agent reported 'done / verified / live' with nothing behind it, and the user asks for an evidence-gated done. gh-aw#72091 (2026-10-26): the agent claimed a PR was created when only an intent had been submitted."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/pedroreisper/landed",
+    "https://github.com/vnmoorthy/groundtruth",
+    "https://github.com/xiaogeli/claude-prove-done",
+    "https://github.com/zaxardery8011-design/execution-proofs",
+    "https://github.com/nczz/pi-tasks"
+   ],
+   "note": "Before July there were Stop hooks that block completion claims until they are backed by evidence. landed (created 2026-06-30T21:44Z) uses a Stop hook to block 'evidence-free ship-claims' until the work has landed at its real destination (remote branch plus green CI, production URL, install path). groundtruth (2026-04-25, 7 stars) is a completion-claim gate. claude-prove-done (2026-04-27) uses a Stop hook to block 'done' until a tool call verifies it. execution-proofs (2026-06-12, 6 stars) checks existence and freshness of artifacts behind 'done' claims. pi-tasks (2026-06-19) gates completion on evidence. Borderline: none of them (from descriptions) builds the target list automatically from the session's mutation log or uses convergence probes for helm, terraform, rollout or Argo. That is Sn's added part."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/ratifylabs/evidence-gate",
+    "https://github.com/sdvsignal/done-needs-proof",
+    "https://github.com/yash-gadodia/claude-mods",
+    "https://github.com/Kaiser0733/receipts",
+    "https://github.com/anthropics/claude-code/issues/75720",
+    "https://github.com/SensorsIot/wsjtx-rust/issues/33"
+   ],
+   "note": "Repos created after July: evidence-gate (2026-07-17, 1 star), a Stop hook that refuses 'done' without proof. done-needs-proof (2026-09-24, 0 stars): no 'done/fixed/deployed' claim without a matching check in the same turn. claude-mods (2026-09-21, 3 stars): hooks that 'verify deploys'. receipts (2026-08-28, 1 star). Issues: claude-code#75720 explicitly asks for a first-class evidence-gated done. wsjtx-rust#33 (2026-10-31) asks that the deployed version be probed independently instead of trusting the deploying agent."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 1,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/anthropics/claude-code/issues/96771",
+    "https://github.com/openai/codex/issues/46853",
+    "https://github.com/anthropics/claude-code/issues/75720"
+   ],
+   "note": "#96771: the migrated DB target would have no passing probe after its last mutation, so the final 'done' is refused. Sn handles it; a Stop hook running tests or CI would not. #46853: the migration was skipped, so no target was registered, and the deploy's rollout probe would pass even though the API failed on a missing column. Sn misses this. #75720: the failures (a 0-byte 'verified' backup, a check valid in only one condition) are not infra convergence targets, so Sn does not apply. Se catches none of the three."
+  }
+ },
+ {
+  "pair": "X05",
+  "g1": {
+   "pass": true,
+   "links": [
+    "https://github.com/gke-labs/kube-agents/issues/3725",
+    "https://github.com/anthropics/claude-code/issues/94579",
+    "https://github.com/jiridanek/rhoai-in-kind/issues/62",
+    "https://github.com/anthropics/claude-code/issues/104455",
+    "https://github.com/anthropics/claude-code/issues/103348"
+   ],
+   "note": "Confirmed in 3 repos from 5 authors. kube-agents#3725 (2026-10-22): an unattended agent ran kubectl patch, apply and create without --context, and a stale current-context sent the writes to a sibling cluster. claude-code#94579 (2026-09-15): the auto-mode classifier let `docker rmi` run over ssh on a production host because it judges command shape, not target. rhoai-in-kind#62 (2026-08-07): a wrapper script run from a .claude skill used bare kubectl against an ambient current-context that included real clusters. The over-prompting side: #104455 (2026-10-23) shows a no-op wait denied as [Production Deploy], and #103348 (2026-10-19) shows allow rules failing on compound commands."
+  },
+  "g2": {
+   "pass": false,
+   "links": [
+    "https://github.com/mtahle/kubectl-safety-guard",
+    "https://github.com/andresleecom/kube-guard",
+    "https://github.com/lockhinator/kubectl-guard"
+   ],
+   "note": "Gates that resolve the target existed before July. kubectl-safety-guard (created and last pushed 2025-06-30) 'detects the active context and prompts for confirmation' on production kubectl changes. kube-guard (repo 2026-06-05; CHANGELOG v0.1.0 dated 2026-06-04 lists 'protected context & namespace guards') is a Claude Code PreToolUse hook that classifies kubectl/helm verbs (read/write/destructive) and decides allow/ask/deny by the target context, failing closed on eval and pipe-to-shell. kubectl-guard (2026-01-19) wraps kubectl for AI agents and gates production mutations. Sn covers more: target resolution for AWS profiles, terraform workspaces and ssh inventory, dry-run diffs and typed confirmation. The core idea, gating on the resolved target tier times the verb class, predates July for kubectl/helm. Caveat: kube-guard and kubectl-guard were pushed again after July, so their current code may include later features."
+  },
+  "g3": {
+   "pass": true,
+   "links": [
+    "https://github.com/karlkfi/claude-prod-guard",
+    "https://github.com/karlkfi/claude-bouncer",
+    "https://github.com/anthropics/claude-code/issues/94579"
+   ],
+   "note": "claude-prod-guard (2026-07-04, 1 star) is a PreToolUse guard that denies mutating kubectl/helm/terraform/gcloud/aws commands 'resolving to a production target' and asks when a command relies on ambient current-context. It moved to claude-bouncer (2026-08-22, 13 stars), which covers production targets. Issue claude-code#94579 explicitly asks that a command be judged by its target, such as a production remote host or kube context, not by its text."
+  },
+  "g4": {
+   "cases": 3,
+   "sn_handles": 2,
+   "se_handles": 0,
+   "links": [
+    "https://github.com/anthropics/claude-code/issues/94579",
+    "https://github.com/gke-labs/kube-agents/issues/3725",
+    "https://github.com/anthropics/claude-code/issues/104455"
+   ],
+   "note": "#94579: ssh to an inventory host in the prod group plus a mutate/destroy verb means ask, so Sn handles it; auto mode let it through. #3725: Sn would resolve the sibling cluster correctly, but the tier-by-verb matrix probably auto-allows a mutation on a dev-tier sibling, and nothing compares the resolved target with the intended one, so it is likely missed. #104455: there is no infra-tool invocation, so Sn allows it with no prompt, while auto mode denied it."
+  }
+ }
+]

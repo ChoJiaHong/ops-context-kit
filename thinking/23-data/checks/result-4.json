@@ -1,0 +1,215 @@
+[
+  {
+    "pair": "X16",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/anthropics/claude-code/issues/97272",
+        "https://github.com/directionally-local/autopilot/issues/1125",
+        "https://github.com/jikig-ai/soleur/issues/9776",
+        "https://github.com/lgallard/terraform-aws-cognito-user-pool/issues/443",
+        "https://github.com/anthropics/claude-code/issues/103895",
+        "https://github.com/anthropics/claude-code/issues/94579"
+      ],
+      "note": "Confirmed after reading: claude-code#97272 (2026-09-25) says the auto mode classifier judges only command text, so `kubectl delete pod X --context lab` gets an avoidable prompt because safety depends on which cluster and namespace. autopilot#1125 (2026-11-03): permission rules 'only see command text', so with auto-approve or a broad allow rule nothing stops terraform destroy. soleur#9776 (2026-10-08): autonomous mode auto-approves any Bash not on a blocklist, and terraform/tofu destroy and apply -destroy pass. cognito-user-pool#443 (2026-08-10): the allowlist had to be widened to Bash(terraform:*). claude-code#103895 (2026-10-21): a user-requested Terraform Cloud apply stalled under repeated classifier blocks. #94579 is related (auto mode let a destructive remote docker command through). 5+ reports from 5 repositories and authors."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/safoinme/palisade"
+      ],
+      "note": "Palisade (repo created 2026-03-18, HEAD commit 2026-03-20): a Claude Code PreToolUse hook and PATH shim intercept terraform/tofu/kubectl. Its pipeline is intercept, plan (`terraform plan`; `kubectl apply --dry-run=server -o json`), analyze per resource, decide ALLOW/REVIEW/BLOCK with OPA policies, then apply with plan-hash-bound approval tokens ('what was reviewed is what gets applied'). Policies are custom Rego with config data and include limit_change_count and namespace or StatefulSet deletion approval. That is the same core mechanism as Sn: decide from the dry-run's effect and execute exactly the checked artifact. What differs: Sn adds a per-task scope manifest the human confirms at handoff (Palisade uses static or custom policies) and covers Helm and Pulumi. A second candidate, roboticforce/agent-guardrails (created 2026-03-06), could not be checked because its README fetch was blocked."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/RobeyBeswick/plansentry",
+        "https://github.com/somaz94/whatdies",
+        "https://github.com/CarlosOliveira-23/plangate",
+        "https://github.com/kordloom/switchtender",
+        "https://github.com/rune-task-runner/rune/issues/49"
+      ],
+      "note": "plansentry (created 2026-09-23, 1 star): a Claude Code/Codex hook that 'reads the plan, not the command', blocks only destroy or replace of data-holding resources, and applies the checked plan file with no re-plan. whatdies (2026-11-05, 1 star): a PreToolUse hook that reads saved Terraform plans and live kubectl state and returns deny/ask/no-decision. plangate (2026-11-02, 1 star): gates on the 'real structured plan/diff, not the command text'. switchtender (2026-09-29, 2 stars): approvals bound to the plan. rune#49 (2026-10-28) asks to bind approval and apply to the exact plan artifact. None found implements a per-task scope manifest."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 2,
+      "se_handles": 1,
+      "links": [
+        "https://github.com/anthropics/claude-code/issues/97272",
+        "https://github.com/jikig-ai/soleur/issues/9776",
+        "https://github.com/anthropics/claude-code/issues/94579"
+      ]
+    }
+  },
+  {
+    "pair": "X17",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/peopleforrester/Unleash_an_Agent_Watch_It_Burn/issues/732",
+        "https://github.com/lakisyaman/cloak/issues/3",
+        "https://github.com/RaFoyer/repo-agent-harness-builder/issues/21"
+      ],
+      "note": "evenfire#952 (2026-09-30): two sessions on one machine. Session B's `minikube start` switches the shared kubectl current-context, after which 'every kubectl call A makes without --context now reaches B's cluster'. Unleash_an_Agent#732 (2026-10-31): a deploy script uses ~/.kube/config's current-context, 'which may be another session's'. cloak#3 (2026-09-26): a context switch by one parallel agent retargets every other agent, and the example sequence ends with a delete hitting prod. repo-agent-harness-builder#21 (2026-07-24): ambient global gh and gcloud credentials let any agent thread mutate another repo's cloud project. 4 repositories and authors."
+    },
+    "g2": {
+      "pass": true,
+      "links": [
+        "https://github.com/sozercan/kindctl",
+        "https://github.com/luisgf/infrabroker",
+        "https://github.com/EphyrAI/Ephyr",
+        "https://github.com/kubeleash/kubeleash"
+      ],
+      "note": "No tool from before July 2026 was found that binds an agent session to an explicit target set across kube, cloud and Terraform, mints creds only for it, hides global configs, and resolves each CLI command's effective target to deny anything outside the binding. Nearest partials: kindctl (2026-06-10) gives each worktree its own kubeconfig, local kind clusters only, which is Se. infrabroker (2026-06-03) mints per-operation SSH certs through an MCP broker; its Kubernetes target came 2026-07-03, after the cutoff. Ephyr (2026-03-14) is a task-scoped SSH/HTTP broker with macaroons and no kube/aws/terraform CLI binding. kubeleash (2026-05-24) is a per-context policy MCP server, not session binding. agentblindfold's private per-context kubeconfig also landed after the cutoff (2026-07-04). Teleport, aws-vault and kubie supply ingredients (short-lived certs, per-shell isolation) but not this per-session binding with per-command target resolution."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/maytech-labs/mochi-donut",
+        "https://github.com/sam-albon-li/pi-guard-kubectl-context",
+        "https://github.com/agentdefsec-labs/agentblindfold",
+        "https://github.com/lakisyaman/cloak/issues/3"
+      ],
+      "note": "mochi-donut (created 2026-10-28, 1 star): its 'yuzu check' resolves which cluster or account a command would touch against declared environments (kube_contexts, aws_profiles, ssh_hosts), runs as a Claude Code hook, and has `whoami` showing which account will be used. This is the per-command target resolution part of Sn, without credential minting. pi-guard-kubectl-context (2026-09-16, 0 stars) blocks kubectl unless --context is in an allowlist. agentblindfold added a private short-lived kubeconfig holding only the configured context on 2026-07-04. cloak#3 (2026-09-26) explicitly asks for a per-session context override for parallel agents."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 3,
+      "se_handles": 2,
+      "links": [
+        "https://github.com/evenfire-ai/evenfire/issues/952",
+        "https://github.com/peopleforrester/Unleash_an_Agent_Watch_It_Burn/issues/732",
+        "https://github.com/RaFoyer/repo-agent-harness-builder/issues/21"
+      ]
+    }
+  },
+  {
+    "pair": "X18",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/mlorentedev/kubelab/issues/1083",
+        "https://github.com/mlorentedev/kubelab/issues/1859",
+        "https://github.com/fgarofalo56/csa-inabox/issues/3676",
+        "https://github.com/AI-Substrate/pij-fleet/issues/72",
+        "https://github.com/Lenton-Losper/Tap-n-Munch/issues/281"
+      ],
+      "note": "kubelab#1859 (2026-09-27): 'Staging is shared between lanes, so any deploy-k8s from any worktree silently reverts another lane's n8n state.' kubelab#1083 (2026-08-15): a manual staging apply from an unmerged worktree branch was reverted within ~30s because a parallel lane's merge triggered an Argo sync. csa-inabox#3676 (2026-08-17): a scheduled deploy silently reverted a rolled security fix and 'every lane involved reported success'. pij-fleet#72 (2026-10-27): an unmerged commit was deployed, and the next bounce from main silently removed the feature. Tap-n-Munch#281 (2026-08-14): a migration applied to staging from an unmerged branch showed up as unexplained drift. 4 repositories and authors. Few reports name agents directly, but most are multi-lane agent setups."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://gist.github.com/bvsatyaram/2687884",
+        "https://github.com/github/branch-deploy/blob/main/docs/outdated_mode.md"
+      ],
+      "note": "This is a well-known practice: Heroku-style git-push deploys keep the deployed commit as the remote ref and reject any push that is not a descendant ('non-fast-forward updates were rejected'), with --force as the override. The gist above, created 2012-05-13, shows the rejection when deploying a branch. That is the same core check as Sn: refuse to deploy when the live commit is not an ancestor of what you deploy, unless overridden. Sn's new part is putting the stamp on Kubernetes, Helm and Terraform targets plus the session id. Not counted: GitHub branch-deploy outdated_mode compares against main, not against the live commit, and Atlantis locking uses a lock until merge rather than an ancestry check. This is a judgment call."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/AI-Substrate/pij-fleet/issues/72",
+        "https://github.com/EhlOps/jobfinder",
+        "https://git.berlin.ccc.de/vinzenz/hyperhive/commit/6973610d392bd7005a190df0a67620be8e21c047"
+      ],
+      "note": "pij-fleet#72 (2026-10-27) explicitly asks for a 'lost-deploy sensor': stamp the running build with its commit and warn when that commit is not on origin/main. EhlOps/jobfinder (created 2026-10-07, 0 stars): deploy/k8s/deploy-ssh.sh records a jobfinder.io/deployed-commit namespace annotation and uses `git merge-base --is-ancestor` against it to skip older or out-of-order deploys. hyperhive commit (2026-07-26, not on GitHub): 'the reviewed head must descend from applied/main, else bail before the irreversible merge'."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 1,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/mlorentedev/kubelab/issues/1083",
+        "https://github.com/fgarofalo56/csa-inabox/issues/3676",
+        "https://github.com/AI-Substrate/pij-fleet/issues/72"
+      ]
+    }
+  },
+  {
+    "pair": "X19",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/Cratis/AI/issues/863",
+        "https://github.com/anthropics/claude-code/issues/95680",
+        "https://github.com/opena2a-org/secretless-ai/issues/129",
+        "https://github.com/StellarEdgeServices/otterquote-platform/issues/1873"
+      ],
+      "note": "Cratis/AI#863 (2026-10-22): agents ran `kubectl get pods -o json` and `describe` on production, and a scan found eight real production credentials in transcripts and saved tool output. claude-code#95680 (2026-09-20): secrets from tool calls and stdout fan out unredacted to every on-disk store. secretless-ai#129 (2026-08-12): `kubectl get secret -o yaml`, `secretsmanager get-secret-value` and the Vercel env API return credentials straight into agent context, and a PreToolUse guard cannot see them. otterquote#1873 (2026-09-08): Doppler's write endpoint echoed all 49 prod secret values into a subagent transcript. 4 repositories and authors."
+    },
+    "g2": {
+      "pass": true,
+      "links": [
+        "https://github.com/josephrobertlopez/secrets-router",
+        "https://github.com/Flux159/mcp-server-kubernetes",
+        "https://github.com/p1rallels/pi-op",
+        "https://github.com/gitdamnit/opencode-stranger-danger"
+      ],
+      "note": "No tool from before July 2026 was found that parses ops output schemas, replaces secret-marked values (and their raw or base64 recurrences) with stable handles, and substitutes them only inside spawned processes. Nearest partials: secrets-router (2026-03-26) returns opaque handles for secrets fetched from a password store and resolves them in browser fill, but does not touch command output. mcp-server-kubernetes MASK_SECRETS masks Kubernetes Secret values by schema, but the masked values cannot be used as handles. pi-op (2026-04-17) redacts only 1Password values it injected itself, as in Se. opencode-stranger-danger (2026-05-13) uses detector/regex redaction, as in Se. 1Password op:// references give exec-time substitution, but only for secrets you inject yourself."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/Elixion-ai/claudepass",
+        "https://github.com/jesset/pi-keep-secret/issues/1",
+        "https://github.com/Cratis/AI/issues/863"
+      ],
+      "note": "claudepass (created 2026-09-09, 2 stars): 'Agents see Handles, never Secret values'. `cpass capture <handle> -- <command>` stores a tool's stdout in the vault and prints only the handle, `cpass run` resolves handles when it spawns the command, and output is redacted to [REDACTED:<handle>]. It is close to Sn but captures whole stdout and is not schema-aware. pi-keep-secret#1 (2026-11-01) proposes and implements deterministic placeholders for credentials in tool results sent to the model, restored in tool-call arguments before execution; detection is regex plus an LLM judge, not schema. Cratis/AI#863 asks that secrets never enter transcripts."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 1,
+      "se_handles": 1,
+      "links": [
+        "https://github.com/Cratis/AI/issues/863",
+        "https://github.com/opena2a-org/secretless-ai/issues/129",
+        "https://github.com/anthropics/claude-code/issues/95680"
+      ]
+    }
+  },
+  {
+    "pair": "X20",
+    "g1": {
+      "pass": true,
+      "links": [
+        "https://github.com/warpdotdev/warp/issues/13560",
+        "https://github.com/anthropics/claude-code/issues/86001",
+        "https://github.com/razzant/claudexor/issues/621",
+        "https://github.com/modelcontextprotocol/modelcontextprotocol/issues/3394"
+      ],
+      "note": "warp#13560 (2026-07-10): after AI quota ran out mid-turn, commands that had executed were reported as cancelled, so the agent re-ran them and duplicated real external side effects. claude-code#86001 (2026-08-12): a tool interrupted mid-execution is reported to the model as never having run. claudexor#621 (2026-11-03): stream interruptions made the orchestrator retry the attempt from scratch after the work was already written. MCP#3394 (2026-09-27): retrying a mutating tools/call after a lost response re-executes the effect. The core of P (uncertain completion after interruption, then a duplicated mutation) is confirmed in 4 repositories. None is specifically about Kubernetes or Terraform rollouts."
+    },
+    "g2": {
+      "pass": false,
+      "links": [
+        "https://github.com/prashkn/agent-durable-execution-engine",
+        "https://github.com/temporalio/temporal",
+        "https://github.com/dbos-inc/dbos-transact-py",
+        "https://docs.langchain.com/oss/python/langgraph/durable-execution",
+        "https://github.com/waitdeadai/no-amnesia"
+      ],
+      "note": "Durable execution (Temporal, repo created 2019-10-16; DBOS, 2024-07-19; LangGraph durable execution) is a well-known practice with the same core: journal the intent before the side effect and the result after it, then on recovery rely on the journal rather than model memory to avoid duplicates. prashkn/agent-durable-execution-engine (created 2026-05-17) applies this to LLM agent tool calls: intent fsync'd to a WAL before the side effect, and a replay finds intents with no result. Its README lists LangGraph, OpenAI/Vercel agent SDKs, Restate, Inngest, Temporal, DBOS and Hatchet as already doing this. no-amnesia (2026-05-11) re-injects state after Claude Code compaction. Sn's new part is narrower: infra pre/post fingerprints, plus probe-based reconciliation that blocks further mutations instead of retrying with an idempotency key."
+    },
+    "g3": {
+      "pass": true,
+      "links": [
+        "https://github.com/akaashnidhiss/agentic-assessment-harness",
+        "https://github.com/johnwangwyx/stele",
+        "https://github.com/111wukong/wukong",
+        "https://github.com/varad-oss/agentwal"
+      ],
+      "note": "Repos created after 2026-07-01 with the same mechanism. agentic-assessment-harness (2026-09-02, 0 stars): write-ahead tool ledger, with retries classified by outcome certainty. stele (2026-09-01, 5 stars): write-ahead task state so work resumes after a rate limit or harness switch. wukong (2026-09-28, 1 star): write-ahead tool ledger plus context compaction. agentwal (2026-10-23, 0 stars): crash-safe agent runs from a write-ahead journal with no duplicated side effects. None is ops-specific and none uses infra fingerprints."
+    },
+    "g4": {
+      "cases": 3,
+      "sn_handles": 2,
+      "se_handles": 0,
+      "links": [
+        "https://github.com/warpdotdev/warp/issues/13560",
+        "https://github.com/anthropics/claude-code/issues/86001",
+        "https://github.com/razzant/claudexor/issues/621"
+      ]
+    }
+  }
+]
