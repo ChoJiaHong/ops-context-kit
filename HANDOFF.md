@@ -20,7 +20,7 @@
 | `round2` → `round3` → `v3-merge` | 規則集三輪評估、v3 規則（未驗證） | 已 push |
 | `thinking-models` | thinking/00–08 | 已 push |
 | `double-loop` | thinking/09 + guard.py 三輪反駁試驗（回歸測試 202 個） | 已 push |
-| **`claude-md`** | thinking/10–19 + 本檔 + `evals/validate_problem.py`；包含以上全部 | **最新**，已 push |
+| **`claude-md`** | thinking/10–20 + 本檔 + 問題訊號分析與校準程式；包含以上全部 | **最新** |
 | `workflow` | 從 `claude-md` 的 thinking/15 分出：`/start` → `/handoff`、session 綁定任務、guard 依任務 mode／targets 把關（回歸測試 213 個） | 已 push；沒有 thinking/16–19 |
 
 檢查指令：`python3 evals/guard_test.py`、`python3 template/tools/check_kit.py`。
@@ -34,6 +34,7 @@
 - 06 的收斂骨架拿掉了原模型最需要的部分，已在 [16](thinking/16-model-selection.md) 修正，不要再選它。
 
 **最近一次執行與評估**
+- [20](thinking/20-problem-validation.md)：Codex 已在雲端完成量測器校準與可見對話個案核對。48 個事先固定的邊界案例中，25 個符合期望、23 個不符合；不是使用者實際準確率。`guard_test.py` 202/202，kit 結構檢查通過。沒有原電腦 JSONL，完整歷史 A/B 仍未驗證；不要把模擬資料當真實紀錄，或從缺資料推出零事件。詳見 `thinking/20-data/` 和 `evals/probe_problem_signals.py`。
 - [18](thinking/18-original-model-run.md)：用原模型處理「大量使用 AI 時規則層的污染與覆蓋缺口」，得到四個解法。
 - [19](thinking/19-evaluation-of-18.md)：自我評估。只有「infra 事實查核」站得住，而且應該改成「手寫事實越少越好」；「stg 測 AI 指令」的關鍵主張錯了（任務紀錄沒有初始狀態）；「隔離寫入」有內部矛盾（日誌也是外部文字）；問題的重新界定沒有用使用者的資料驗證。
 
@@ -48,6 +49,8 @@
 3. 19 的修正建議要做哪幾項。
 
 ## 建議的下一步
+
+**最新狀態（20）**：使用者要求由 agent 自主完成實驗，不再反覆把本機執行交回使用者。本輪已完成能自主進行的受控校準。原分析程式在 dry-run／權限查詢、部分寫入、工具失敗、事件時間、去重與專案識別上有量測偏差；正式歷史比較之前先處理這些資料品質問題。下列第 1 項的原始資料前提尚未滿足，不能宣稱已完成；不要以等待上傳作為唯一能做的工作。
 
 1. **先用使用者的實際資料驗證問題**（使用者 11-07 選了這項，進行中）：已寫好 `evals/validate_problem.py`，等使用者在自己電腦跑完、上傳 `problem-signals.md`。它分別數出 A（使用者說過的痛點）和 B（18 的推論）的訊號，只輸出彙總數字和遮罩過的摘錄。`mine_sessions.py` 不適合做這件事：它是挑評估案例用的，只輸出第一句需求和難度分數，量不到糾正、逐步確認、同時開幾個 session、出事前有沒有 AI 改過 infra。`/insights` 最多看 50 個 session，平行用量大時只涵蓋幾天，可當補充。拿到結果後，判讀交給沒看過 18 推論的 agent（避免自己評自己）。這個雲端 session 碰不到使用者的電腦。
 2. TRUTH.md 改成「只留查不到的事實」，其他現查或從 IaC 產生。

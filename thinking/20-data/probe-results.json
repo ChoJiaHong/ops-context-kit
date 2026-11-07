@@ -1,0 +1,491 @@
+{
+  "scope": "synthetic controlled calibration; not user session history",
+  "target": "validate_problem.py at baseline commit 0dbea6a",
+  "target_sha256": "c177a1ca804ed8f2c732f7db7fad74396e67ef6c43d768d89358b9e53c964044",
+  "python": "3.12.14",
+  "date": "2026-11-07",
+  "total": 48,
+  "passed": 25,
+  "groups": {
+    "integration": {
+      "passed": 4,
+      "total": 8
+    },
+    "mutation": {
+      "passed": 10,
+      "total": 22
+    },
+    "rule_write": {
+      "passed": 5,
+      "total": 9
+    },
+    "text": {
+      "passed": 6,
+      "total": 9
+    }
+  },
+  "mutation_confusion": {
+    "TP": 6,
+    "TN": 4,
+    "FP": 6,
+    "FN": 6
+  },
+  "cases": [
+    {
+      "group": "mutation",
+      "id": "M01",
+      "input": "kubectl --context stg get pods",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M02",
+      "input": "kubectl --context stg apply -f app.yaml",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M03",
+      "input": "kubectl --context stg apply -f app.yaml --dry-run=server",
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M04",
+      "input": "kubectl --context stg create cm x --from-literal=k=v --dry-run=client -o yaml",
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M05",
+      "input": "kubectl --context stg auth can-i delete pods",
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M06",
+      "input": "kubectl --context stg cp ./a app/pod:/tmp/a",
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M07",
+      "input": "helm upgrade api ./chart --kube-context stg",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M08",
+      "input": "helm upgrade api ./chart --kube-context stg --dry-run",
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M09",
+      "input": "terraform plan",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M10",
+      "input": "terraform apply -auto-approve",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M11",
+      "input": "ansible-playbook site.yml --check",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M12",
+      "input": "ansible-playbook site.yml --syntax-check",
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M13",
+      "input": "systemctl restart nginx",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M14",
+      "input": "systemctl --user restart app",
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M15",
+      "input": "docker compose up -d",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M16",
+      "input": "docker ps",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M17",
+      "input": "scp app.conf web1:/etc/app.conf",
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M18",
+      "input": "ssh web1 'touch /tmp/probe'",
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M19",
+      "input": "ssh web1 'echo x > /tmp/probe'",
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M20",
+      "input": "ssh web1 'grep rm /var/log/auth.log'",
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "mutation",
+      "id": "M21",
+      "input": "ssh web1 'sudo sed -i s/a/b/ /etc/app.conf'",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "mutation",
+      "id": "M22",
+      "input": "kubectl --context stg exec api -- rm /tmp/probe",
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "rule_write",
+      "id": "R01",
+      "input": {
+        "tool": "Write",
+        "input": {
+          "file_path": "/work/CLAUDE.md"
+        }
+      },
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "rule_write",
+      "id": "R02",
+      "input": {
+        "tool": "Write",
+        "input": {
+          "file_path": "/work/.claude/rules/a.md"
+        }
+      },
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "rule_write",
+      "id": "R03",
+      "input": {
+        "tool": "Write",
+        "input": {
+          "file_path": ".claude/rules/a.md"
+        }
+      },
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "rule_write",
+      "id": "R04",
+      "input": {
+        "tool": "Edit",
+        "input": {
+          "file_path": "memory/topic.md"
+        }
+      },
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "rule_write",
+      "id": "R05",
+      "input": {
+        "tool": "Write",
+        "input": {
+          "file_path": "README.md"
+        }
+      },
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "rule_write",
+      "id": "R06",
+      "input": {
+        "tool": "Bash",
+        "input": {
+          "command": "cat > CLAUDE.md <<'EOF'\nx\nEOF"
+        }
+      },
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "rule_write",
+      "id": "R07",
+      "input": {
+        "tool": "Bash",
+        "input": {
+          "command": "cp draft.md CLAUDE.md"
+        }
+      },
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "rule_write",
+      "id": "R08",
+      "input": {
+        "tool": "Bash",
+        "input": {
+          "command": "cat > .claude/rules/a.md <<'EOF'\nx\nEOF"
+        }
+      },
+      "expected": true,
+      "actual": false,
+      "passed": false
+    },
+    {
+      "group": "rule_write",
+      "id": "R09",
+      "input": {
+        "tool": "Bash",
+        "input": {
+          "command": "cat CLAUDE.md"
+        }
+      },
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "text",
+      "id": "T01",
+      "input": {
+        "category": "correct",
+        "text": "不是我要的，請重新整理。"
+      },
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "text",
+      "id": "T02",
+      "input": {
+        "category": "correct",
+        "text": "請說明 Kubernetes 的核心元件。"
+      },
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "text",
+      "id": "T03",
+      "input": {
+        "category": "stop",
+        "text": "先不要執行。"
+      },
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "text",
+      "id": "T04",
+      "input": {
+        "category": "stop",
+        "text": "整理 kubectl、helm 等等工具的差異。"
+      },
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "text",
+      "id": "T05",
+      "input": {
+        "category": "confirm",
+        "text": "繼續"
+      },
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "text",
+      "id": "T06",
+      "input": {
+        "category": "confirm",
+        "text": "可以說明為什麼嗎？"
+      },
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "group": "text",
+      "id": "T07",
+      "input": {
+        "category": "incident",
+        "text": "服務壞了，現在連不上。"
+      },
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "text",
+      "id": "T08",
+      "input": {
+        "category": "incident",
+        "text": "請設計 rollback 演練流程，目前沒有故障。"
+      },
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "text",
+      "id": "T09",
+      "input": {
+        "category": "incident",
+        "text": "避免出事，先讀取目前設定。"
+      },
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "integration",
+      "id": "I01",
+      "input": "valid timestamped transcript produces a report",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "integration",
+      "id": "I02",
+      "input": "missing data must not produce an all-zero success report",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "integration",
+      "id": "I03",
+      "input": "mixed missing timestamps must not crash",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "group": "integration",
+      "id": "I04",
+      "input": "--since 30 excludes old messages in newly touched files",
+      "expected": false,
+      "actual": true,
+      "passed": false
+    },
+    {
+      "group": "integration",
+      "id": "I05",
+      "input": "same message/tool ID repeated should count once",
+      "expected": 1,
+      "actual": 2,
+      "passed": false
+    },
+    {
+      "group": "integration",
+      "id": "I06",
+      "input": "command-not-found cannot count as an executed infra change",
+      "expected": 0,
+      "actual": 1,
+      "passed": false
+    },
+    {
+      "group": "integration",
+      "id": "I07",
+      "input": "different cwd with same basename must remain separate",
+      "expected": 2,
+      "actual": 1,
+      "passed": false
+    },
+    {
+      "group": "integration",
+      "id": "I08",
+      "input": "explicit rejected command is excluded",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    }
+  ]
+}
