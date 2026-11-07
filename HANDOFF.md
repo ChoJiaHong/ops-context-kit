@@ -20,7 +20,7 @@
 | `round2` → `round3` → `v3-merge` | 規則集三輪評估、v3 規則（未驗證） | 已 push |
 | `thinking-models` | thinking/00–08 | 已 push |
 | `double-loop` | thinking/09 + guard.py 三輪反駁試驗（回歸測試 202 個） | 已 push |
-| **`claude-md`** | thinking/10–19 + 本檔；包含以上全部 | **最新**，已 push |
+| **`claude-md`** | thinking/10–19 + 本檔 + `evals/validate_problem.py`；包含以上全部 | **最新**，已 push |
 | `workflow` | 從 `claude-md` 的 thinking/15 分出：`/start` → `/handoff`、session 綁定任務、guard 依任務 mode／targets 把關（回歸測試 213 個） | 已 push；沒有 thinking/16–19 |
 
 檢查指令：`python3 evals/guard_test.py`、`python3 template/tools/check_kit.py`。
@@ -49,7 +49,7 @@
 
 ## 建議的下一步
 
-1. **先用使用者的實際資料驗證問題**：請使用者在他真實的工作區跑 `/insights`，或用 `evals/mine_sessions.py` 分析對話紀錄。這個雲端 session 碰不到他的電腦。
+1. **先用使用者的實際資料驗證問題**（使用者 11-07 選了這項，進行中）：已寫好 `evals/validate_problem.py`，等使用者在自己電腦跑完、上傳 `problem-signals.md`。它分別數出 A（使用者說過的痛點）和 B（18 的推論）的訊號，只輸出彙總數字和遮罩過的摘錄。`mine_sessions.py` 不適合做這件事：它是挑評估案例用的，只輸出第一句需求和難度分數，量不到糾正、逐步確認、同時開幾個 session、出事前有沒有 AI 改過 infra。`/insights` 最多看 50 個 session，平行用量大時只涵蓋幾天，可當補充。拿到結果後，判讀交給沒看過 18 推論的 agent（避免自己評自己）。這個雲端 session 碰不到使用者的電腦。
 2. TRUTH.md 改成「只留查不到的事實」，其他現查或從 IaC 產生。
 3. infra 工作區關掉自動記憶，教訓走 `lessons/inbox.md`（`workflow` 分支）。
 4. 在原模型的主場測它（[16](thinking/16-model-selection.md) 的實驗設計）：只有雙向迴圈 vs 原模型完整內容，比較找出的方案查證後是否真的勝過現有工具。
@@ -61,7 +61,7 @@
 - **只在 AI 工具圈子找現有解法**：要同時查使用者所在領域（infra）自己的成熟做法（19）。
 - **資源只確認存在、沒確認能用**（19）。
 - **誤解需求就動手**：使用者說「做出一個工作流」，其實是要「用模型找問題、做出比現有更好的工具」。不確定時先確認，或先問「你要的產出是什麼」。
-- **工具面**：派子 agent 時，要求「寫出推理過程」的提示曾被安全機制擋下，換成只要結果的寫法；WebFetch 的授權提示有時沒人回應，改用搜尋或 `git clone`。
+- **工具面**：派子 agent 時，要求「寫出推理過程」的提示曾被安全機制擋下，換成只要結果的寫法；WebFetch 的授權提示有時沒人回應，改用搜尋或 `git clone`。11-07 的 session 裡，直接執行 clone 下來的程式（`guard_test.py`、`check_kit.py`）被權限擋下，沒驗證測試現況；自己寫的程式可以跑。
 
 ## commit 署名
 
