@@ -56,6 +56,8 @@
 | [23-data/](23-data/) | 6 月前的 GitHub issue 資料、提示、作答、查證結果 |
 | [24-open-problems.md](24-open-problems.md) | 找出現在無解或沒有完美解的問題：250 則仍開著的 issue 篩成 29 類，兩組 agent 獨立查證。沒有一類完全無解；28 類兩組都判「沒有完美解」，其中 9 類只有小工具、核心缺口還在 |
 | [24-data/](24-data/) | 候選 issue、分類與查證結果 |
+| [25-open-problem-solutions.md](25-open-problem-solutions.md) | 對 24 的 9 類「核心缺口還在」的問題提出新解：直接做 vs 原模型，作答前寫好需求清單、盲評（進行中） |
+| [25-data/](25-data/) | 題目、需求清單、提示、作答、評分 |
 | [22-validation-guide.md](22-validation-guide.md) | 驗證問題界定的純 MD 指引，取代已撤掉的程式：關鍵字只找候選、由執行的 AI 讀上下文判斷，納入 20 找到的偏差，附抽樣核對；交給沒看過 18 的 agent 判讀 |
 
 ## 三個版本怎麼搭配
