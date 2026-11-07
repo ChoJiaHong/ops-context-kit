@@ -1,0 +1,806 @@
+[
+ {
+  "problem": "P1",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Wire-level proxy with alias substitution covers scripts, subagents and encodings without blocking local calls."
+ },
+ {
+  "problem": "P1",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Wire-level proxy with alias substitution covers scripts, subagents and encodings without blocking local calls."
+ },
+ {
+  "problem": "P1",
+  "solution": "S03",
+  "items": {
+   "R1": 1,
+   "R2": 0.5,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Wire-level proxy with alias substitution; stripping the email from model context is only optional."
+ },
+ {
+  "problem": "P1",
+  "solution": "S04",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Wire-level proxy with alias substitution covers scripts, subagents and encodings without blocking local calls."
+ },
+ {
+  "problem": "P1",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 0,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Wire-level alias proxy, but model-API traffic is passed untouched so the email stays in model context."
+ },
+ {
+  "problem": "P1",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Wire-level proxy with alias substitution covers scripts, subagents and encodings without blocking local calls."
+ },
+ {
+  "problem": "P2",
+  "solution": "S01",
+  "items": {
+   "R1": 0.5,
+   "R2": 0.5,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Mock-model conformance runner in CI catches regressions and generates minimal shims, but fixes only what hooks can reach."
+ },
+ {
+  "problem": "P2",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "partial",
+  "reason": "Parser-based user-level hook plus conformance suite; ExitPlanMode, mobile prompts and Gemini policy loading still need the vendor."
+ },
+ {
+  "problem": "P2",
+  "solution": "S03",
+  "items": {
+   "R1": 0.5,
+   "R2": 0.5,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "partial",
+  "reason": "Conformance tests against the real CLI detect drift and regressions, but vendor-controlled prompts stay unfixed."
+ },
+ {
+  "problem": "P2",
+  "solution": "S04",
+  "items": {
+   "R1": 0.5,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "partial",
+  "reason": "Rule-derived variant cases (git -C, quoting, subagent, bypass) detect mismatches; unfixable ones need the vendor."
+ },
+ {
+  "problem": "P2",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "partial",
+  "reason": "Single policy compiled per agent with parser hook and conformance CI; vendor-only prompts and Gemini policy loading remain."
+ },
+ {
+  "problem": "P2",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "partial",
+  "reason": "tree-sitter normalising hook plus probe-corpus conformance tests; defects like ExitPlanMode need the vendor."
+ },
+ {
+  "problem": "P3",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Runs the agent in the org's own CI via ticket/MR triggers and pushes MRs in the native forge, covering self-hosted editions."
+ },
+ {
+  "problem": "P3",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Runs the agent in the org's own CI via ticket/MR triggers and pushes MRs in the native forge, covering self-hosted editions."
+ },
+ {
+  "problem": "P3",
+  "solution": "S03",
+  "items": {
+   "R1": 0.5,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "GitHub shadow mirror lets GitHub-only agents work and the bridge pushes MRs back to the origin, but a GitHub dependency and mirror remain."
+ },
+ {
+  "problem": "P3",
+  "solution": "S04",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Runs the agent in the org's own CI via ticket/MR triggers and pushes MRs in the native forge, covering self-hosted editions."
+ },
+ {
+  "problem": "P3",
+  "solution": "S05",
+  "items": {
+   "R1": 0.5,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "GitHub shadow mirror lets GitHub-only agents work and the bridge pushes MRs back to the origin, but a GitHub dependency and mirror remain."
+ },
+ {
+  "problem": "P3",
+  "solution": "S06",
+  "items": {
+   "R1": 0.5,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "GitHub shadow mirror lets GitHub-only agents work and the bridge pushes MRs back to the origin, but a GitHub dependency and mirror remain."
+ },
+ {
+  "problem": "P4",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Log and process-state watcher alerts on completion, approval waits and errors without hooks; timestamps come from a separate view or statusline."
+ },
+ {
+  "problem": "P4",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Log and process-state watcher alerts on completion, approval waits and errors without hooks; timestamps come from a separate view or statusline."
+ },
+ {
+  "problem": "P4",
+  "solution": "S03",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Log and process-state watcher alerts on completion, approval waits and errors without hooks; timestamps come from a separate view or statusline."
+ },
+ {
+  "problem": "P4",
+  "solution": "S04",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Log and process-state watcher alerts on completion, approval waits and errors without hooks; timestamps come from a separate view or statusline."
+ },
+ {
+  "problem": "P4",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Log and process-state watcher alerts on completion, approval waits and errors without hooks; timestamps come from a separate view or statusline."
+ },
+ {
+  "problem": "P4",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Log and process-state watcher alerts on completion, approval waits and errors without hooks; timestamps come from a separate view or statusline."
+ },
+ {
+  "problem": "P5",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Effect-based shell supervision via snapshot diff enforces path rules, shows diffs and offers rewind for any write route, with reads left to the OS sandbox."
+ },
+ {
+  "problem": "P5",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Effect-based shell supervision via snapshot diff enforces path rules, shows diffs and offers rewind for any write route, with reads left to the OS sandbox."
+ },
+ {
+  "problem": "P5",
+  "solution": "S03",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Effect-based shell supervision via snapshot diff enforces path rules, shows diffs and offers rewind for any write route, with reads left to the OS sandbox."
+ },
+ {
+  "problem": "P5",
+  "solution": "S04",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Effect-based shell supervision via snapshot diff enforces path rules, shows diffs and offers rewind for any write route, with reads left to the OS sandbox."
+ },
+ {
+  "problem": "P5",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Effect-based shell supervision via snapshot diff enforces path rules, shows diffs and offers rewind for any write route, with reads left to the OS sandbox."
+ },
+ {
+  "problem": "P5",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Effect-based shell supervision via snapshot diff enforces path rules, shows diffs and offers rewind for any write route, with reads left to the OS sandbox."
+ },
+ {
+  "problem": "P6",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 0,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "partial",
+  "reason": "Broker behind one network secret covers most gaps but inherits the Team/CMEK availability gap and is AWS-centric for cloud identity."
+ },
+ {
+  "problem": "P6",
+  "solution": "S02",
+  "items": {
+   "R1": 0.5,
+   "R2": 1,
+   "R3": 1,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Broker with repo-push attestation bootstraps Team/CMEK accounts and issues short-lived credentials, which do enter the VM."
+ },
+ {
+  "problem": "P6",
+  "solution": "S03",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Broker with GitHub attestation, OIDC issuer and protocol tunnels; WebSocket through the vendor proxy is unverified."
+ },
+ {
+  "problem": "P6",
+  "solution": "S04",
+  "items": {
+   "R1": 0.5,
+   "R2": 1,
+   "R3": 1,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Attestation-bootstrapped broker issuing short-lived credentials into the VM, which is admitted to expose them briefly."
+ },
+ {
+  "problem": "P6",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 0.5,
+   "R5": 0.5,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "partial",
+  "reason": "Single-network-secret broker covers the gaps but depends on network secrets, which Team accounts lack, with only a weaker env-token fallback."
+ },
+ {
+  "problem": "P6",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Broker bootstrapped by network secret or phone-approved device code covers Team, CMEK and self-hosted, with live rotation."
+ },
+ {
+  "problem": "P7",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Forge app plus CI turns independent per-repo PRs into a linked, jointly tested, ordered set with policy, but does not change the session itself."
+ },
+ {
+  "problem": "P7",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 1,
+   "R5": 0
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Stop-hook manifest with Depends-On links, sibling-branch CI and an order check, but only a tracking issue for review and no teleport."
+ },
+ {
+  "problem": "P7",
+  "solution": "S03",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Forge app plus CI turns independent per-repo PRs into a linked, jointly tested, ordered set with policy, but does not change the session itself."
+ },
+ {
+  "problem": "P7",
+  "solution": "S04",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 1,
+   "R5": 0
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Depends-On footers, speculative CI and ordered merge with an umbrella status view, but no combined diff and no teleport."
+ },
+ {
+  "problem": "P7",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Forge app plus CI turns independent per-repo PRs into a linked, jointly tested, ordered set with policy, but does not change the session itself."
+ },
+ {
+  "problem": "P7",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 0.5,
+   "R5": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Agent-written manifest with dependency-aware CI checks and a local checkout command, but no merge enforcement or combined review view."
+ },
+ {
+  "problem": "P8",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 0.5,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "OS wake timer plus headless resume from structured limit data covers weekly resets, sleep, closed terminals and prompt stalls."
+ },
+ {
+  "problem": "P8",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "OS wake timer plus headless resume from structured limit data covers weekly resets, sleep, closed terminals and prompt stalls."
+ },
+ {
+  "problem": "P8",
+  "solution": "S03",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "OS wake timer plus headless resume from structured limit data covers weekly resets, sleep, closed terminals and prompt stalls."
+ },
+ {
+  "problem": "P8",
+  "solution": "S04",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "OS wake timer plus headless resume from structured limit data covers weekly resets, sleep, closed terminals and prompt stalls."
+ },
+ {
+  "problem": "P8",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 0.5,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "Supervisor with wake-resume and ntfy alerts; interactive and Remote Control sessions still need the vendor."
+ },
+ {
+  "problem": "P8",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": false,
+  "feasible": "yes",
+  "reason": "OS wake timer plus headless resume from structured limit data covers weekly resets, sleep, closed terminals and prompt stalls."
+ },
+ {
+  "problem": "P9",
+  "solution": "S01",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": true,
+  "feasible": "yes",
+  "reason": "Queue file with a Stop-hook dispatcher is the claudeq-style hook queue, with added done-check gating and nothing passing through the chat box."
+ },
+ {
+  "problem": "P9",
+  "solution": "S02",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": true,
+  "feasible": "yes",
+  "reason": "Queue file with a Stop-hook dispatcher is the claudeq-style hook queue, with added done-check gating and nothing passing through the chat box."
+ },
+ {
+  "problem": "P9",
+  "solution": "S03",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 1
+  },
+  "existing": true,
+  "feasible": "yes",
+  "reason": "Queue file with a Stop-hook dispatcher is the claudeq-style hook queue, with added done-check gating and nothing passing through the chat box."
+ },
+ {
+  "problem": "P9",
+  "solution": "S04",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": true,
+  "feasible": "yes",
+  "reason": "Queue file with a Stop-hook dispatcher is the claudeq-style hook queue, with added done-check gating and nothing passing through the chat box."
+ },
+ {
+  "problem": "P9",
+  "solution": "S05",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 1,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": true,
+  "feasible": "yes",
+  "reason": "Queue file with a Stop-hook dispatcher is the claudeq-style hook queue, with added done-check gating and nothing passing through the chat box."
+ },
+ {
+  "problem": "P9",
+  "solution": "S06",
+  "items": {
+   "R1": 1,
+   "R2": 1,
+   "R3": 1,
+   "R4": 0.5,
+   "R5": 1,
+   "R6": 0.5
+  },
+  "existing": true,
+  "feasible": "yes",
+  "reason": "Queue file with a Stop-hook dispatcher is the claudeq-style hook queue, with added done-check gating and nothing passing through the chat box."
+ }
+]
