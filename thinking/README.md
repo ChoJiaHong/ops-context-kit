@@ -54,6 +54,8 @@
 | [21-data/](21-data/) | 題卡、分組提示、作答、評審包、評審結果與對照表 |
 | [23-community-backtest.md](23-community-backtest.md) | 社群回測：用 6 月前的 GitHub issue 找「問題＋新解法」，再用 7 月後的 GitHub 逐組查證。直接做和原模型一樣；依一致標準重查後，兩組的合格新解都是 0：所有點子在 6 月前都已有小工具。原模型多花約 25% 時間 |
 | [23-data/](23-data/) | 6 月前的 GitHub issue 資料、提示、作答、查證結果 |
+| [24-open-problems.md](24-open-problems.md) | 找出現在無解或沒有完美解的問題：GitHub 上仍開著、反應最多的 issue，篩選後每類由兩個 agent 獨立查證（進行中） |
+| [24-data/](24-data/) | 候選 issue、分類與查證結果 |
 | [22-validation-guide.md](22-validation-guide.md) | 驗證問題界定的純 MD 指引，取代已撤掉的程式：關鍵字只找候選、由執行的 AI 讀上下文判斷，納入 20 找到的偏差，附抽樣核對；交給沒看過 18 的 agent 判讀 |
 
 ## 三個版本怎麼搭配
