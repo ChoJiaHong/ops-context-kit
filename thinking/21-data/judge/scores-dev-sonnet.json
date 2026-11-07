@@ -1,0 +1,326 @@
+[
+ {
+  "case": "cc-projects",
+  "set": "S1",
+  "best": 1,
+  "best_proposal": "P1",
+  "p1": 1,
+  "alt": false,
+  "reason": "Dispatches per-task sessions on branches but no result verification before merge in the same proposal."
+ },
+ {
+  "case": "cc-projects",
+  "set": "S2",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Planner dispatches per-task sessions on branches, tracks verifying/merged states."
+ },
+ {
+  "case": "cc-projects",
+  "set": "S3",
+  "best": 1,
+  "best_proposal": "P1",
+  "p1": 1,
+  "alt": false,
+  "reason": "Dispatcher with per-task branches but no checking or merging in P1."
+ },
+ {
+  "case": "cc-projects",
+  "set": "S4",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Planner, per-task branch sessions, reconciler verifies and merges."
+ },
+ {
+  "case": "cc-projects",
+  "set": "S5",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Coordinator dispatches branch sessions, watcher verifies and merges."
+ },
+ {
+  "case": "cc-projects",
+  "set": "S6",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Planner dispatches branch sessions, verifies and merges to integration."
+ },
+ {
+  "case": "honest-arch-diagrams",
+  "set": "S1",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Evidence-carrying graph from sources plus verify gate failing unevidenced elements."
+ },
+ {
+  "case": "honest-arch-diagrams",
+  "set": "S2",
+  "best": 2,
+  "best_proposal": "P2",
+  "p1": 1,
+  "alt": false,
+  "reason": "P2 gate rejects elements not in the evidence IR; P1 has IR without gate."
+ },
+ {
+  "case": "honest-arch-diagrams",
+  "set": "S3",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Evidence graph with tiers and verify failing missing evidence."
+ },
+ {
+  "case": "honest-arch-diagrams",
+  "set": "S4",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Evidence-cited graph where nothing without evidence is drawn, with tiers."
+ },
+ {
+  "case": "honest-arch-diagrams",
+  "set": "S5",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Evidence graph with tiers; nothing without evidence emitted."
+ },
+ {
+  "case": "honest-arch-diagrams",
+  "set": "S6",
+  "best": 2,
+  "best_proposal": "P2",
+  "p1": 1,
+  "alt": false,
+  "reason": "P2 grounding checker against evidence graph; P1 has graph without gate."
+ },
+ {
+  "case": "squadra",
+  "set": "S1",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Hash-chained ledger with tree-bound tests and non-author review gate."
+ },
+ {
+  "case": "squadra",
+  "set": "S2",
+  "best": 2,
+  "best_proposal": "P3",
+  "p1": 1,
+  "alt": false,
+  "reason": "P3 tree-bound non-author cross-vendor review with ledger; P1 lacks author separation."
+ },
+ {
+  "case": "squadra",
+  "set": "S3",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Shared ledger, tree-hash tests, non-author review gate."
+ },
+ {
+  "case": "squadra",
+  "set": "S4",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Ledger with assign/ack, tree-hash test, non-author review, ship-check."
+ },
+ {
+  "case": "squadra",
+  "set": "S5",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Shared ledger with hash-bound test/review and author-differs gate."
+ },
+ {
+  "case": "squadra",
+  "set": "S6",
+  "best": 2,
+  "best_proposal": "P3",
+  "p1": 1,
+  "alt": false,
+  "reason": "P3 gate needs same-tree test and different-harness review; P1 lacks reviewer separation."
+ },
+ {
+  "case": "tokeneconomizer",
+  "set": "S1",
+  "best": 1,
+  "best_proposal": "P2",
+  "p1": 0,
+  "alt": false,
+  "reason": "P2 prunes tools unused in this repo from transcripts; P1 is generic loop."
+ },
+ {
+  "case": "tokeneconomizer",
+  "set": "S2",
+  "best": 1,
+  "best_proposal": "P1",
+  "p1": 1,
+  "alt": false,
+  "reason": "Disables MCP servers unused across sessions, reversible."
+ },
+ {
+  "case": "tokeneconomizer",
+  "set": "S3",
+  "best": 2,
+  "best_proposal": "P3",
+  "p1": 1,
+  "alt": false,
+  "reason": "P3 prunes unused tools and keeps cross-session rediscovered facts with staleness drop."
+ },
+ {
+  "case": "tokeneconomizer",
+  "set": "S4",
+  "best": 1,
+  "best_proposal": "P2",
+  "p1": 0,
+  "alt": false,
+  "reason": "P2 prunes unused tools from transcript usage; P1 generic."
+ },
+ {
+  "case": "tokeneconomizer",
+  "set": "S5",
+  "best": 1,
+  "best_proposal": "P3",
+  "p1": 0,
+  "alt": false,
+  "reason": "P3 prunes unused tools with auto-restore; P1 generic."
+ },
+ {
+  "case": "tokeneconomizer",
+  "set": "S6",
+  "best": 1,
+  "best_proposal": "P1",
+  "p1": 1,
+  "alt": false,
+  "reason": "Disables tools unused over N sessions with revert."
+ },
+ {
+  "case": "transcripto",
+  "set": "S1",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Reads existing transcripts and classifies failures from tool results."
+ },
+ {
+  "case": "transcripto",
+  "set": "S2",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Reads existing transcripts and classifies failures from tool results."
+ },
+ {
+  "case": "transcripto",
+  "set": "S3",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Reads existing transcripts and classifies failures from tool results."
+ },
+ {
+  "case": "transcripto",
+  "set": "S4",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Reads existing transcripts and classifies failures from tool results."
+ },
+ {
+  "case": "transcripto",
+  "set": "S5",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Reads existing transcripts and classifies failures from tool results."
+ },
+ {
+  "case": "transcripto",
+  "set": "S6",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Reads existing transcripts and classifies failures from tool results."
+ },
+ {
+  "case": "unlazy",
+  "set": "S1",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Approved executable check contract with Stop hook blocking completion."
+ },
+ {
+  "case": "unlazy",
+  "set": "S2",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Approved executable check contract with Stop hook blocking completion."
+ },
+ {
+  "case": "unlazy",
+  "set": "S3",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Approved executable check contract with Stop hook blocking completion."
+ },
+ {
+  "case": "unlazy",
+  "set": "S4",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Approved executable check contract with Stop hook blocking completion."
+ },
+ {
+  "case": "unlazy",
+  "set": "S5",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Approved executable check contract with Stop hook blocking completion."
+ },
+ {
+  "case": "unlazy",
+  "set": "S6",
+  "best": 2,
+  "best_proposal": "P1",
+  "p1": 2,
+  "alt": false,
+  "reason": "Approved executable check contract with Stop hook blocking completion."
+ }
+]
