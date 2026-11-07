@@ -23,7 +23,7 @@
     "depends_on_unknown": false,
     "obviousness": "med",
     "relevance": "high",
-    "verdict": "keep - consequence preview plus per-command insurance is a distinctive, checkable mechanism directly about unsafe changes."
+    "verdict": "drop: answering this case repeatedly stopped by a safety classifier (3 of 3 attempts that included it); excluded from all arms before any scoring"
   },
   {
     "id": "agent-replay",

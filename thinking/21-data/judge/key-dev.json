@@ -1,0 +1,50 @@
+{
+  "cc-projects": {
+    "S1": "D2-dev",
+    "S2": "A1-dev",
+    "S3": "D1-dev",
+    "S4": "B2-dev",
+    "S5": "B1-dev",
+    "S6": "A2-dev"
+  },
+  "honest-arch-diagrams": {
+    "S1": "B2-dev",
+    "S2": "D2-dev",
+    "S3": "B1-dev",
+    "S4": "D1-dev",
+    "S5": "A2-dev",
+    "S6": "A1-dev"
+  },
+  "squadra": {
+    "S1": "A1-dev",
+    "S2": "A2-dev",
+    "S3": "D2-dev",
+    "S4": "B2-dev",
+    "S5": "B1-dev",
+    "S6": "D1-dev"
+  },
+  "tokeneconomizer": {
+    "S1": "A2-dev",
+    "S2": "B2-dev",
+    "S3": "A1-dev",
+    "S4": "D2-dev",
+    "S5": "B1-dev",
+    "S6": "D1-dev"
+  },
+  "transcripto": {
+    "S1": "A1-dev",
+    "S2": "A2-dev",
+    "S3": "D1-dev",
+    "S4": "B1-dev",
+    "S5": "B2-dev",
+    "S6": "D2-dev"
+  },
+  "unlazy": {
+    "S1": "A1-dev",
+    "S2": "B2-dev",
+    "S3": "D2-dev",
+    "S4": "B1-dev",
+    "S5": "D1-dev",
+    "S6": "A2-dev"
+  }
+}

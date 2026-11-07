@@ -82,7 +82,7 @@ def packets(name, runs):
 
 
 def arm(run):
-    return run.split("-")[0]
+    return re.match(r"[A-Za-z]+", run).group(0)
 
 
 def score(name):

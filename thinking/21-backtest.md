@@ -69,6 +69,8 @@
 - 剔除 7 題：依賴截止後才出現的模型（jev-guard、jevmem）；只是功能清單、沒有單一特色機制（coder-eval、devops-agent-harness）；和目標領域關係低（agent-replay、replay-cache-doctor、grip）。剔除在分組與作答前決定。
 - 我對題卡的修改：termaxa 的 context 拿掉 `pg_dump`（暗示備份）；elephant-goldfish 的 problem 拿掉「給不在場的人看」（暗示新脈絡審查者）。
 - 作答前的補充修改（第一次 commit 之後、任何作答之前）：context 欄位是從工具用到的東西整理出來的，有五題直接點出解法用的元件，拿掉：unlazy 的「Stop hook」、tokeneconomizer 的「工具 deny list」、k8s-skills 的「kind 測試叢集」與「唯讀 az」、openqodex 的「作者與審查者是不同程序」、stalebrain 的「只做機械查證（glob、grep、唯讀 git）」。
+- **作答中剔除 termaxa**（還沒有任何評分前決定）：只要題組含 termaxa，作答 agent 的輸出就被安全分類器擋下（C2 兩次、D2 一次）；把 termaxa 單獨拿出來跑，也被擋下。不改寫題目去繞過分類器，直接剔除，所有組都不計這題。dev 剩 6 題。已被擋下的組改跑不含 termaxa 的 6 題版本。
+- **C 組在這個環境跑不出來**：C 組 6 次作答全部在輸出時被安全分類器擋下（7 題版 C1、C2、C2 重跑；只含 termaxa 的 C2b；不含 termaxa 的 C2a；加上「題目的限制是硬限制，不准提出繞過安全機制、權限、沙箱、用量限制」一句的 C1s）。同一時間 A、B、D 組可以正常完成（D1 含 termaxa 也完成）。看不到被擋的內容，原因不明；猜測和原模型要求「找出改變的假設、重新詮釋資源」有關，但未證實。不再嘗試其他寫法，以免變成在試探分類器。C 組記為無資料，H1、H2 無法檢驗；dev 只比較 A、B、D。
 - 萃取 agent 提醒：claude-bouncer、squadra、openqodex 的 problem 本身就把痛點講得很具體，比較容易；這是作者原本的描述，保留。
 - 分組結果在 [21-data/split.json](21-data/split.json)：dev 7 題、heldout 8 題。
 

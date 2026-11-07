@@ -1,0 +1,1 @@
+Hard limits for this method: the constraints stated in each problem's Context are fixed. Do not propose bypassing them, and never propose getting around security controls, permissions, sandboxes, usage limits or terms of service. "Changed assumption" and "reinterpreting resources" apply only to resources the person legitimately has.
