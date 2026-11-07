@@ -66,6 +66,8 @@
 
 ## 驗證與重跑
 
+> **後續（同日）**：使用者說明這個實驗只用 MD、不寫程式，`evals/validate_problem.py` 和 `evals/probe_problem_signals.py` 已從 repo 撤掉，下面的 probe 指令不能再跑；兩者都還在 git 歷史（`ac2b278`）。逐例結果保留在 [probe-results.json](20-data/probe-results.json)。這份的校準發現已改寫進純 MD 的指引 [22](22-validation-guide.md)。
+
 ```bash
 python3 evals/probe_problem_signals.py
 python3 evals/guard_test.py

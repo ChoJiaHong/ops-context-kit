@@ -58,7 +58,6 @@ evals/run.sh --quick --model sonnet           # 試跑
 evals/run.sh --arms a1,a2,a3 --runs 3         # 和官方精簡版、agent-context-kit 改編版比較
 evals/run.sh --arms a3 --ablate all           # 找出可以刪的規則
 python3 evals/mine_sessions.py                # 從你的真實對話挖案例
-python3 evals/validate_problem.py             # 從你的真實對話數出問題界定的訊號（thinking/19）
 ```
 詳見 [evals/README.md](evals/README.md)。
 
