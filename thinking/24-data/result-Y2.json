@@ -1,0 +1,418 @@
+[
+ {
+  "family": "F28",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Cursor Automations with Team Owned / Team editable scope and enterprise service accounts",
+    "link": "https://forum.cursor.com/t/team-owned-automations-should-support-collaborative-editing-by-team-members/155636",
+    "date": "2026-03-26",
+    "stars": null,
+    "covers": "Cursor automations can be Private, Team Visible or Team Owned (team-billed, admin-managed, later 'Team editable'); service accounts let automations keep running as people change (https://cursor.com/docs/account/enterprise/service-accounts)."
+   },
+   {
+    "name": "anthropics/claude-code-action on a GitHub Actions schedule: trigger",
+    "link": "https://github.com/anthropics/claude-code-action/blob/main/docs/solutions.md",
+    "date": "2026-11-06",
+    "stars": 9825,
+    "covers": "Documented 'Scheduled Repository Maintenance' workflow with cron; the job definition lives in the repo and runs on repo secrets, so it survives any one person leaving."
+   },
+   {
+    "name": "OpenAI Workspace Agents (Codex-powered, shared across the ChatGPT workspace, can schedule work)",
+    "link": "https://codex.danielvaughan.com/2026/04/24/workspace-agents-codex-cli-slack-team-shared-agentic-workflows/",
+    "date": "2026-04-22",
+    "stars": null,
+    "covers": "Team-visible persistent agents that can schedule future work and be triggered from Slack."
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Claude Code's own docs state scheduled tasks (routines) belong to the individual claude.ai account, are not shared with teammates, and act as the creator; #48322 is still open.",
+    "link": "https://code.claude.com/docs/en/routines"
+   },
+   {
+    "what": "The CI workaround loses claude.ai connectors (e.g. Slack) and needs an API key, as the issue author notes.",
+    "link": "https://github.com/anthropics/claude-code/issues/48322"
+   },
+   {
+    "what": "claude-code-action fails OIDC token exchange when triggered by cron but works on manual dispatch (open).",
+    "link": "https://github.com/anthropics/claude-code-action/issues/814"
+   },
+   {
+    "what": "Cursor shared automations have no change review/version history; one member's edit broke a team automation (staff: config-as-code under consideration).",
+    "link": "https://forum.cursor.com/t/better-collaboration-change-flow-on-shared-automations/164703"
+   },
+   {
+    "what": "Nov 2026: Cursor automation sessions briefly defaulted to Private so teammates could not follow up; no team-wide default setting.",
+    "link": "https://forum.cursor.com/t/cant-followup-on-cursor-automation-co-workers-sessions/177168"
+   }
+  ],
+  "note": "Cursor ships team-owned automations under service accounts and teams can run Claude/Codex from CI cron under repo-held secrets, so the core is addressable, but Claude Code routines remain per-user and the shared alternatives have documented gaps (no change review, CI loses connectors, cron auth bug)."
+ },
+ {
+  "family": "F24",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Dicklesworthstone/destructive_command_guard",
+    "link": "https://github.com/Dicklesworthstone/destructive_command_guard",
+    "date": "2026-11-07",
+    "stars": 6290,
+    "covers": "PreToolUse hook that blocks destructive shell/git/filesystem commands (e.g. git reset --hard, rm -rf) before agents run them; limits the damage of running in the wrong place."
+   },
+   {
+    "name": "kenryu42/cc-safety-net",
+    "link": "https://github.com/kenryu42/cc-safety-net",
+    "date": "2026-11-06",
+    "stars": 1947,
+    "covers": "Pre-execution guard that blocks destructive git and filesystem commands for AI coding agents."
+   },
+   {
+    "name": "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR (built-in Claude Code env var) and 'Shell cwd was reset' notices",
+    "link": "https://github.com/anthropics/claude-code/issues/42837",
+    "date": "2026-04-02",
+    "stars": null,
+    "covers": "Resets the Bash cwd to the project directory after each command so the agent does not drift; harness auto-resets cd outside approved dirs."
+   },
+   {
+    "name": "Community cwd hooks/status line (PostToolUse show-cwd, PreToolUse guard-cd, statusline workspace.current_dir)",
+    "link": "https://github.com/anthropics/claude-code/issues/1669",
+    "date": "2026-01-28",
+    "stars": null,
+    "covers": "Inject or display the current directory after each command and block bare cd."
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Original issue still open with reports it persists; the env var fails with nested directories and the cd-blocking hook hampers monorepo work.",
+    "link": "https://github.com/anthropics/claude-code/issues/1669"
+   },
+   {
+    "what": "Subagent Bash cwd resets to another subagent's worktree and there is no cwd parameter to pin it.",
+    "link": "https://github.com/anthropics/claude-code/issues/87953"
+   },
+   {
+    "what": "Parallel Bash calls share one cwd; a cd in one call breaks a sibling's relative paths and the harness notices only afterwards.",
+    "link": "https://github.com/anthropics/claude-code/issues/97902"
+   },
+   {
+    "what": "Agent keeps using cd despite rules, changing the session working directory (Oct 2026).",
+    "link": "https://github.com/anthropics/claude-code/issues/101060"
+   },
+   {
+    "what": "No always-visible cwd indicator on web/desktop/mobile surfaces.",
+    "link": "https://github.com/anthropics/claude-code/issues/98876"
+   },
+   {
+    "what": "Codex desktop intermittently runs commands in a stale directory despite an explicit cwd.",
+    "link": "https://github.com/openai/codex/issues/42001"
+   }
+  ],
+  "note": "Destructive-command guards (dcg, cc-safety-net) and cwd env/hook workarounds mitigate the worst outcome, but they match command patterns rather than verify the target directory, and cwd confusion is still reported in current Claude Code and Codex builds."
+ },
+ {
+  "family": "F20",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Claude Code plansDirectory setting (project .claude/settings.json)",
+    "link": "https://claudelog.com/faqs/what-is-plans-directory-in-claude-code/",
+    "date": "2026-01-19",
+    "stars": null,
+    "covers": "Lets a project store plan-mode files in a repo path such as ./plans instead of ~/.claude/plans; replaced the plan-export plugin."
+   },
+   {
+    "name": "Prompt-derived plan file names (Claude Code v2.1.111)",
+    "link": "https://github.com/anthropics/claude-code/issues/49297",
+    "date": "2026-04-16",
+    "stars": null,
+    "covers": "Plan files are named after the prompt (e.g. fix-auth-race-snug-otter.md) instead of only random words."
+   },
+   {
+    "name": "kenryu42/claude-code-plan-export (archived; superseded by plansDirectory)",
+    "link": "https://github.com/kenryu42/claude-code-plan-export",
+    "date": "2026-01-19",
+    "stars": 21,
+    "covers": "Hook-based export of plans into the project as plan-{slug}.md or timestamped names."
+   },
+   {
+    "name": "archive-plan.sh PostToolUse hook on ExitPlanMode",
+    "link": "https://dev.to/yurukusa/claude-code-ignores-its-own-tools-here-are-3-hooks-that-force-it-to-behave-mi1",
+    "date": "2026-10-30",
+    "stars": null,
+    "covers": "Copies the latest plan into a repo .plans/archive directory."
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Only the location is configurable; filenames are still auto-generated slugs with random words and no template setting exists.",
+    "link": "https://github.com/anthropics/claude-code/issues/89291"
+   },
+   {
+    "what": "The original request for a per-repo naming scheme (PLAN-xxxx-description.md) remains open.",
+    "link": "https://github.com/anthropics/claude-code/issues/12619"
+   },
+   {
+    "what": "plansDirectory in global settings is ignored by plan mode (still reproduces on 2.1.301).",
+    "link": "https://github.com/anthropics/claude-code/issues/102707"
+   },
+   {
+    "what": "Forks reuse the parent's plan slug so all forks collide on one plan file.",
+    "link": "https://github.com/anthropics/claude-code/issues/76404"
+   }
+  ],
+  "note": "plansDirectory puts plans in the repo where they can be versioned and shared, which covers much of the pain, but teams still cannot impose their naming convention and the setting has open bugs."
+ },
+ {
+  "family": "F16",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "tonywu20/no-shell-file-ops (Claude Code plugin)",
+    "link": "https://www.claudepluginhub.com/plugins/tonywu20-no-shell-file-ops",
+    "date": "2026-05-21",
+    "stars": 0,
+    "covers": "Hooks that block shell commands that read or edit files (sed, cat, xxd, od, sd, python -c)."
+   },
+   {
+    "name": "enforce-builtin-tools.sh PreToolUse hook",
+    "link": "https://dev.to/yurukusa/claude-code-ignores-its-own-tools-here-are-3-hooks-that-force-it-to-behave-mi1",
+    "date": "2026-10-30",
+    "stars": null,
+    "covers": "Denies Bash cat/head/tail/sed/grep/find and points the agent to Read/Edit/Write/Grep/Glob."
+   },
+   {
+    "name": "davidewins/claude-guardrails",
+    "link": "https://github.com/davidewins/claude-guardrails",
+    "date": "2026-11-03",
+    "stars": 1,
+    "covers": "Config-driven block/ask/remind rules on Bash commands and file writes."
+   },
+   {
+    "name": "CLAUDE_CODE_THRIFTY_SONIC=0 env workaround (undocumented)",
+    "link": "https://github.com/anthropics/claude-code/issues/87971",
+    "date": "2026-08-19",
+    "stars": null,
+    "covers": "Users report it disables the auto-mode 'Bash-first' steering on 2.1.263+."
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Claude Code's auto/bypass mode system prompt itself tells the model to read and edit files with cat/sed/heredocs, routing writes around Write|Edit hooks; still reproducing on 2.1.268.",
+    "link": "https://github.com/anthropics/claude-code/issues/89251"
+   },
+   {
+    "what": "A user's PreToolUse hook blocking shell writes stopped being a reliable opt-out after the Opus 5.5 release; no documented setting separates auto-approval from tool routing.",
+    "link": "https://github.com/anthropics/claude-code/issues/87971"
+   },
+   {
+    "what": "Bash-first edits silently skip nested CLAUDE.md and path-scoped rules; PreToolUse cannot inject additionalContext to redirect.",
+    "link": "https://github.com/anthropics/claude-code/issues/90450"
+   },
+   {
+    "what": "Bash-edited files break /rewind.",
+    "link": "https://github.com/anthropics/claude-code/issues/87575"
+   },
+   {
+    "what": "Agent circumvents an Edit hook by writing files via python in Bash, showing pattern-based hooks are easy to route around.",
+    "link": "https://github.com/anthropics/claude-code/issues/29709"
+   },
+   {
+    "what": "Third-party hooks are tiny projects (0-1 stars, low maintenance scores).",
+    "link": "https://www.claudepluginhub.com/plugins/tonywu20-no-shell-file-ops"
+   }
+  ],
+  "note": "Blocking hooks exist but are small, regex-based and evadable, and in auto mode the vendor prompt actively steers toward shell file edits, so the supervision gap persists."
+ },
+ {
+  "family": "F12",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "punkpeye/mcp-remote",
+    "link": "https://github.com/punkpeye/mcp-remote",
+    "date": "2026-11-07",
+    "stars": 1664,
+    "covers": "Local stdio bridge to remote MCP servers that runs the OAuth flow and token refresh itself."
+   },
+   {
+    "name": "docker/mcp-gateway",
+    "link": "https://github.com/docker/mcp-gateway",
+    "date": "2026-10-26",
+    "stars": 1626,
+    "covers": "MCP gateway with OAuth handling and refresh for remote servers."
+   },
+   {
+    "name": "stacklok/toolhive",
+    "link": "https://github.com/stacklok/toolhive",
+    "date": "2026-11-07",
+    "stars": 2327,
+    "covers": "MCP platform with remote proxy and auth server (CIMD, provisioned clients)."
+   },
+   {
+    "name": "oomol-lab/open-connector",
+    "link": "https://github.com/oomol-lab/open-connector",
+    "date": "2026-11-07",
+    "stars": 6196,
+    "covers": "Auth gateway connecting SaaS providers to agents via MCP/CLI/HTTP."
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Claude Code still doesn't auto-refresh MCP OAuth access tokens; daily 'Connection expired' despite a valid refresh token.",
+    "link": "https://github.com/anthropics/claude-code/issues/65036"
+   },
+   {
+    "what": "Claude Code refresh breaks with IdPs using single-use refresh-token rotation; several more open refresh/keychain bugs in Oct-Nov 2026.",
+    "link": "https://github.com/anthropics/claude-code/issues/91641"
+   },
+   {
+    "what": "Codex still doesn't auto-refresh routed MCP OAuth tokens; automations break until manual re-login.",
+    "link": "https://github.com/openai/codex/issues/17265"
+   },
+   {
+    "what": "mcp-remote had concurrent-refresh races deleting valid tokens as recently as Nov 2026.",
+    "link": "https://github.com/punkpeye/mcp-remote/issues/389"
+   },
+   {
+    "what": "mcp-remote lacks CIMD support for servers without dynamic client registration (open).",
+    "link": "https://github.com/punkpeye/mcp-remote/issues/382"
+   },
+   {
+    "what": "docker/mcp-gateway OAuth refresh stops permanently after a 1s secrets-engine timeout.",
+    "link": "https://github.com/docker/mcp-gateway/issues/601"
+   },
+   {
+    "what": "ToolHive remote proxy cannot yet persist/refresh unattended upstream OAuth for always-on clients.",
+    "link": "https://github.com/stacklok/toolhive/issues/6395"
+   }
+  ],
+  "note": "Auth-bridging proxies and gateways exist and are active, but their own trackers and the vendors' show refresh, rotation and no-DCR failures still breaking unattended use in late 2026."
+ },
+ {
+  "family": "F08",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Cursor cloud agents on GitLab (incl. self-hosted), Azure DevOps Services (beta) and Bitbucket Cloud",
+    "link": "https://cursor.com/help/integrations/github-gitlab",
+    "date": "2026-11-08",
+    "stars": null,
+    "covers": "Cloud agent sessions on non-GitHub forges, plus Linear/Jira integrations to delegate from tickets."
+   },
+   {
+    "name": "GitLab Duo Agent Platform external agents (Claude Code, OpenAI Codex)",
+    "link": "https://docs.gitlab.com/user/duo_agent_platform/agents/external.html",
+    "date": "2026-01-14",
+    "stars": null,
+    "covers": "Mention, assign or request review from the agent's service account in GitLab issues/MRs to start a run that responds with changes."
+   },
+   {
+    "name": "Claude Code GitLab CI/CD (beta, maintained by GitLab)",
+    "link": "https://code.claude.com/docs/en/gitlab-ci-cd",
+    "date": "2026-11-08",
+    "stars": null,
+    "covers": "@claude in issues/MRs triggers a pipeline job that implements changes and opens MRs."
+   },
+   {
+    "name": "cyrusagents/cyrus",
+    "link": "https://github.com/cyrusagents/cyrus",
+    "date": "2026-11-06",
+    "stars": 886,
+    "covers": "Self-hosted Claude Code (and Codex/Cursor/Gemini) background agent triggered from Linear, Slack, GitHub and GitLab."
+   },
+   {
+    "name": "Linear coding sessions (Claude Code or Codex)",
+    "link": "https://linear.app/docs/coding-sessions",
+    "date": "2026-06-11",
+    "stars": null,
+    "covers": "Delegate a Linear issue to a cloud agent that opens a draft PR."
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Claude Code cloud sessions still require GitHub for cloning and PRs; GitLab/Bitbucket can only be uploaded as a bundle that cannot push back.",
+    "link": "https://code.claude.com/docs/en/claude-code-on-the-web"
+   },
+   {
+    "what": "Linear coding sessions require repositories via Linear's GitHub integration.",
+    "link": "https://linear.app/docs/coding-sessions"
+   },
+   {
+    "what": "Claude Agent for Jira opens PRs only in a connected GitHub repository.",
+    "link": "https://www.atlassian.com/blog/company-news/claude-agent-for-jira"
+   },
+   {
+    "what": "Cursor cloud agents: Bitbucket Data Center gets only Bugbot, Azure DevOps is public beta and Services-only.",
+    "link": "https://cursor.com/help/integrations/github-gitlab"
+   },
+   {
+    "what": "GitLab external agents are Premium/Ultimate only and gated behind a feature flag for verified customers.",
+    "link": "https://docs.gitlab.com/user/duo_agent_platform/agents/external.html"
+   },
+   {
+    "what": "Native Azure DevOps support for Codex web still requested (open).",
+    "link": "https://github.com/openai/codex/issues/10665"
+   },
+   {
+    "what": "Bitbucket support for Claude Code still requested (open).",
+    "link": "https://github.com/anthropics/claude-code/issues/38179"
+   }
+  ],
+  "note": "GitLab and Linear delegation is now possible through Cursor, GitLab Duo external agents, Claude Code GitLab CI/CD and Cyrus, but Bitbucket Data Center, Azure DevOps (beyond a Cursor beta) and the Claude Code/Codex cloud products remain GitHub-bound."
+ },
+ {
+  "family": "F04",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Claude Code native AGENTS.md support (built-in agents-md plugin, v2.1.277+) with /context and InstructionsLoaded hook",
+    "link": "https://code.claude.com/docs/en/memory",
+    "date": "2026-09-20",
+    "stars": null,
+    "covers": "Reads AGENTS.md when no CLAUDE.md exists (or both via claude-md-and-agents-md); documents on-demand loading of subdirectory CLAUDE.md/AGENTS.md; /context and InstructionsLoaded hook show what loaded."
+   },
+   {
+    "name": "intellectronica/ruler",
+    "link": "https://github.com/intellectronica/ruler",
+    "date": "2026-11-04",
+    "stars": 2963,
+    "covers": "Applies one rules source to all coding agents' instruction files, including nested apply."
+   },
+   {
+    "name": "dyoshikawa/rulesync",
+    "link": "https://github.com/dyoshikawa/rulesync",
+    "date": "2026-11-07",
+    "stars": 1590,
+    "covers": "Generates rules, skills, MCP and hooks for many agents from one source."
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Claude Code loads AGENTS.md only as a fallback by default; any CLAUDE.md or CLAUDE.local.md above disables it, so teams still keep shims.",
+    "link": "https://github.com/anthropics/claude-code/issues/96466"
+   },
+   {
+    "what": "Claude Code does not read anything under .agents/ (so .agents/skills is unsupported) per its docs.",
+    "link": "https://code.claude.com/docs/en/memory"
+   },
+   {
+    "what": "AGENTS.md loading is intermittent on 2.1.278 with identical state.",
+    "link": "https://github.com/anthropics/claude-code/issues/95589"
+   },
+   {
+    "what": "Nested AGENTS.md not loaded when a file in its directory is @-mentioned (nested CLAUDE.md is).",
+    "link": "https://github.com/anthropics/claude-code/issues/98796"
+   },
+   {
+    "what": "Codex nested AGENTS.md precedence/loading is unclear and hard to debug; tracked as a blocker by enterprise customers, still open.",
+    "link": "https://github.com/openai/codex/issues/12115"
+   },
+   {
+    "what": "Ruler gives no warning when a generated AGENTS.md exceeds Codex's 32 KiB limit, so the tail is silently dropped.",
+    "link": "https://github.com/intellectronica/ruler/issues/791"
+   }
+  ],
+  "note": "Sync generators and Claude Code's new AGENTS.md support reduce duplication, but default fallback semantics, unsupported .agents/ paths, intermittent and nested loading bugs, and Codex's unclear nested precedence leave engineers unsure which rules an agent received."
+ }
+]

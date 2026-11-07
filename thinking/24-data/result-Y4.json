@@ -1,0 +1,149 @@
+[
+  {
+    "family": "F26",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Docker Sandboxes (sbx)", "link": "https://github.com/docker/sbx-releases", "date": "2026-11-06", "stars": 499, "covers": "Runs each coding agent (Claude Code, Codex, etc.) in a microVM with its own private Docker daemon, so agents can build images, run containers and Compose for integration tests inside the sandbox; host services are reachable through host.docker.internal with a per-port allowlist (docs: https://docs.docker.com/ai/sandboxes/workflows/development/)."},
+      {"name": "dagger/container-use", "link": "https://github.com/dagger/container-use", "date": "2026-09-21", "stars": 4087, "covers": "Gives each coding agent its own containerized development environment with a git branch, as an alternative to the agent's built-in sandbox."},
+      {"name": "newsnowlabs/dockside", "link": "https://github.com/newsnowlabs/dockside", "date": "2026-11-01", "stars": 321, "covers": "Dev containers that mirror production and sandbox Claude/Codex CLIs under policies the engineer controls."},
+      {"name": "Claude Code built-in sandbox escape hatches (allowLocalBinding, allowedDomains with IP:port, excludedCommands, enableWeakerNetworkIsolation)", "link": "https://code.claude.com/docs/en/sandboxing", "date": "2026-11-07", "stars": 0, "covers": "Official settings: on macOS allowLocalBinding lets sandboxed commands reach localhost ports; gh/terraform/docker can be moved out of the sandbox with excludedCommands; enableWeakerNetworkIsolation for MITM-proxy CA setups."}
+    ],
+    "shortcomings": [
+      {"what": "Official docs: on Linux/WSL2 a sandboxed command's localhost is private and allowLocalBinding has no effect; docker is 'incompatible with the sandbox'; gh, gcloud and terraform 'may fail TLS verification under Seatbelt' and the fix is to run them unsandboxed via excludedCommands, i.e. the engineer still trades containment for working tools.", "link": "https://code.claude.com/docs/en/sandboxing"},
+      {"what": "Source issue on macOS Security.framework TLS breakage of Go binaries is still open.", "link": "https://github.com/anthropics/claude-code/issues/23416"},
+      {"what": "Source issue asking to allow outbound localhost connections is still open.", "link": "https://github.com/anthropics/claude-code/issues/28018"},
+      {"what": "The escape hatch itself does not honour settings: excludedCommands has no effect and listed commands still run sandboxed (2026-09-21).", "link": "https://github.com/anthropics/claude-code/issues/95813"},
+      {"what": "excludedCommands has no effect on macOS 2.1.232.", "link": "https://github.com/anthropics/claude-code/issues/89931"},
+      {"what": "A file redirection on an excluded command defeats excludedCommands, so gh still fails TLS (2.1.278).", "link": "https://github.com/anthropics/claude-code/issues/95532"},
+      {"what": "Sandbox proxy variables are set for excludedCommands despite docs, breaking gh TLS on macOS.", "link": "https://github.com/anthropics/claude-code/issues/100809"},
+      {"what": "allowMachLookup is not passed through from settings.json, so the only fix for Go TLS is the blunt one.", "link": "https://github.com/anthropics/claude-code/issues/82793"},
+      {"what": "New Linux regression (2026-11-03): host bridge dials 'localhost' while proxy binds 127.0.0.1/::1, so all sandboxed network fails.", "link": "https://github.com/anthropics/claude-code/issues/106882"},
+      {"what": "Docker Sandboxes alternative: 127.0.0.1 and LAN IPs are unreachable from inside; only host.docker.internal with a per-port allowlist entry works, and sandbox services bound to 127.0.0.1 are not reachable from the host.", "link": "https://docs.docker.com/ai/sandboxes/workflows/development/"},
+      {"what": "Docker Sandboxes DNS returns SERVFAIL for SRV/TXT lookups, breaking cloudflared and other SRV-based clients.", "link": "https://github.com/docker/sbx-releases/issues/791"},
+      {"what": "Docker Sandboxes policy check reports a host.docker.internal deny rule as active but the proxy does not enforce it.", "link": "https://github.com/docker/sbx-releases/issues/546"}
+    ],
+    "note": "Running the agent in an engineer-controlled container or microVM (Docker Sandboxes, container-use, devcontainers) addresses the core, but both the built-in sandbox and these alternatives still have open reports of blocked localhost/TLS/DNS traffic and ignored settings."
+  },
+  {
+    "family": "F22",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "ignatremizov/codex fork with message_delivery = plaintext | encrypted_with_audit", "link": "https://github.com/ignatremizov/codex", "date": "2026-11-07", "stars": 4, "covers": "Community fork of Codex that adds a configurable MultiAgentV2 delivery policy, persisting a readable copy of spawn/follow-up messages in parent activity, history and rollout traces (described in https://github.com/openai/codex/issues/28058)."},
+      {"name": "PixelPaw-Labs/codex-trace", "link": "https://github.com/PixelPaw-Labs/codex-trace", "date": "2026-11-07", "stars": 119, "covers": "Codex session log viewer that shows tool calls and collaboration chains from ~/.codex/sessions, but only what is stored in plaintext."},
+      {"name": "disler/claude-code-hooks-multi-agent-observability", "link": "https://github.com/disler/claude-code-hooks-multi-agent-observability", "date": "2026-02-08", "stars": 1567, "covers": "Hook-based real-time logging of agent and subagent events for Claude Code, where subagent prompts are not encrypted; an option only for engineers who can switch orchestrators."}
+    ],
+    "shortcomings": [
+      {"what": "Source issue still open; as of 2026-10-26 encrypted delivery remains the upstream default, there is no user-configurable plaintext or audit-copy mode, and SubAgentActivityEvent has no task/prompt field.", "link": "https://github.com/openai/codex/issues/28058"},
+      {"what": "The fork's audit copy is sender-supplied metadata, not decrypted ciphertext or proof that it matches what the child received, and it requires running an unofficial build.", "link": "https://github.com/openai/codex/issues/28058"},
+      {"what": "Hook-based recording fails: a PreToolUse hook matching spawn_agent is bypassed for the namespaced MultiAgentV2 collaboration.spawn_agent tool, and its arguments are encrypted anyway.", "link": "https://github.com/openai/codex/issues/36519"},
+      {"what": "Opting out of MultiAgentV2 does not work: GPT-5.5 forces the V2 tool surface even when multi_agent_v2 is disabled in config and CLI overrides.", "link": "https://github.com/openai/codex/issues/31097"},
+      {"what": "Users and DPA-bound companies still have no documentation of what encrypted inter-agent messages contain or whether plaintext is available for audit.", "link": "https://github.com/openai/codex/issues/43893"},
+      {"what": "Session viewers cannot display encrypted content (codex-trace renders encrypted items as 'cannot display').", "link": "https://github.com/PixelPaw-Labs/codex-trace"}
+    ],
+    "note": "The only thing that restores a readable record of delegated tasks inside Codex is a 4-star personal fork whose audit copy is model-supplied; hooks, proxies and log viewers cannot help because the payload is encrypted upstream and V2 spawns bypass hook matchers."
+  },
+  {
+    "family": "F18",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Claude Code on the web multi-repository sessions", "link": "https://dev.classmethod.jp/en/articles/claude-code-web-multi-repo-issues-prs/", "date": "2026-09-30", "stars": 0, "covers": "Official: several repositories can be attached to one cloud session (multi-select picker or the repositories URL parameter; 12 repos tested in https://dev.classmethod.jp/en/articles/claude-code-web-twelve-repositories/), and Claude can create a separate issue and draft PR in each."},
+      {"name": "Claude Code Projects", "link": "https://code.claude.com/docs/en/claude-code-on-the-web", "date": "2026-11-07", "stars": 0, "covers": "Official: a project is 'one conversation where Claude coordinates parallel cloud sessions on your repositories and reports back'."},
+      {"name": "Cursor cloud agents multi-repo environments", "link": "https://github.com/openai/codex/issues/50155", "date": "2026-10-02", "stars": 0, "covers": "Reported by a migrating user: Cursor cloud agents support multiple repos in one environment and can raise multiple PRs."},
+      {"name": "yahor-punko/mavericks-os", "link": "https://github.com/yahor-punko/mavericks-os", "date": "2026-11-07", "stars": 82, "covers": "Third-party orchestrator for Claude Code sub-agents across multi-repo projects with cross-repo dependency tracking."},
+      {"name": "me-public/nemus", "link": "https://github.com/me-public/nemus", "date": "2026-11-03", "stars": 19, "covers": "Multi-repo git workspaces that group repos, operate in bulk and wire them to a coding agent."}
+    ],
+    "shortcomings": [
+      {"what": "Source issue still open; it asks for coordinated change sets presented as one unit, linked PRs with merge order, per-repo push/PR policy and multi-repo teleport, none of which are documented.", "link": "https://github.com/anthropics/claude-code/issues/23627"},
+      {"what": "In a multi-repo web session each repo gets an independent PR; 'There was no behavior where changes across multiple repositories were consolidated into a single PR.'", "link": "https://dev.classmethod.jp/en/articles/claude-code-web-multi-repo-issues-prs/"},
+      {"what": "Official docs: '--cloud works with a single repository at a time' and --teleport requires a checkout of the same repository, so multi-repo sessions cannot be moved between terminal and cloud.", "link": "https://code.claude.com/docs/en/claude-code-on-the-web"},
+      {"what": "Codex multi-repo support request still open (updated 2026-10-02).", "link": "https://github.com/openai/codex/issues/11956"},
+      {"what": "Codex Cloud environments still lack multiple repos per environment.", "link": "https://github.com/openai/codex/issues/50155"},
+      {"what": "Codex App Git/diff/review UI stays tied to the starting repository when a parent workspace holds several repos.", "link": "https://github.com/openai/codex/issues/26338"}
+    ],
+    "note": "Claude Code cloud sessions now accept several repositories and open per-repo PRs, but linked change sets, multi-repo teleport and Codex cloud multi-repo support are still missing; third-party orchestrators are small."
+  },
+  {
+    "family": "F14",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Claude Code PreCompact/PostCompact hooks and compaction controls", "link": "https://code.claude.com/docs/en/hooks", "date": "2026-11-07", "stars": 0, "covers": "Official: PreCompact fires before manual or auto compaction, receives transcript_path, and can block compaction (exit 2 / decision block); /compact accepts focus instructions; CLAUDE_CODE_AUTO_COMPACT_WINDOW and /autocompact set the window (https://code.claude.com/docs/en/claude-code-on-the-web)."},
+      {"name": "Codex model_auto_compact_token_limit", "link": "https://github.com/openai/codex/blob/main/codex-rs/models-manager/src/config.rs", "date": "2026-11-07", "stars": 0, "covers": "Official config key to set the auto-compaction token threshold."},
+      {"name": "daaain/claude-code-log", "link": "https://github.com/daaain/claude-code-log", "date": "2026-11-07", "stars": 1254, "covers": "Converts Claude Code transcript JSONL (including pre-compaction messages) to readable HTML/Markdown."},
+      {"name": "thedotmack/claude-mem", "link": "https://github.com/thedotmack/claude-mem", "date": "2026-11-07", "stars": 114313, "covers": "Captures session activity, compresses it and reinjects relevant context into later sessions."},
+      {"name": "PixelPaw-Labs/codex-trace", "link": "https://github.com/PixelPaw-Labs/codex-trace", "date": "2026-11-07", "stars": 119, "covers": "Viewer for Codex session JSONL files in ~/.codex/sessions."}
+    ],
+    "shortcomings": [
+      {"what": "Pre-compaction conversation is still inaccessible in the Claude Code UI (Ctrl+O shows only post-compaction messages); open, updated 2026-11-01.", "link": "https://github.com/anthropics/claude-code/issues/27242"},
+      {"what": "File-backed summaries with selective restoration of dropped detail are still not available.", "link": "https://github.com/anthropics/claude-code/issues/17428"},
+      {"what": "Idle compaction removed the compact / new session / continue choice; users ask for it to be opt-in.", "link": "https://github.com/anthropics/claude-code/issues/105775"},
+      {"what": "2.1.286 idle compaction silently discarded working context with no opt-out and was logged as manual.", "link": "https://github.com/anthropics/claude-code/issues/98747"},
+      {"what": "Custom instructions are lost across compaction with no signal to the user.", "link": "https://github.com/anthropics/claude-code/issues/96422"},
+      {"what": "Codex source issue asking for a hard OFF and consent-based compaction modes is still open (updated 2026-11-06).", "link": "https://github.com/openai/codex/issues/4106"},
+      {"what": "Codex gives no telemetry on how many compactions happened or how degraded context is.", "link": "https://github.com/openai/codex/issues/22220"},
+      {"what": "Codex compaction can store a tool-call fragment as the summary with no validation or retry.", "link": "https://github.com/openai/codex/issues/55508"}
+    ],
+    "note": "Hooks, threshold settings, transcript viewers and memory plugins cover parts of the pain, but there is still no in-UI view of pre-compaction history or selective restoration, and new idle-compaction behaviour removed user consent."
+  },
+  {
+    "family": "F10",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "ccusage", "link": "https://github.com/ccusage/ccusage", "date": "2026-11-07", "stars": 19354, "covers": "Parses local Claude Code/Codex logs into daily, session and model token and cost reports."},
+      {"name": "sirmalloc/ccstatusline", "link": "https://github.com/sirmalloc/ccstatusline", "date": "2026-11-06", "stars": 13545, "covers": "Customizable Claude Code CLI status line showing context and usage."},
+      {"name": "getagentseal/codeburn", "link": "https://github.com/getagentseal/codeburn", "date": "2026-11-07", "stars": 11722, "covers": "Local token and cost tracking across 37 agents including Claude Code, Codex and Cursor."},
+      {"name": "Maciek-roboblog/Claude-Code-Usage-Monitor", "link": "https://github.com/Maciek-roboblog/Claude-Code-Usage-Monitor", "date": "2026-07-05", "stars": 8794, "covers": "Real-time usage monitor with burn-rate predictions and limit warnings."},
+      {"name": "musistudio/claude-code-router", "link": "https://github.com/musistudio/claude-code-router", "date": "2026-10-10", "stars": 38032, "covers": "Routes agent requests across models by task, a third-party substitute for automatic model selection."},
+      {"name": "Claude Code OpenTelemetry metrics", "link": "https://code.claude.com/docs/en/monitoring-usage", "date": "2026-11-07", "stars": 0, "covers": "Official: claude_code.token.usage and cost.usage with model, query_source (main/subagent/auxiliary) and agent.name; OTEL_RESOURCE_ATTRIBUTES adds team/cost-center labels."}
+    ],
+    "shortcomings": [
+      {"what": "No supported way to disable the agent_summary spinner calls (22.7% of requests, ~18% of weighted tokens in a measured session).", "link": "https://github.com/anthropics/claude-code/issues/86879"},
+      {"what": "Quota is not exposed as structured CLI data; /usage returns prose and the only machine source is an undocumented OAuth endpoint.", "link": "https://github.com/anthropics/claude-code/issues/13585"},
+      {"what": "Desktop app ignores statusLine and shows no context or 5h/7d rate-limit consumption; only a community monkey patch exists.", "link": "https://github.com/anthropics/claude-code/issues/41456"},
+      {"what": "Usage stats panel removed from the Desktop new-session screen (2026-10-15), still open.", "link": "https://github.com/anthropics/claude-code/issues/102264"},
+      {"what": "statusLine rate_limits are not populated before the first API call of a session.", "link": "https://github.com/anthropics/claude-code/issues/95711"},
+      {"what": "Automatic model and effort selection by task complexity is still an open request.", "link": "https://github.com/anthropics/claude-code/issues/43326"},
+      {"what": "Request to expose subscription usage via local file or API remains open.", "link": "https://github.com/anthropics/claude-code/issues/21943"}
+    ],
+    "note": "Log parsers, status lines, OpenTelemetry labels and routers cover attribution and CLI visibility, but desktop visibility, structured quota access and control over background spinner token use are still missing."
+  },
+  {
+    "family": "F06",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Zed agent panel for Claude Code/Codex via ACP", "link": "https://zed.dev/blog/claude-code-via-acp", "date": "2025-09-03", "stars": 0, "covers": "Review agent edits in a multibuffer and 'accept or reject individual code hunks'."},
+      {"name": "yoshiko-pg/difit", "link": "https://github.com/yoshiko-pg/difit", "date": "2026-08-28", "stars": 3317, "covers": "Local GitHub-style 'Files changed' view of git diffs for reviewing agent output, independent of the vendor UI."},
+      {"name": "Claude Code cloud diff view and /rewind checkpoints", "link": "https://code.claude.com/docs/en/claude-code-on-the-web", "date": "2026-11-07", "stars": 0, "covers": "Official: diff view with inline line comments sent back to Claude; checkpoints can revert edits (https://code.claude.com/docs/en/checkpointing)."},
+      {"name": "mcarlssen/claude-adversarial-review", "link": "https://github.com/mcarlssen/claude-adversarial-review", "date": "2026-10-13", "stars": 24, "covers": "Claude Code plugin running a multi-agent adversarial review of the uncommitted diff before commit."},
+      {"name": "kunkka19xx/lgtm", "link": "https://github.com/kunkka19xx/lgtm", "date": "2026-10-22", "stars": 66, "covers": "TUI for reading and reviewing what the agent wrote before approving."}
+    ],
+    "shortcomings": [
+      {"what": "Claude Code VS Code extension still lacks per-change/per-file accept-reject review; checkpoints only partially address it.", "link": "https://github.com/anthropics/claude-code/issues/33932"},
+      {"what": "Codex 'View all changes' appears only after files are written; maintainers say VS Code does not expose its accept/discard edits API to extensions.", "link": "https://github.com/openai/codex/issues/2998"},
+      {"what": "Codex /review usually reports a single issue and stops; users report push-review loops and dropping Codex from pipelines; still open.", "link": "https://github.com/openai/codex/issues/5547"},
+      {"what": "Edit-tool diffs appear inline in chat and Write-tool diffs in the editor; the only workaround patches the installed extension and must be rerun after updates.", "link": "https://github.com/anthropics/claude-code/issues/29388"}
+    ],
+    "note": "Zed's ACP integration and git-diff review tools give per-hunk review outside the vendor UIs, but inside VS Code and Codex there is still no pre-write per-change accept/reject flow and the built-in review pass under-reports."
+  },
+  {
+    "family": "F02",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "extracurricular-ai/codex-rewind", "link": "https://github.com/extracurricular-ai/codex-rewind", "date": "2026-11-03", "stars": 59, "covers": "Unofficial Codex CLI build adding /rewind and /redo that restore files together with the conversation, without needing git."},
+      {"name": "Claude Code checkpointing (/rewind)", "link": "https://code.claude.com/docs/en/checkpointing", "date": "2026-11-07", "stars": 0, "covers": "Official: checkpoint before each prompt; 'Restore code and conversation' reverts both."},
+      {"name": "entireio/cli", "link": "https://github.com/entireio/cli", "date": "2026-11-07", "stars": 5317, "covers": "Hooks into git to capture agent sessions with checkpoints for Claude Code, Codex, Gemini CLI and others, with a rewind command."},
+      {"name": "nirbenda/revertly", "link": "https://github.com/nirbenda/revertly", "date": "2026-08-16", "stars": 12, "covers": "Records every file change by an agent and reverts anything, from one file to a whole rm -rf."},
+      {"name": "qorexdevs/quicksave", "link": "https://github.com/qorexdevs/quicksave", "date": "2026-07-03", "stars": 4, "covers": "Checkpoint before every agent command; restore even after rm -rf."}
+    ],
+    "shortcomings": [
+      {"what": "Upstream Codex still has no /undo; source issue open and updated 2026-11-05.", "link": "https://github.com/openai/codex/issues/9203"},
+      {"what": "Upstream Codex /rewind that reverts both context and code edits is still an open request.", "link": "https://github.com/openai/codex/issues/11626"},
+      {"what": "Codex app 'Undo changes' only works with git.", "link": "https://github.com/openai/codex/issues/34634"},
+      {"what": "Codex undo depends on a git repository being present.", "link": "https://github.com/openai/codex/issues/19205"},
+      {"what": "Claude Code checkpoints do not track files changed only by Bash (e.g. rm), do not restore most subagent edits, and skip symlinked/hard-linked files.", "link": "https://code.claude.com/docs/en/checkpointing"},
+      {"what": "codex-rewind caps shell-made changes at 100 files/16 MB, excludes hidden files by default, silently loses tracking if the session is opened with official codex, and lets concurrent sessions overwrite each other.", "link": "https://github.com/extracurricular-ai/codex-rewind"},
+      {"what": "Entire checkpoints are created at git commits and 'entire checkpoint rewind' is deprecated, so it does not give a per-turn pre-edit restore point.", "link": "https://github.com/entireio/cli"},
+      {"what": "Continued data-loss reports of Codex deleting files without being asked.", "link": "https://github.com/openai/codex/issues/38312"}
+    ],
+    "note": "Claude Code's /rewind and third-party snapshot tools such as codex-rewind cover the core, but each misses shell deletions, untracked or hidden files, subagent edits or upstream support, and Codex itself still has no file-reverting rewind."
+  }
+]

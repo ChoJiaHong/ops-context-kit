@@ -1,0 +1,410 @@
+[
+ {
+  "family": "F04",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "intellectronica/ruler",
+    "link": "https://github.com/intellectronica/ruler",
+    "date": "2026-11-04",
+    "stars": 2963,
+    "covers": "One canonical rules source rendered into each agent's instruction file (AGENTS.md, CLAUDE.md, Cursor, Copilot, etc.), including nested apply"
+   },
+   {
+    "name": "dyoshikawa/rulesync",
+    "link": "https://github.com/dyoshikawa/rulesync",
+    "date": "2026-11-07",
+    "stars": 1590,
+    "covers": "CLI that generates and syncs rules, skills, commands, MCP and hooks configs across many coding agents"
+   },
+   {
+    "name": "Claude Code native AGENTS.md support (v2.1.277)",
+    "link": "https://simonwillison.net/2026/Sep/18/thariq-shihipar/",
+    "date": "2026-09-18",
+    "stars": 0,
+    "covers": "Claude Code reads AGENTS.md when no CLAUDE.md exists; configurable 'Project instructions' setting can load both; subdirectory CLAUDE.md/AGENTS.md load on demand (documented at https://code.claude.com/docs/en/memory)"
+   },
+   {
+    "name": "Topicspot/rulereach",
+    "link": "https://github.com/Topicspot/rulereach",
+    "date": "2026-08-26",
+    "stars": 0,
+    "covers": "Linter that reports which agent instruction files (nested AGENTS.md, CLAUDE.md imports, Cursor globs) will never be loaded"
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Codex still does not dynamically load nested AGENTS.md as work moves into subtrees, and gives no visibility into which instruction files are active; issue open with enterprise customers (Stripe, Wix, Reddit, Palantir) attached",
+    "link": "https://github.com/openai/codex/issues/12115"
+   },
+   {
+    "what": "Claude Code still does not load skills from .agents/skills (new request filed Nov 2026); umbrella issue remains open",
+    "link": "https://github.com/anthropics/claude-code/issues/107421"
+   },
+   {
+    "what": "Claude Code's AGENTS.md support is fallback-only by default and InstructionsLoaded hooks do not fire for AGENTS.md read through the setting, so visibility tooling misses it",
+    "link": "https://code.claude.com/docs/en/memory"
+   },
+   {
+    "what": "Symlinking CLAUDE.md to AGENTS.md loads both files, duplicating content",
+    "link": "https://github.com/anthropics/claude-code/issues/102369"
+   },
+   {
+    "what": "Ruler gives no warning when generated AGENTS.md exceeds Codex's 32 KiB limit, so the tail of the instructions is silently dropped",
+    "link": "https://github.com/intellectronica/ruler/issues/791"
+   },
+   {
+    "what": "Ruler nested apply ignores child settings",
+    "link": "https://github.com/intellectronica/ruler/issues/775"
+   }
+  ],
+  "note": "Generators (Ruler, rulesync) handle cross-agent fan-out and Claude Code now reads AGENTS.md, but nested-file loading and 'which rules did the agent actually get' remain gaps, especially in Codex. Sync tools also have silent-truncation and nested-apply bugs."
+ },
+ {
+  "family": "F08",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "GitLab Duo Agent Platform external agents (Claude Code Agent, Codex Agent)",
+    "link": "https://docs.gitlab.com/user/duo_agent_platform/agent_assistant/",
+    "date": "2026-11-07",
+    "stars": 0,
+    "covers": "Mention or assign a service account in GitLab issues/MRs to run GitLab-managed Claude Code or Codex agents that push branches and MRs"
+   },
+   {
+    "name": "Cursor Cloud Agents forge integrations",
+    "link": "https://cursor.com/help/integrations/github-gitlab",
+    "date": "2026-11-07",
+    "stars": 0,
+    "covers": "Cloud agents work with GitHub, GitLab (incl. self-hosted), Azure DevOps Services and Bitbucket Cloud"
+   },
+   {
+    "name": "cyrusagents/cyrus",
+    "link": "https://github.com/cyrusagents/cyrus",
+    "date": "2026-11-06",
+    "stars": 886,
+    "covers": "Self-hostable Claude Code (and Codex/Cursor/Gemini) background agent triggered from Linear, Slack, GitHub, GitLab"
+   },
+   {
+    "name": "Linear coding sessions",
+    "link": "https://linear.app/changelog/2026-06-11-coding-sessions",
+    "date": "2026-06-11",
+    "stars": 0,
+    "covers": "Assign a Linear issue to Linear Agent to run Claude Code or Codex in the cloud and return a diff"
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Claude Code on the web still connects only to GitHub; GitLab, Bitbucket and Azure DevOps requests remain open",
+    "link": "https://github.com/anthropics/claude-code/issues/54054"
+   },
+   {
+    "what": "Linear coding sessions require a GitHub connection; no other forge mentioned",
+    "link": "https://linear.app/changelog/2026-06-11-coding-sessions"
+   },
+   {
+    "what": "GitLab external agents require Premium/Ultimate, are behind a feature flag enabled on request, and are 'Experiment' on Self-Managed/Dedicated",
+    "link": "https://docs.gitlab.com/user/duo_agent_platform/agent_assistant/"
+   },
+   {
+    "what": "Cursor Azure DevOps and Bitbucket Cloud support is public beta, Bitbucket Data Center unsupported for cloud agents",
+    "link": "https://cursor.com/help/integrations/github-gitlab"
+   },
+   {
+    "what": "User report: Cursor Azure DevOps integration broken",
+    "link": "https://forum.cursor.com/t/azure-dev-ops-integration-is-broken/170774"
+   },
+   {
+    "what": "User report: Cursor cloud agents cannot get branches from Bitbucket repo",
+    "link": "https://forum.cursor.com/t/cloud-agents-cant-get-branches-from-bitbucket-repo/169511"
+   },
+   {
+    "what": "Codex cloud has no Azure DevOps integration",
+    "link": "https://github.com/openai/codex/issues/10665"
+   }
+  ],
+  "note": "GitLab-side external agents, Cursor cloud agents and Cyrus let teams start agent work from non-GitHub forges and Linear. Coverage is still partial: the Claude Code/Codex cloud products stay GitHub-only, ADO/Bitbucket support is beta with failure reports, and GitLab's option is tier-gated."
+ },
+ {
+  "family": "F12",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Claude Code native remote MCP OAuth (claude mcp login, --client-id/--client-secret, auto refresh)",
+    "link": "https://dev.to/aicoding-guide/sign-in-to-a-remote-mcp-server-in-claude-code-mcp-and-claude-mcp-login-43i7",
+    "date": "2026-09-27",
+    "stars": 0,
+    "covers": "Pre-registered client credentials for servers without DCR, refresh-and-retry on 401, offline_access, headless URL paste flow"
+   },
+   {
+    "name": "punkpeye/mcp-remote",
+    "link": "https://github.com/punkpeye/mcp-remote",
+    "date": "2026-11-07",
+    "stars": 1664,
+    "covers": "Local stdio proxy that runs the OAuth flow and token refresh for remote MCP servers"
+   },
+   {
+    "name": "abluva/mcp-remote",
+    "link": "https://github.com/abluva/mcp-remote",
+    "date": "2026-09-22",
+    "stars": 54,
+    "covers": "Bridge for remote MCP with OAuth and auth recovery"
+   },
+   {
+    "name": "hyprmcp/mcp-gateway",
+    "link": "https://github.com/hyprmcp/mcp-gateway",
+    "date": "2026-04-21",
+    "stars": 92,
+    "covers": "MCP OAuth proxy including dynamic client registration"
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Codex does not auto-refresh MCP OAuth tokens even when a refresh token is stored (open)",
+    "link": "https://github.com/openai/codex/issues/17265"
+   },
+   {
+    "what": "Codex mcp login fails for Slack's official MCP: dynamic client registration not supported (open)",
+    "link": "https://github.com/openai/codex/issues/13200"
+   },
+   {
+    "what": "Codex OAuth fails at issuer validation (open)",
+    "link": "https://github.com/openai/codex/issues/31573"
+   },
+   {
+    "what": "Codex desktop: MCP sign-in never surfaces for plugin servers",
+    "link": "https://github.com/openai/codex/issues/57093"
+   },
+   {
+    "what": "Claude Code: concurrent processes wipe MCP OAuth entries from the macOS Keychain despite valid refresh tokens",
+    "link": "https://github.com/anthropics/claude-code/issues/93537"
+   },
+   {
+    "what": "Claude Code: plugin MCP OAuth is per-session and not durable",
+    "link": "https://github.com/anthropics/claude-code/issues/94321"
+   },
+   {
+    "what": "Claude Code: MCP OAuth against Microsoft Entra ID fails on connect/reconnect",
+    "link": "https://github.com/anthropics/claude-code/issues/89438"
+   },
+   {
+    "what": "Non-interactive runs (claude -p, Agent SDK) cannot run the OAuth flow, so scheduled automations still need a manual login",
+    "link": "https://dev.to/aicoding-guide/sign-in-to-a-remote-mcp-server-in-claude-code-mcp-and-claude-mcp-login-43i7"
+   },
+   {
+    "what": "Third-party audit lists OAuth trust-boundary advisories/CVE records against mcp-remote",
+    "link": "https://github.com/playb0t/mcp-remote-oauth-security"
+   }
+  ],
+  "note": "Claude Code's native OAuth and proxies like mcp-remote cover DCR gaps and refresh, but open bugs show token loss, per-session auth, IdP-specific failures and no headless re-auth, and Codex still lacks refresh and DCR fallbacks."
+ },
+ {
+  "family": "F16",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Claude Code Read/Edit deny rules applied to recognized Bash file commands, plus OS sandbox",
+    "link": "https://dev.to/rulestack/claude-codes-read-deny-rules-let-4-of-11-routes-through-grep-r-a-python-one-liner-and-two-ajf",
+    "date": "2026-10-02",
+    "stars": 0,
+    "covers": "Deny rules cover cat/head/tail/sed/tee in Bash; sandbox blocks file access at OS level"
+   },
+   {
+    "name": "HabibiCodeCH/claude-no-bash-detour",
+    "link": "https://github.com/HabibiCodeCH/claude-no-bash-detour",
+    "date": "2026-07-24",
+    "stars": 2,
+    "covers": "PreToolUse hooks that deny Bash commands with a native-tool equivalent (grep/find, sed -i, cat/head/tail) and redirect to Grep/Glob/Read/Edit"
+   },
+   {
+    "name": "derekwden-droid/file-tools-first",
+    "link": "https://github.com/derekwden-droid/file-tools-first",
+    "date": "2026-10-09",
+    "stars": 0,
+    "covers": "Plugin blocking shell file reads/edits and routing them to Read/Edit/Write so /rewind and rules apply"
+   },
+   {
+    "name": "JasonGDG/claude-bash-bridge",
+    "link": "https://github.com/JasonGDG/claude-bash-bridge",
+    "date": "2026-10-19",
+    "stars": 0,
+    "covers": "Fires Write/Edit hooks and path rules when Claude edits files through Bash"
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "In auto mode the harness itself instructs Claude to do file reads/writes via Bash (cat, sed, heredocs) instead of Read/Edit/Write; open",
+    "link": "https://github.com/anthropics/claude-code/issues/87971"
+   },
+   {
+    "what": "Model frequently uses sed/grep/cat when built-in tools fit; open",
+    "link": "https://github.com/anthropics/claude-code/issues/19649"
+   },
+   {
+    "what": "Checkpointing/rewind does not track files changed only by Bash commands",
+    "link": "https://code.claude.com/docs/en/checkpointing"
+   },
+   {
+    "what": "Read deny rules bypassed by grep -r and python one-liners on v2.1.285 unless the sandbox is on",
+    "link": "https://dev.to/rulestack/claude-codes-read-deny-rules-let-4-of-11-routes-through-grep-r-a-python-one-liner-and-two-ajf"
+   }
+  ],
+  "note": "Permission enforcement for shell file access is partly covered (deny rules on recognized commands, sandbox), and small hook projects redirect to file tools. Edit tracking, diffs and rewind are still bypassed, and the vendor's own auto-mode prompt pushes the behavior. The hook projects have little adoption."
+ },
+ {
+  "family": "F20",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Claude Code plansDirectory setting",
+    "link": "https://claudelog.com/faqs/what-is-plans-directory-in-claude-code/",
+    "date": "2026-10-24",
+    "stars": 0,
+    "covers": "Sets where plan-mode plan files are written, e.g. a plans/ directory in the repo (behaviour summarized in https://github.com/anthropics/claude-code/issues/89291)"
+   },
+   {
+    "name": "github/spec-kit",
+    "link": "https://github.com/github/spec-kit",
+    "date": "2026-11-07",
+    "stars": 148342,
+    "covers": "Spec-driven workflow that writes specs and plans into versioned, numbered directories in the repo across many agents"
+   },
+   {
+    "name": "nightlab-agent/plan-names",
+    "link": "https://github.com/nightlab-agent/plan-names",
+    "date": "2026-11-07",
+    "stars": 0,
+    "covers": "Claude Code mod saving each approved plan as plans/<date>-<title>.md and keeping earlier versions"
+   },
+   {
+    "name": "humblefool-2/plan-checklist",
+    "link": "https://github.com/humblefool-2/plan-checklist",
+    "date": "2026-11-07",
+    "stars": 0,
+    "covers": "Skill saving a plan as a markdown checklist in the project and resuming it in a new session"
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Plan filenames are still auto-generated (prompt slug plus random words); only the location is configurable",
+    "link": "https://github.com/anthropics/claude-code/issues/89291"
+   },
+   {
+    "what": "plansDirectory in global settings ignored by plan mode on 2.1.301 (earlier report closed as stale)",
+    "link": "https://github.com/anthropics/claude-code/issues/102707"
+   },
+   {
+    "what": "Per-repo plan naming scheme request remains open",
+    "link": "https://github.com/anthropics/claude-code/issues/12619"
+   }
+  ],
+  "note": "plansDirectory can put plans in the repo and spec-kit or small mods/skills enforce in-repo naming. The native naming scheme is still not configurable and the setting has reliability bugs, and the plan-naming mods have no adoption yet."
+ },
+ {
+  "family": "F24",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Dicklesworthstone/destructive_command_guard",
+    "link": "https://github.com/Dicklesworthstone/destructive_command_guard",
+    "date": "2026-11-07",
+    "stars": 6290,
+    "covers": "PreToolUse hook that blocks destructive shell/git/filesystem commands (e.g. git reset --hard, rm -rf) before agents run them"
+   },
+   {
+    "name": "kenryu42/cc-safety-net",
+    "link": "https://github.com/kenryu42/cc-safety-net",
+    "date": "2026-11-06",
+    "stars": 1947,
+    "covers": "Pre-execution guard blocking destructive git and filesystem commands for coding agents"
+   },
+   {
+    "name": "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR",
+    "link": "https://code.claude.com/docs/en/env-vars",
+    "date": "2026-11-07",
+    "stars": 0,
+    "covers": "Returns the Bash tool to the original working directory after each command in the main session"
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Core report that Claude Code loses track of its directory is still open",
+    "link": "https://github.com/anthropics/claude-code/issues/1669"
+   },
+   {
+    "what": "The cwd-reset variable is opt-in and applies only to the main session, not subagents",
+    "link": "https://code.claude.com/docs/en/env-vars"
+   },
+   {
+    "what": "Guards decide by command pattern, not whether the target is the intended directory; cc-safety-net missed git -C <abs path> when cwd was outside the repo",
+    "link": "https://github.com/kenryu42/cc-safety-net/issues/272"
+   },
+   {
+    "what": "cc-safety-net fix applied only when cwd was home; from a project cwd the same delete was allowed",
+    "link": "https://github.com/kenryu42/cc-safety-net/issues/326"
+   },
+   {
+    "what": "destructive_command_guard decisions vary with cwd and produce false positives",
+    "link": "https://github.com/Dicklesworthstone/destructive_command_guard/issues/636"
+   }
+  ],
+  "note": "Popular guard hooks stop the catastrophic case (destructive git/rm) and an env var pins the shell cwd, but nothing makes the agent reliably track where it is. The guards check command patterns rather than whether the target directory is the intended one."
+ },
+ {
+  "family": "F28",
+  "verdict": "imperfect",
+  "best_existing": [
+   {
+    "name": "Cursor Automations with Team Owned / Team editable scope",
+    "link": "https://forum.cursor.com/t/team-owned-automations-should-support-collaborative-editing-by-team-members/155636",
+    "date": "2026-03-26",
+    "stars": 0,
+    "covers": "Scheduled/triggered agents owned and billed by the team, managed by admins or team editors"
+   },
+   {
+    "name": "anthropics/claude-code-action (schedule-triggered workflows)",
+    "link": "https://github.com/anthropics/claude-code-action",
+    "date": "2026-11-06",
+    "stars": 9825,
+    "covers": "Run Claude Code from GitHub Actions cron with definitions in a shared repo"
+   },
+   {
+    "name": "github/gh-aw (GitHub Agentic Workflows)",
+    "link": "https://github.com/github/gh-aw",
+    "date": "2026-11-07",
+    "stars": 5588,
+    "covers": "Markdown agent workflows in the repo, run on schedules in Actions with Claude/Codex/Copilot engines"
+   },
+   {
+    "name": "openai/codex-action",
+    "link": "https://github.com/openai/codex-action",
+    "date": "2026-10-31",
+    "stars": 1296,
+    "covers": "Run Codex from CI under repository/org credentials"
+   }
+  ],
+  "shortcomings": [
+   {
+    "what": "Claude Code scheduled tasks (routines) belong to an individual account, are not shared with teammates, and act as the creator's GitHub/Slack identity",
+    "link": "https://code.claude.com/docs/en/routines"
+   },
+   {
+    "what": "Shared routines feature request remains open",
+    "link": "https://github.com/anthropics/claude-code/issues/48322"
+   },
+   {
+    "what": "claude-code-action fails auth when triggered by cron while manual runs work (open)",
+    "link": "https://github.com/anthropics/claude-code-action/issues/814"
+   },
+   {
+    "what": "Headless action reports success after the agent backgrounds work, so scheduled CI runs silently do nothing",
+    "link": "https://github.com/anthropics/claude-code-action/issues/1462"
+   },
+   {
+    "what": "Team members got Access Forbidden on agents spawned by team-owned Cursor automations until VM Sharing was enabled",
+    "link": "https://forum.cursor.com/t/allow-team-members-to-access-cloud-agent-desktop-on-automation-spawned-agents/161064"
+   }
+  ],
+  "note": "Team ownership exists in Cursor Automations, and CI-based runners (claude-code-action, gh-aw, codex-action) give repo-owned schedules. Claude Code's own scheduled tasks are still per-user, and the CI route has open cron-auth and silent-success bugs."
+ }
+]

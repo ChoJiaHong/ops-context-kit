@@ -1,0 +1,564 @@
+[
+  {
+    "family": "F27",
+    "verdict": "imperfect",
+    "best_existing": [
+      {
+        "name": "Codex follow-up queue (CLI Tab to queue, IDE extension queue mode, desktop app queue list)",
+        "link": "https://www.memorylake.ai/en/blogs/codex-steer-vs-queue",
+        "date": "2026-11-03",
+        "stars": 0,
+        "covers": "Native queue in Codex: a queued message waits until the current run finishes; the IDE extension defaults to queue (chatgpt.followUpQueueMode) and the desktop app lets users edit, reorder or delete queued items."
+      },
+      {
+        "name": "Claude Code built-in message queue",
+        "link": "https://www.memorylake.ai/en/blogs/claude-code-queue-messages",
+        "date": "2026-11-03",
+        "stars": 0,
+        "covers": "Enter while Claude works queues messages, but plain messages are passed in as soon as the current tool calls finish within the same turn; only slash and shell commands wait until the turn ends."
+      },
+      {
+        "name": "codecShivam/claudeq",
+        "link": "https://github.com/codecShivam/claudeq",
+        "date": "2026-09-14",
+        "stars": 9,
+        "covers": "Side-pane queue for Claude Code built on Stop/SessionStart/UserPromptSubmit hooks; delivers one queued message per turn in order, no patching."
+      },
+      {
+        "name": "Vesely/cmux-claude-queue",
+        "link": "https://github.com/Vesely/cmux-claude-queue",
+        "date": "2026-09-20",
+        "stars": 3,
+        "covers": "Option+Enter queues a prompt delivered as a fresh turn after the Stop hook fires (macOS + cmux only)."
+      },
+      {
+        "name": "ivanarama/PromptPilot",
+        "link": "https://github.com/ivanarama/PromptPilot",
+        "date": "2026-11-07",
+        "stars": 20,
+        "covers": "Background task queue for Claude Code and other AI CLIs with web UI and Telegram bot."
+      },
+      {
+        "name": "coding-by-feng/ai-agent-session-center",
+        "link": "https://github.com/coding-by-feng/ai-agent-session-center",
+        "date": "2026-11-05",
+        "stars": 95,
+        "covers": "Dashboard for Claude Code and Codex sessions with prompt queues and workspace resume."
+      }
+    ],
+    "shortcomings": [
+      {
+        "what": "VS Code extension request to queue instead of interrupting is still open with no maintainer reply; users ask whether it is on the roadmap.",
+        "link": "https://github.com/anthropics/claude-code/issues/30677"
+      },
+      {
+        "what": "Task-queue request still open; earlier queue issues were auto-closed by the stale bot; the cmux workaround needs macOS and cmux.",
+        "link": "https://github.com/anthropics/claude-code/issues/33323"
+      },
+      {
+        "what": "Claude Code merges queued messages into one combined turn instead of one message = one turn FIFO.",
+        "link": "https://github.com/anthropics/claude-code/issues/73661"
+      },
+      {
+        "what": "No setting to hold queued messages until the turn completes instead of folding them mid-turn.",
+        "link": "https://github.com/anthropics/claude-code/issues/87656"
+      },
+      {
+        "what": "Desktop Code tab has no way to queue a message until the turn fully ends; Ctrl+Enter interrupts.",
+        "link": "https://github.com/anthropics/claude-code/issues/92988"
+      },
+      {
+        "what": "Queued messages are never delivered in Claude Code desktop (silent loss of input).",
+        "link": "https://github.com/anthropics/claude-code/issues/104517"
+      },
+      {
+        "what": "Public criticism (Sep 2026) that Claude Code cannot queue a message as a separate next task; cites a cycle of partial fixes and regressions.",
+        "link": "https://digg.com/ai/pdwiholm"
+      },
+      {
+        "what": "Codex queue bugs: 'App-server queued follow-up no longer exists' errors, queued prompts behaving like steer and being sent simultaneously, prompts disappearing before entering the queue.",
+        "link": "https://github.com/openai/codex/issues/45019"
+      },
+      {
+        "what": "Codex queued prompts behave like steer prompts; multiple queued prompts sent simultaneously.",
+        "link": "https://github.com/openai/codex/issues/17285"
+      },
+      {
+        "what": "Codex VS Code extension: submitted prompts randomly disappear before entering the queue.",
+        "link": "https://github.com/openai/codex/issues/25928"
+      }
+    ],
+    "note": "Codex ships a real next-turn queue (with bugs), but Claude Code's native queue folds messages into the running turn and the desktop/VS Code surfaces cannot hold a message for the next task; third-party hook-based queues exist but are tiny, platform-limited projects."
+  },
+  {
+    "family": "F23",
+    "verdict": "imperfect",
+    "best_existing": [
+      {
+        "name": "Gemini CLI interactive shell (node-pty) and tools.shell.inactivityTimeout",
+        "link": "https://geminicli.com/docs/tools/shell/",
+        "date": "2025-10-15",
+        "stars": 0,
+        "covers": "Setting tools.shell.enableInteractiveShell runs commands in a PTY so vim, REPLs and prompts work; inactivityTimeout kills a shell command after N seconds without output."
+      },
+      {
+        "name": "Gemini CLI interactive shell announcement",
+        "link": "https://developers.googleblog.com/en/say-hello-to-a-new-level-of-interactivity-in-gemini-cli/",
+        "date": "2025-10-15",
+        "stars": 0,
+        "covers": "Announces PTY-backed interactive commands in Gemini CLI (v0.9.0)."
+      },
+      {
+        "name": "Claude Code Bash timeouts and background time limit",
+        "link": "https://code.claude.com/docs/en/tools-reference",
+        "date": "2026-11-08",
+        "stars": 0,
+        "covers": "BASH_DEFAULT_TIMEOUT_MS (2 min) / BASH_MAX_TIMEOUT_MS (10 min) cap foreground commands, which then move to the background; unattended sessions (-p, SDK, CI, cloud) get a 30-min/2-h background time limit (v2.1.285+)."
+      },
+      {
+        "name": "wonderwhy-er/DesktopCommanderMCP",
+        "link": "https://github.com/wonderwhy-er/DesktopCommanderMCP",
+        "date": "2026-11-07",
+        "stars": 10244,
+        "covers": "MCP server giving the agent terminal control including long-running and interactive processes it can start and interact with."
+      },
+      {
+        "name": "nickgnd/tmux-mcp",
+        "link": "https://github.com/nickgnd/tmux-mcp",
+        "date": "2026-02-14",
+        "stars": 306,
+        "covers": "MCP server letting the agent drive tmux sessions (send keys, capture panes) for interactive programs."
+      },
+      {
+        "name": "yiwenlu66/PiloTY",
+        "link": "https://github.com/yiwenlu66/PiloTY",
+        "date": "2026-04-23",
+        "stars": 45,
+        "covers": "PTY-control MCP server so agents can operate interactive terminals like a human."
+      }
+    ],
+    "shortcomings": [
+      {
+        "what": "Claude Code's built-in Bash tool still has no PTY/interactive support; feature request open with no maintainer reply, users rely on tmux workarounds.",
+        "link": "https://github.com/anthropics/claude-code/issues/9881"
+      },
+      {
+        "what": "Scheduled (unattended) Claude Code task hangs indefinitely on its first Bash tool call with no timeout and no error.",
+        "link": "https://github.com/anthropics/claude-code/issues/95159"
+      },
+      {
+        "what": "Commands that hit the Bash timeout keep running in the background unbounded; agents re-run them and processes pile up.",
+        "link": "https://github.com/anthropics/claude-code/issues/98092"
+      },
+      {
+        "what": "Bash run_in_background ignores timeout and a never-exiting background task produces no notification.",
+        "link": "https://github.com/anthropics/claude-code/issues/88702"
+      },
+      {
+        "what": "Docs: local terminal, desktop and VS Code sessions have no time limit on background commands, and timed-out foreground commands are moved to the background rather than killed.",
+        "link": "https://code.claude.com/docs/en/tools-reference"
+      },
+      {
+        "what": "Gemini CLI still lacks a general per-tool-call timeout setting (only shell inactivity timeout); request open.",
+        "link": "https://github.com/google-gemini/gemini-cli/issues/3375"
+      }
+    ],
+    "note": "Gemini CLI has PTY interactive shell and an inactivity timeout, and PTY/tmux MCP servers exist (Desktop Commander is popular), but Claude Code's native shell still has no PTY and open reports show unattended sessions hanging and timed-out commands left running."
+  },
+  {
+    "family": "F19",
+    "verdict": "imperfect",
+    "best_existing": [
+      {
+        "name": "Claude Code auto-continue at usage limit (autoContinueAtUsageLimit, v2.1.234)",
+        "link": "https://aicatchup.com/news/claude-code-desktop-auto-continue",
+        "date": "2026-08-13",
+        "stars": 0,
+        "covers": "Interactive CLI sessions (and a Desktop checkbox) wait out a claude.ai 5-hour limit and resume with a continuation prompt after reset; on by default for subscribers."
+      },
+      {
+        "name": "Claude Code auto-continue caveats write-up",
+        "link": "https://wmedia.es/en/tips/claude-code-session-limit-auto-continue",
+        "date": "2026-09-28",
+        "stars": 0,
+        "covers": "Documents surfaces and limits of the built-in auto-continue (CLI default on, Desktop checkbox, /rate-limit-options fallback)."
+      },
+      {
+        "name": "saaranshM/unsnooze",
+        "link": "https://github.com/saaranshM/unsnooze",
+        "date": "2026-11-01",
+        "stars": 229,
+        "covers": "Resumes Claude Code, Codex CLI and other agent sessions when 5-hour or weekly limits reset; reads reset timestamps and runs codex resume."
+      },
+      {
+        "name": "terryso/claude-auto-resume",
+        "link": "https://github.com/terryso/claude-auto-resume",
+        "date": "2026-05-09",
+        "stars": 821,
+        "covers": "Shell wrapper that waits for the Claude CLI usage limit to lift and resumes the task."
+      },
+      {
+        "name": "songyb111-gachon/codex-auto-resume-windows",
+        "link": "https://github.com/songyb111-gachon/codex-auto-resume-windows",
+        "date": "2026-11-07",
+        "stars": 77,
+        "covers": "Resumes the same conversation in the Codex desktop app on Windows after usage-limit resets."
+      },
+      {
+        "name": "dujunyi416/claude-nightshift",
+        "link": "https://github.com/dujunyi416/claude-nightshift",
+        "date": "2026-07-20",
+        "stars": 36,
+        "covers": "Quota-aware automation: queue prompts overnight and auto-resume interrupted sessions on reset."
+      }
+    ],
+    "shortcomings": [
+      {
+        "what": "Codex has no native auto-resume at limit reset; request open with no maintainer reply; Goals stay in usageLimited after reset until a new user message.",
+        "link": "https://github.com/openai/codex/issues/21073"
+      },
+      {
+        "what": "Codex /goal auto-resume after 5h/weekly reset requested and still open; users rely on third-party desktop scripts.",
+        "link": "https://github.com/openai/codex/issues/28931"
+      },
+      {
+        "what": "Claude Code auto-continue does not apply to -p headless or background sessions, does not auto-wait for weekly resets more than 24h away, needs Enter after >30 min laptop sleep, ends if the terminal closes, and re-arms at most twice.",
+        "link": "https://wmedia.es/en/tips/claude-code-session-limit-auto-continue"
+      },
+      {
+        "what": "Claude Code auto-continue never arms when Remote Control is connected.",
+        "link": "https://github.com/anthropics/claude-code/issues/100650"
+      },
+      {
+        "what": "Claude Code auto-continue at usage limit does not trigger.",
+        "link": "https://github.com/anthropics/claude-code/issues/103591"
+      },
+      {
+        "what": "Session stalls on a consent prompt when a model-specific weekly limit is hit instead of continuing.",
+        "link": "https://github.com/anthropics/claude-code/issues/104623"
+      },
+      {
+        "what": "Third-party wrapper fails if already over a session limit, and broke when Claude's limit message format changed.",
+        "link": "https://github.com/terryso/claude-auto-resume/issues/24"
+      }
+    ],
+    "note": "Claude Code now auto-continues interactive sessions at 5-hour resets, and many wrappers cover Codex and headless runs, but Codex has nothing native and the Claude feature excludes headless/background runs and long weekly waits, with open reports of it not triggering."
+  },
+  {
+    "family": "F15",
+    "verdict": "imperfect",
+    "best_existing": [
+      {
+        "name": "Claude Code Notification and Stop hooks",
+        "link": "https://code.claude.com/docs/en/hooks",
+        "date": "2026-11-08",
+        "stars": 0,
+        "covers": "Hooks fire when Claude needs input or finishes, so users can trigger desktop/phone alerts or log timestamps."
+      },
+      {
+        "name": "Claude Code Remote Control push notifications",
+        "link": "https://wmedia.es/en/tips/claude-code-notifications-on-your-phone",
+        "date": "2026-08-17",
+        "stars": 0,
+        "covers": "'Push when actions required' and 'Push when Claude decides' send phone pushes via the Claude app when blocked on a prompt or when a long task finishes."
+      },
+      {
+        "name": "Codex tui.notifications / notify config",
+        "link": "https://github.com/openai/codex/issues/3962",
+        "date": "2026-11-05",
+        "stars": 0,
+        "covers": "Maintainer describes tui.notifications with OSC 9/BEL and the notify script hook on agent-turn-complete; desktop app has OS completion notifications."
+      },
+      {
+        "name": "tuchg/Lucarne",
+        "link": "https://github.com/tuchg/Lucarne",
+        "date": "2026-08-02",
+        "stars": 343,
+        "covers": "Notifications plus approve/resume for Codex and Claude Code sessions from anywhere."
+      },
+      {
+        "name": "DevinoSolutions/anotifier-for-claude-codex-cursor",
+        "link": "https://github.com/DevinoSolutions/anotifier-for-claude-codex-cursor",
+        "date": "2026-11-07",
+        "stars": 35,
+        "covers": "Desktop and phone (ntfy) notifications for Claude Code, Codex, Gemini CLI and Cursor, with native VS Code support."
+      },
+      {
+        "name": "wyattjoh/claude-code-notification",
+        "link": "https://github.com/wyattjoh/claude-code-notification",
+        "date": "2026-11-03",
+        "stars": 95,
+        "covers": "macOS desktop notification hook with sounds for Claude Code events."
+      },
+      {
+        "name": "Riplexa Timestamps (VS Code extension)",
+        "link": "https://github.com/agurrotem-crypto/riplexa-timestamps",
+        "date": "2026-09-14",
+        "stars": 0,
+        "covers": "Shows timestamps inline in the Claude Code and Codex VS Code chat panels."
+      }
+    ],
+    "shortcomings": [
+      {
+        "what": "No per-message timestamps in Claude Code; request open; the only third-party option covers the VS Code panel only and patches its webview.",
+        "link": "https://github.com/anthropics/claude-code/issues/44763"
+      },
+      {
+        "what": "Second open request for message timestamps in the interactive conversation view.",
+        "link": "https://github.com/anthropics/claude-code/issues/30745"
+      },
+      {
+        "what": "Claude Code VS Code extension lacks native system/toast notifications when Claude needs attention.",
+        "link": "https://github.com/anthropics/claude-code/issues/57230"
+      },
+      {
+        "what": "Codex IDE extension has no audible signal; notify hook does not fire on approval requests; third-party notifiers fail over Remote SSH.",
+        "link": "https://github.com/openai/codex/issues/3962"
+      },
+      {
+        "what": "Codex VS Code extension does not request attention when approval is required.",
+        "link": "https://github.com/openai/codex/issues/30821"
+      },
+      {
+        "what": "Claude Code Notification hook fires with a ~10 second delay.",
+        "link": "https://github.com/anthropics/claude-code/issues/5186"
+      },
+      {
+        "what": "idle_prompt notification timeout is not configurable.",
+        "link": "https://github.com/anthropics/claude-code/issues/13922"
+      },
+      {
+        "what": "Remote Control pushes need a subscription, both toggles on, a live Remote Control session and an open terminal; not available with API keys or cloud providers.",
+        "link": "https://wmedia.es/en/tips/claude-code-notifications-on-your-phone"
+      },
+      {
+        "what": "Codex Remote Control push notifications not delivered on iOS.",
+        "link": "https://github.com/openai/codex/issues/32908"
+      }
+    ],
+    "note": "Completion and needs-input alerts are well covered by hooks, Codex notify settings, Remote Control pushes and many third-party notifiers, but IDE surfaces still lack native signals and per-message timestamps remain unshipped outside a VS Code-only patch."
+  },
+  {
+    "family": "F11",
+    "verdict": "imperfect",
+    "best_existing": [
+      {
+        "name": "Claude Code per-subcommand permission matching and read-only cd",
+        "link": "https://code.claude.com/docs/en/permissions",
+        "date": "2026-11-08",
+        "stars": 0,
+        "covers": "Compound commands are split on &&, ||, ;, | etc. and each subcommand matched; cd into the working directory counts as read-only; 'don't ask again' saves one rule per subcommand; /permissions lists every rule and its source file."
+      },
+      {
+        "name": "Claude Code auto mode (classifier approvals)",
+        "link": "https://code.claude.com/docs/en/permissions",
+        "date": "2026-11-08",
+        "stars": 0,
+        "covers": "A classifier decides most permission prompts instead of the user, reducing stalls in unattended runs."
+      },
+      {
+        "name": "ldayton/Dippy",
+        "link": "https://github.com/ldayton/Dippy",
+        "date": "2026-06-12",
+        "stars": 244,
+        "covers": "PreToolUse hook that parses bash and auto-approves commands known to be safe."
+      },
+      {
+        "name": "oryband/claude-code-auto-approve",
+        "link": "https://github.com/oryband/claude-code-auto-approve",
+        "date": "2026-07-29",
+        "stars": 20,
+        "covers": "Auto-approves compound Bash commands by parsing pipes, chains and subshells and checking each segment."
+      },
+      {
+        "name": "vosslab/codex-code-permissions-hook",
+        "link": "https://github.com/vosslab/codex-code-permissions-hook",
+        "date": "2026-07-26",
+        "stars": 0,
+        "covers": "Codex permission hook that decomposes compound shell commands and applies allow/deny TOML rules."
+      }
+    ],
+    "shortcomings": [
+      {
+        "what": "Permission prompt triggers on cd instead of the real command in compound statements; most-reacted permission bug still open.",
+        "link": "https://github.com/anthropics/claude-code/issues/28240"
+      },
+      {
+        "what": "Permission matching described as fundamentally broken (30+ issues, user-level rules not applied, deny-rule bypasses); community hook reimplementations have no security review.",
+        "link": "https://github.com/anthropics/claude-code/issues/30519"
+      },
+      {
+        "what": "Skills and subagents do not inherit user-level permissions.",
+        "link": "https://github.com/anthropics/claude-code/issues/18950"
+      },
+      {
+        "what": "Bypass/skip-permissions broken in versions after v2.1.77.",
+        "link": "https://github.com/anthropics/claude-code/issues/36168"
+      },
+      {
+        "what": "Remote Control mobile app shows permission prompts despite --dangerously-skip-permissions.",
+        "link": "https://github.com/anthropics/claude-code/issues/29214"
+      },
+      {
+        "what": "Quoted-characters-in-flag-names warning cannot be disabled.",
+        "link": "https://github.com/anthropics/claude-code/issues/27957"
+      },
+      {
+        "what": "Codex requires per-project trust approval; maintainers announced trusting all directories then reversed the decision and reopened the issue.",
+        "link": "https://github.com/openai/codex/issues/14599"
+      },
+      {
+        "what": "Gemini CLI workspace .gemini/policies/*.toml files do not take effect.",
+        "link": "https://github.com/google-gemini/gemini-cli/issues/18186"
+      }
+    ],
+    "note": "Claude Code now documents per-subcommand matching and offers auto mode, and hook-based approvers like Dippy exist, but the core issues (cd prompts, user rules not applied, subagent inheritance, bypass prompts, Codex trust, Gemini workspace policies) remain open across vendors."
+  },
+  {
+    "family": "F07",
+    "verdict": "imperfect",
+    "best_existing": [
+      {
+        "name": "Claude Code repository-shared plugins, marketplaces and claude.ai synced org plugins",
+        "link": "https://code.claude.com/docs/en/plugins/loading",
+        "date": "2026-11-08",
+        "stars": 0,
+        "covers": "enabledPlugins/extraKnownMarketplaces in committed .claude/settings.json and plugin dirs under .claude/skills reach every collaborator; plugins bundle skills, agents, hooks, MCP and LSP servers; org-required plugins sync from claude.ai (v2.1.273+)."
+      },
+      {
+        "name": "intellectronica/ruler",
+        "link": "https://github.com/intellectronica/ruler",
+        "date": "2026-11-04",
+        "stars": 2963,
+        "covers": "Applies one versioned set of rules to all coding agents from a repo."
+      },
+      {
+        "name": "dyoshikawa/rulesync",
+        "link": "https://github.com/dyoshikawa/rulesync",
+        "date": "2026-11-07",
+        "stars": 1590,
+        "covers": "CLI generating rules, commands, subagents, MCP and other config for many agents from one source."
+      },
+      {
+        "name": "nicepkg/vsync",
+        "link": "https://github.com/nicepkg/vsync",
+        "date": "2026-01-27",
+        "stars": 63,
+        "covers": "Syncs MCP servers, skills, agents and commands across Claude Code, Cursor, OpenCode and Codex from one config."
+      },
+      {
+        "name": "spxrogers/agentsync",
+        "link": "https://github.com/spxrogers/agentsync",
+        "date": "2026-10-14",
+        "stars": 40,
+        "covers": "Syncs agent configs from one canonical, committable source."
+      }
+    ],
+    "shortcomings": [
+      {
+        "what": "Org skills still uploaded one by one in the admin console with no version history or repo link; request open.",
+        "link": "https://github.com/anthropics/claude-code/issues/28729"
+      },
+      {
+        "what": "Claude Code plugins cannot bundle rules.",
+        "link": "https://github.com/anthropics/claude-code/issues/14200"
+      },
+      {
+        "what": "Project settings.json is not inherited from a monorepo parent directory.",
+        "link": "https://github.com/anthropics/claude-code/issues/12962"
+      },
+      {
+        "what": "Docs: a repository-root plugin in .claude/skills does not load when the session starts in a subdirectory, and cloud sessions do not add repo-listed marketplaces.",
+        "link": "https://code.claude.com/docs/en/plugins/loading"
+      },
+      {
+        "what": "Codex lacks repository-scoped marketplace and plugin configuration.",
+        "link": "https://github.com/openai/codex/issues/18115"
+      },
+      {
+        "what": "Codex plugins cannot include agents.",
+        "link": "https://github.com/openai/codex/issues/18308"
+      },
+      {
+        "what": "Codex config.toml mixes portable preferences with machine-local trust entries.",
+        "link": "https://github.com/openai/codex/issues/14601"
+      },
+      {
+        "what": "rulesync declarative sources cannot install commands, subagents, MCP servers, hooks or permissions.",
+        "link": "https://github.com/dyoshikawa/rulesync/issues/3423"
+      }
+    ],
+    "note": "Claude Code plugins and repo-scoped settings plus sync tools like ruler and rulesync cover much of the need, but org skills from git, rules in plugins, monorepo inheritance and Codex repo-scoped plugins/portable config remain open."
+  },
+  {
+    "family": "F03",
+    "verdict": "imperfect",
+    "best_existing": [
+      {
+        "name": "taylorwilsdon/google_workspace_mcp",
+        "link": "https://github.com/taylorwilsdon/google_workspace_mcp",
+        "date": "2026-11-05",
+        "stars": 3482,
+        "covers": "Google Workspace MCP server (Gmail, Calendar, Drive, Docs...) with multi-account operation selected per call by user email."
+      },
+      {
+        "name": "Wh1isper/mcp-email-server",
+        "link": "https://github.com/Wh1isper/mcp-email-server",
+        "date": "2026-11-03",
+        "stars": 378,
+        "covers": "Multi-account IMAP/SMTP email MCP server."
+      },
+      {
+        "name": "evolsb/claude-code-google-workspace",
+        "link": "https://github.com/evolsb/claude-code-google-workspace",
+        "date": "2026-07-23",
+        "stars": 38,
+        "covers": "Multi-account Google Workspace and Slack MCP setup for Claude Code."
+      },
+      {
+        "name": "majiayu000/mcp-mux",
+        "link": "https://github.com/majiayu000/mcp-mux",
+        "date": "2026-11-07",
+        "stars": 0,
+        "covers": "Multiplexes several accounts of one MCP server (Gmail, Slack, Notion) into one toolset with an account argument, for Claude Code and Codex."
+      },
+      {
+        "name": "Duplicate custom connector URL trick and ProxyLoom",
+        "link": "https://github.com/anthropics/claude-code/issues/27302",
+        "date": "2026-02-21",
+        "stars": 0,
+        "covers": "Adding the same MCP URL with a unique query string as a second custom connector authorizes a second account; ProxyLoom hosts connectors whose tools take an account argument."
+      },
+      {
+        "name": "Codex Gmail multiple connected accounts (partial)",
+        "link": "https://github.com/openai/codex/issues/20500",
+        "date": "2026-07-13",
+        "stars": 0,
+        "covers": "Users report Gmail now allows connecting several labeled accounts."
+      }
+    ],
+    "shortcomings": [
+      {
+        "what": "Built-in connectors in Claude and Claude Code on the web still allow one account per connector; request open with no maintainer reply; the URL trick does not work for the built-in GitHub connector or the web, and self-hosted multi-account servers are described as cumbersome.",
+        "link": "https://github.com/anthropics/claude-code/issues/27302"
+      },
+      {
+        "what": "Newer open requests (Oct 2026) still ask for more than one Google account per claude.ai connector.",
+        "link": "https://github.com/anthropics/claude-code/issues/100407"
+      },
+      {
+        "what": "Codex Gmail multi-account has no account selector when invoked, and other connectors lack equivalent support.",
+        "link": "https://github.com/openai/codex/issues/20500"
+      },
+      {
+        "what": "google_workspace_mcp multi-account stdio mode discards refreshed tokens, causing spurious re-auth.",
+        "link": "https://github.com/taylorwilsdon/google_workspace_mcp/issues/926"
+      },
+      {
+        "what": "Slack multi-workspace MCP servers found are essentially unused (0 stars), so coverage beyond Google/email is thin.",
+        "link": "https://github.com/TYTYBU/slack-mcp"
+      }
+    ],
+    "note": "Third-party MCP servers (notably google_workspace_mcp) and a custom-connector URL trick allow several accounts per service, but vendor connectors still bind one account, Codex Gmail support lacks a selector, and multi-account coverage outside Google/email is thin and fragile."
+  }
+]

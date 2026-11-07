@@ -1,0 +1,139 @@
+[
+  {
+    "family": "F01",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Claude Code built-in privacy mod cc-plugin-privacy (v2.1.317+)", "link": "https://github.com/anthropics/claude-code/issues/107144", "date": "2026-11-04", "stars": 0, "covers": "Official check that asks (or denies, headless) before a web or shell tool call whose input holds the signed-in account email goes to the network; enabled by default. A contributor confirmed it in the main thread (https://github.com/anthropics/claude-code/issues/107757)."},
+      {"name": "AlexErrant/claude-code-no-email", "link": "https://github.com/AlexErrant/claude-code-no-email", "date": "2026-10-29", "stars": 71, "covers": "Mod/hook that drops the userEmail block from the context Claude Code sends to the model, which removes the source of the header leak."},
+      {"name": "klavdiy-core/pii-tripwire", "link": "https://github.com/klavdiy-core/pii-tripwire", "date": "2026-10-27", "stars": 0, "covers": "PreToolUse hook that stops emails, phone numbers and IDs from leaving in outbound tool calls."},
+      {"name": "NobleCodeSoftware/claude-pii-guard", "link": "https://github.com/NobleCodeSoftware/claude-pii-guard", "date": "2026-11-06", "stars": 0, "covers": "Local PreToolUse hook that detects emails and other PII in tool calls, with block, ask or warn modes."},
+      {"name": "princejain756/egressleak", "link": "https://github.com/princejain756/egressleak", "date": "2026-11-06", "stars": 0, "covers": "Auditor for outbound HTTP egress, the User-Agent email leak (#107757) and PII in context for Claude Code, Codex CLI and MCP configs."}
+    ],
+    "shortcomings": [
+      {"what": "A Claude Code employee's statement, quoted in the issue thread, says the 2.1.317 check does not cover every case, for example scripts Claude writes and runs itself. Removing the email from the model context was promised for a later release, and this check found no confirmation that it has shipped.", "link": "https://github.com/anthropics/claude-code/issues/107757"},
+      {"what": "The built-in check matches on the address plus a network word, so it denies local-only calls (heredoc file writes, curl to 127.0.0.1) in headless bypass runs, and the run still ends as success. The only way to turn it off is to disable the whole privacy plugin.", "link": "https://github.com/anthropics/claude-code/issues/107144"},
+      {"what": "The account email is still injected into the system prompt every session, with no supported opt-out. IS_DEMO hides only display surfaces. The model has also written the address into commits.", "link": "https://github.com/anthropics/claude-code/issues/81138"},
+      {"what": "The claude-code-no-email mod does nothing on Team/Enterprise logins or on machines with managed settings, because the built-in guard skips prompt.context hooks from user mods there.", "link": "https://github.com/AlexErrant/claude-code-no-email/issues/1"},
+      {"what": "Hook workarounds match exact strings and can miss encodings, and prompt rules did not prevent a reported leak.", "link": "https://explainx.ai/blog/claude-code-leaks-your-email-user-agent-header-how-to-stop-it-2026"}
+    ],
+    "note": "Anthropic shipped a built-in egress check in 2.1.317, and third-party mods and hooks can strip or block the email. But the email still sits in the model context for most users, and the check has known gaps and false positives. The context-stripping mod is skipped on Team/Enterprise and managed setups."
+  },
+  {
+    "family": "F05",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "oraios/serena", "link": "https://github.com/oraios/serena", "date": "2026-10-28", "stars": 31177, "covers": "MCP toolkit with LSP-backed semantic retrieval and editing (find symbol, references, symbol-level edits) across many languages, usable from Claude Code and Codex."},
+      {"name": "zilliztech/claude-context", "link": "https://github.com/zilliztech/claude-context", "date": "2026-07-14", "stars": 12673, "covers": "Code-search MCP that indexes the whole codebase for semantic search by any coding agent."},
+      {"name": "zzet/gortex", "link": "https://github.com/zzet/gortex", "date": "2026-11-07", "stars": 2014, "covers": "Graph-based code-intelligence engine for AI agents covering 257 languages and multiple repositories, exposed through a CLI, an MCP server and an API."},
+      {"name": "isaacphi/mcp-language-server", "link": "https://github.com/isaacphi/mcp-language-server", "date": "2026-03-01", "stars": 1615, "covers": "MCP bridge that exposes any LSP's definition, references, rename and diagnostics to MCP clients, Codex included."},
+      {"name": "Piebald-AI/claude-code-lsps", "link": "https://github.com/Piebald-AI/claude-code-lsps", "date": "2026-07-25", "stars": 522, "covers": "Claude Code plugin marketplace of LSP servers, including Ruby (ruby-lsp) and Scala (metals), which fill the gaps in the native lineup."}
+    ],
+    "shortcomings": [
+      {"what": "Codex CLI still has no native LSP integration, and the issue remains open with recent activity.", "link": "https://github.com/openai/codex/issues/8745"},
+      {"what": "A write-up says community MCP-LSP bridges for Codex are beta-quality, with rough edges in workspace initialisation, multi-root projects and server lifecycle. It also notes heavy memory use (2-4 GB for rust-analyzer).", "link": "https://codex.danielvaughan.com/2026/04/25/codex-cli-lsp-integration-language-server-semantic-code-intelligence/"},
+      {"what": "Usage data from one user's logs: with Serena connected in every session, only 35.4% of sessions used it. The agent did most reads with Read/Grep/Glob, and 18.4% of symbol queries were followed by a full-file Read.", "link": "https://github.com/oraios/serena/issues/1491"},
+      {"what": "Claude Code LSP plugins: lspServers config from marketplace.json is not processed, so installed LSP plugins can fail to load (open, updated 2026-10-06).", "link": "https://github.com/anthropics/claude-code/issues/15148"},
+      {"what": "Native Claude Code LSP lineup still lacks Scala (Metals); request open.", "link": "https://github.com/anthropics/claude-code/issues/45132"},
+      {"what": "Serena's replace_symbol_body silently corrupts Python assignments under Pyright.", "link": "https://github.com/oraios/serena/issues/2226"}
+    ],
+    "note": "Mature MCP servers (Serena, claude-context, LSP bridges) and LSP plugin marketplaces cover any language. But Codex still lacks native LSP, the bridges are rough, native plugin loading is buggy, and usage data shows agents often ignore connected code-intelligence tools."
+  },
+  {
+    "family": "F09",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Claude Code session picker, naming and purge (official)", "link": "https://code.claude.com/docs/en/sessions", "date": "2026-11-07", "stars": 0, "covers": "The picker is scoped to the current worktree, with Ctrl+W/Ctrl+A to widen and Ctrl+B to filter by branch. It has search and preview. Sessions can be named with -n, /rename or Ctrl+R in the picker, and `claude purge` deletes a project's transcripts."},
+      {"name": "Claude Code SessionStart hook sessionTitle (official)", "link": "https://code.claude.com/docs/en/hooks", "date": "2026-11-07", "stars": 0, "covers": "A SessionStart hook can set the session title, so a label can be recorded automatically when the session starts."},
+      {"name": "jazzyalex/agent-sessions", "link": "https://github.com/jazzyalex/agent-sessions", "date": "2026-11-04", "stars": 941, "covers": "Local-first macOS app to browse, search and resume session history across Codex, Claude Code and other agents."},
+      {"name": "HizTam/codex-history-viewer", "link": "https://github.com/HizTam/codex-history-viewer", "date": "2026-11-07", "stars": 47, "covers": "VS Code extension for Codex and Claude Code history: scope by current project group, custom titles, tags and notes, hide sessions, trash."},
+      {"name": "nrzz/claude-session-tidy", "link": "https://github.com/nrzz/claude-session-tidy", "date": "2026-10-28", "stars": 0, "covers": "Lists, deletes, keeps and restores Claude Code sessions: a trash with restore, a keep list that outlives the 30-day sweep, and cleanup of empty and orphaned sessions."},
+      {"name": "fandy891229/cc-session-renamer", "link": "https://github.com/fandy891229/cc-session-renamer", "date": "2026-05-31", "stars": 0, "covers": "Renames Claude Code session titles through an in-chat skill or the CLI."}
+    ],
+    "shortcomings": [
+      {"what": "Skills still cannot rename the session natively; feature request open (148 reactions, updated 2026-11-01), and a new request for programmatic self-rename for multi-session orchestration was filed 2026-10-28 (#105550).", "link": "https://github.com/anthropics/claude-code/issues/25045"},
+      {"what": "Codex VS Code chats from different workspaces still appear in one list; request to scope them to the current project is open (updated 2026-11-03).", "link": "https://github.com/openai/codex/issues/25319"},
+      {"what": "Claude Code has no per-session delete command. `claude purge` works per project, `claude rm` on a background session keeps its transcript, and the docs say the transcript format is internal and changes between versions, so third-party scripts that parse it can break.", "link": "https://code.claude.com/docs/en/sessions"},
+      {"what": "The richest third-party viewer warns that file formats may change without notice, and its Hide action changes only extension-local visibility, leaving the transcript file on disk.", "link": "https://github.com/HizTam/codex-history-viewer"},
+      {"what": "The /delete command request remains open.", "link": "https://github.com/anthropics/claude-code/issues/26904"}
+    ],
+    "note": "Claude Code's picker now scopes by project and supports naming, and third-party indexers, renamers and cleanup tools exist. But skill-driven renaming and single-session deletion are still missing natively, Codex VS Code still mixes workspaces, and the third-party tools are small and depend on internal formats."
+  },
+  {
+    "family": "F13",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Claude Code hooks additionalContext (official)", "link": "https://code.claude.com/docs/en/hooks", "date": "2026-11-07", "stars": 0, "covers": "UserPromptSubmit and SessionStart hooks can inject context on every turn or at session start to re-assert standing rules or point to skills."},
+      {"name": "diet103/claude-code-infrastructure-showcase", "link": "https://github.com/diet103/claude-code-infrastructure-showcase", "date": "2026-07-13", "stars": 10049, "covers": "Skill auto-activation pattern: a hook matches prompts or files to skills and tells the agent to use them."},
+      {"name": "Piebald-AI/tweakcc", "link": "https://github.com/Piebald-AI/tweakcc", "date": "2026-11-06", "stars": 2602, "covers": "Customizes and patches Claude Code's system prompts, so overriding vendor sections can be edited."},
+      {"name": "systemfsoftware/comment-checker", "link": "https://github.com/systemfsoftware/comment-checker", "date": "2026-11-04", "stars": 5, "covers": "Claude Code hook that flags unnecessary code comments via Tree-sitter across 37 languages."},
+      {"name": "ftvision/agent-prompt-observatory", "link": "https://github.com/ftvision/agent-prompt-observatory", "date": "2026-11-07", "stars": 2, "covers": "History of Claude Code's system prompt with inline diffs across versions, for spotting overriding changes."}
+    ],
+    "shortcomings": [
+      {"what": "Claude still writes verbose code comments by default and ignores instructions to stop; issue open (256 reactions).", "link": "https://github.com/anthropics/claude-code/issues/65961"},
+      {"what": "The assistant is not aware of skills in .claude/skills (open), and in 2.1.295 `/skills` showed skills as loaded while the listing reached the model late or never (#100813).", "link": "https://github.com/anthropics/claude-code/issues/9716"},
+      {"what": "The heron_brook section overriding the user's delegation policy has no supported opt-out. Workarounds are CLAUDE.md blocks, an undocumented internal env var, or a per-turn hook costing about 220 tokens.", "link": "https://github.com/anthropics/claude-code/issues/80988"},
+      {"what": "Auto Mode's Bash-first instruction silently disables nested CLAUDE.md and path-scoped rules.", "link": "https://github.com/anthropics/claude-code/issues/90450"},
+      {"what": "Gemini CLI: GEMINI.md instructions are ignored; issue open.", "link": "https://github.com/google-gemini/gemini-cli/issues/13852"}
+    ],
+    "note": "Hooks, skill-activation patterns, comment linters and prompt patchers exist. But users still report rules and skills being ignored, vendor prompt sections overriding configuration with no opt-out, and Auto Mode bypassing nested rules."
+  },
+  {
+    "family": "F17",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Claude Code cloud environments: network secrets (official)", "link": "https://code.claude.com/docs/en/cloud-environments", "date": "2026-11-07", "stars": 0, "covers": "Store an API key or token (Bearer, custom header, username/password, AWS SigV4) on an Anthropic-hosted environment. The agent proxy attaches it to requests for the listed hosts after they leave the VM, so the key never enters the session environment or files."},
+      {"name": "Claude Code cloud GitHub proxy (official)", "link": "https://code.claude.com/docs/en/cloud-environments", "date": "2026-11-07", "stars": 0, "covers": "Git and gh requests are re-authenticated by a proxy that keeps the real GitHub token outside the session VM."},
+      {"name": "ermoluk/mcp-warden", "link": "https://github.com/ermoluk/mcp-warden", "date": "2026-11-03", "stars": 12, "covers": "Local-first credential broker for MCP. Agents call APIs, SSH and databases through scoped presets, and secrets stay in the OS keychain. It is local only, not for vendor-cloud sessions."}
+    ],
+    "shortcomings": [
+      {"what": "Network secrets never reach setup scripts, public package registries (registry.npmjs.org, pypi.org and others), the Anthropic API or telemetry. Self-hosted environments have no network secrets, orgs with customer-managed encryption keys cannot save them, and Enterprise non-admins cannot add them. Interactive auth such as AWS SSO is not supported.", "link": "https://code.claude.com/docs/en/cloud-environments"},
+      {"what": "An AWS SigV4 network secret signs only *.amazonaws.com hosts, so S3-compatible stores such as R2 fail with a 502 and users fall back to a plain environment variable.", "link": "https://github.com/anthropics/claude-code/issues/106173"},
+      {"what": "There is no OIDC identity token for keyless cloud-provider auth from cloud sessions; request open (updated 2026-11-04).", "link": "https://github.com/anthropics/claude-code/issues/81502"},
+      {"what": "The original request for secrets as process-level env vars, usable by setup scripts, private registries and database URLs, is still open. Comments report Team-account gaps and a mismatch between the docs and the UI.", "link": "https://github.com/anthropics/claude-code/issues/32733"}
+    ],
+    "note": "Anthropic now offers network secrets, which the agent proxy injects into HTTP requests without the session seeing them. That covers API calls but not setup-time installs, private package registries on public hosts, non-HTTP credentials, self-hosted environments or some cloud signing cases."
+  },
+  {
+    "family": "F21",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "Claude Code worktree.baseRef setting and WorktreeCreate hook (official)", "link": "https://code.claude.com/docs/en/worktrees", "date": "2026-11-07", "stars": 0, "covers": "baseRef chooses between the remote default branch (\"fresh\") and the current HEAD (\"head\"). A WorktreeCreate hook can replace worktree creation entirely, including placing worktrees outside .claude/worktrees/."},
+      {"name": "max-sixty/worktrunk", "link": "https://github.com/max-sixty/worktrunk", "date": "2026-11-07", "stars": 11901, "covers": "Git worktree CLI for parallel agent workflows. Worktree paths come from a configurable template, and it can create a worktree and start Claude in it in one command (wt switch -c -x claude)."},
+      {"name": "coderabbitai/git-worktree-runner", "link": "https://github.com/coderabbitai/git-worktree-runner", "date": "2026-11-07", "stars": 1809, "covers": "Worktree manager with --from <ref> / --from-current base selection that can launch Claude Code or Codex in the new worktree (--ai)."}
+    ],
+    "shortcomings": [
+      {"what": "Claude Code's worktree.baseRef cannot be set to a branch name. The docs say to create the worktree with git directly instead, and the in-app base-branch request is still open (#23622).", "link": "https://github.com/anthropics/claude-code/issues/23622"},
+      {"what": "A configurable or sibling worktree location is still requested. The only native route is a WorktreeCreate hook that replaces all git logic and turns off .worktreeinclude processing.", "link": "https://github.com/anthropics/claude-code/issues/27282"},
+      {"what": "The Codex app always creates worktrees under ~/.codex/worktrees. The only workarounds are a symlink or changing CODEX_HOME, and users were still asking for a fix in October 2026.", "link": "https://github.com/openai/codex/issues/10599"},
+      {"what": "The Codex app cannot use worktrees created outside it, so wrapper-created worktrees do not integrate with the app's parallel threads (open, updated 2026-11-02).", "link": "https://github.com/openai/codex/issues/12863"}
+    ],
+    "note": "CLI users can get any base branch and location through worktree wrappers (Worktrunk, gtr) or Claude Code's WorktreeCreate hook. The app-driven flows the pain describes stay fixed: Codex's location and Claude Code's base-branch choice cannot be configured in-app, and the Codex app will not adopt external worktrees."
+  },
+  {
+    "family": "F25",
+    "verdict": "imperfect",
+    "best_existing": [
+      {"name": "mksglu/context-mode", "link": "https://github.com/mksglu/context-mode", "date": "2026-11-07", "stars": 33641, "covers": "Sandboxes tool output and indexes large outputs into SQLite FTS5, returning only matching sections, so raw output stays out of the agent's context. Supports Claude Code, Codex, Cursor, Gemini CLI and others."},
+      {"name": "wonderwhy-er/DesktopCommanderMCP", "link": "https://github.com/wonderwhy-er/DesktopCommanderMCP", "date": "2026-11-07", "stars": 10244, "covers": "MCP server with paginated file reads (offset/length, tail-style negative offsets) and process-output pagination to prevent context overflow. Cline is a listed client."},
+      {"name": "Unofficial CLINE_MESSAGE_BUILDER_* env vars / bundle patch", "link": "https://github.com/cline/cline/issues/13263", "date": "2026-11-04", "stars": 0, "covers": "Users raise Cline's hard-coded truncation limits through env vars or by patching extension.js."}
+    ],
+    "shortcomings": [
+      {"what": "Cline hard-codes caps: 8,000 characters for tool results, 50,000 for file content and 6,000 for editor input. The PR to make them configurable is unmerged and only SDK users get editorInputCharLimit, so users patch the bundle and must re-patch after each update.", "link": "https://github.com/cline/cline/issues/13263"},
+      {"what": "Large-file reads are blocked at 300KB, and an accidental large read still produces an unrecoverable prompt-too-long state that forces a new task; issue open (updated 2026-10-31).", "link": "https://github.com/cline/cline/issues/4389"},
+      {"what": "Cline Nightly regularly exceeds the context limit instead of compacting properly.", "link": "https://github.com/cline/cline/issues/12111"},
+      {"what": "context-mode does not list Cline. On platforms without hooks it depends on routing instructions, about 60% compliance by its own figures, so built-in reads and commands can still flood or be truncated.", "link": "https://github.com/mksglu/context-mode"}
+    ],
+    "note": "Paging and summarizing MCP servers address the general pain and one (Desktop Commander) supports Cline. But Cline's own built-in truncation and large-file overflow remain unfixed, and wrappers cannot stop the agent from using the built-in tools."
+  },
+  {
+    "family": "F29",
+    "verdict": "solved",
+    "best_existing": [
+      {"name": "ChromeDevTools/chrome-devtools-mcp", "link": "https://github.com/ChromeDevTools/chrome-devtools-mcp", "date": "2026-11-06", "stars": 54928, "covers": "MCP server that lets any MCP-capable agent, editor extensions included, open and drive Chrome: DOM inspection, screenshots, console and network, performance traces."},
+      {"name": "microsoft/playwright-mcp", "link": "https://github.com/microsoft/playwright-mcp", "date": "2026-11-06", "stars": 39298, "covers": "Playwright-based browser automation MCP server for page snapshots, interaction, screenshots and console messages."},
+      {"name": "Claude in Chrome integration for CLI and VS Code extension (official)", "link": "https://code.claude.com/docs/en/chrome", "date": "2026-11-07", "stars": 0, "covers": "Claude Code can open localhost pages, read console errors and DOM state, take screenshots and interact from the CLI or from the VS Code extension via @browser. Since v2.1.287 it can connect at session start."}
+    ],
+    "shortcomings": [],
+    "note": "Widely used browser MCP servers and Anthropic's own Chrome integration let the agent load, inspect and test its UI changes from the editor. The remaining gaps are side issues: VS Code's native browser-sharing API is unsupported (https://github.com/anthropics/claude-code/issues/57034), and @browser in the VS Code extension has reportedly failed to load on some Linux/Windows setups (https://github.com/anthropics/claude-code/issues/50423). The MCP servers cover those cases."
+  }
+]
