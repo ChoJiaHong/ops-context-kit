@@ -18,3 +18,5 @@ Judge by substance. For G2 and G3, "same mechanism" means the same core idea, no
 Write a JSON array to the output path you were given, one object per pair:
 {"pair": "X07", "g1": {"pass": true, "links": ["..."], "note": "..."}, "g2": {"pass": false, "links": ["..."], "note": "..."}, "g3": {"pass": true, "links": ["..."], "note": "..."}, "g4": {"cases": 3, "sn_handles": 2, "se_handles": 1, "links": ["..."]}}
 Then reply only "done".
+
+If a search returns a rate-limit error (HTTP 403 or 429), wait 60 seconds and retry; other checkers share the same limit.
