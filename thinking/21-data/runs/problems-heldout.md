@@ -28,19 +28,19 @@ Context: SKILL.md files with YAML frontmatter (declared tools, network, filesyst
 
 Problem: I want AI agents to help troubleshoot Kubernetes (crashloops, DNS, cert-manager, Flux/Argo, Istio, storage...) on real clusters. Out of the box they guess from memory - docs and training data don't match the error strings the cluster actually prints - investigate in no particular order, and may 'fix' things (delete pods, apply manifests) in the middle of an investigation. Handing an agent cluster credentials feels risky and I can't tell whether its diagnosis is right.
 
-Context: Agent Skills (SKILL.md) for Claude Code/Codex/Gemini/Copilot; kubectl, read-only az; kind for test clusters; Kubernetes RBAC; Claude Code PreToolUse hooks; CI. Constraints: Secrets must never be read; the human applies anything destructive.
+Context: Agent Skills (SKILL.md) for Claude Code/Codex/Gemini/Copilot; kubectl, az; Kubernetes RBAC; Claude Code PreToolUse hooks; CI. Constraints: Secrets must never be read; the human applies anything destructive.
 
 ## openqodex
 
 Problem: My coding agent writes a change and then tells me it is fine. The LLM reviews I have tried report problems that turn out not to exist, silently skip parts of the change, and bury me in scanner noise from code I never touched. I want a review I can trust before the agent pushes.
 
-Context: Claude Code/Codex (as author and as separate reviewer processes on the user's login), Cursor/Cline, git hooks/pre-push, static scanners (gitleaks, semgrep, osv-scanner, kubeconform, checkov...). Constraints: runs locally, no account/API key of its own, no telemetry.
+Context: Claude Code/Codex on the user's login, Cursor/Cline, git hooks/pre-push, static scanners (gitleaks, semgrep, osv-scanner, kubeconform, checkov...). Constraints: runs locally, no account/API key of its own, no telemetry.
 
 ## stalebrain
 
 Problem: Agents keep 'ignoring the rules' in CLAUDE.md, AGENTS.md, .cursorrules and friends, but half the time the rules are unfollowable: they name paths that moved, scripts that were renamed, a package manager swapped months ago, an owner who left. Fed contradictory memory, the agent is confidently wrong every session, at a token cost paid every session. Across many agents' memory files nobody knows which lines are still true.
 
-Context: A git repo with history; memory files for ~13 agents in 18+ locations; Claude Code skills (also a portable pasteable protocol). Constraints: mechanical verification only (glob, grep, read-only git); no embeddings, server, database or network; never execute scripts; every edit approved by the human.
+Context: A git repo with history; memory files for ~13 agents in 18+ locations; Claude Code skills (also a portable pasteable protocol). Constraints: no embeddings, server, database or network; never execute scripts; every edit approved by the human.
 
 ## stop-that-shit
 

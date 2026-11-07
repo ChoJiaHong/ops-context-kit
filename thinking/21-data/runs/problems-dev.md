@@ -28,7 +28,7 @@ Context: Agent hook paths (Claude Code PreToolUse on Bash and write tools; Codex
 
 Problem: Developers run the same coding agents on the same repositories again and again, and the bill is high. Every turn pays again for the agent's instructions, every loaded tool definition and the conversation so far, and each session behaves as if it had never seen the repository before. We want sessions to get cheaper without hurting task success.
 
-Context: Claude Code, Codex, Copilot CLI, Pi plugins (session/prompt/tool hooks, agent settings files incl. tool deny lists, transcripts with usage); the agent's own login for any model calls. Constraints: black box - cannot change the agent's model, weights or code; no API key of its own; every action reversible; must never stop a turn itself; cost counted with cache pricing including its own calls.
+Context: Claude Code, Codex, Copilot CLI, Pi plugins (session/prompt/tool hooks, agent settings files, transcripts with usage); the agent's own login for any model calls. Constraints: black box - cannot change the agent's model, weights or code; no API key of its own; every action reversible; must never stop a turn itself; cost counted with cache pricing including its own calls.
 
 ## transcripto
 
@@ -40,4 +40,4 @@ Context: Agents already write local session transcripts (e.g. ~/.claude/projects
 
 Problem: On substantial multi-part work (a refactor with many migration paths, work fanned out to subagents), the agent truncates, partially complies, and then reports 'done' with confidence. Subagents hand back work that the parent accepts on their word. I find out later that several required outcomes were never met.
 
-Context: Claude Code skills and hooks (Stop hook), Codex skills, parallel subagents/fresh contexts, shell. Constraints: Node 16+ with no runtime dependencies; hooks installed only with user consent; checks run with ambient access (no sandbox).
+Context: Claude Code skills and hooks, Codex skills, parallel subagents/fresh contexts, shell. Constraints: Node 16+ with no runtime dependencies; hooks installed only with user consent; checks run with ambient access (no sandbox).

@@ -68,6 +68,7 @@
 
 - 剔除 7 題：依賴截止後才出現的模型（jev-guard、jevmem）；只是功能清單、沒有單一特色機制（coder-eval、devops-agent-harness）；和目標領域關係低（agent-replay、replay-cache-doctor、grip）。剔除在分組與作答前決定。
 - 我對題卡的修改：termaxa 的 context 拿掉 `pg_dump`（暗示備份）；elephant-goldfish 的 problem 拿掉「給不在場的人看」（暗示新脈絡審查者）。
+- 作答前的補充修改（第一次 commit 之後、任何作答之前）：context 欄位是從工具用到的東西整理出來的，有五題直接點出解法用的元件，拿掉：unlazy 的「Stop hook」、tokeneconomizer 的「工具 deny list」、k8s-skills 的「kind 測試叢集」與「唯讀 az」、openqodex 的「作者與審查者是不同程序」、stalebrain 的「只做機械查證（glob、grep、唯讀 git）」。
 - 萃取 agent 提醒：claude-bouncer、squadra、openqodex 的 problem 本身就把痛點講得很具體，比較容易；這是作者原本的描述，保留。
 - 分組結果在 [21-data/split.json](21-data/split.json)：dev 7 題、heldout 8 題。
 

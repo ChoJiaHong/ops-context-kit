@@ -101,7 +101,7 @@
     "repo": "stalebrainlabs/stalebrain",
     "created": "2026-07-31",
     "problem": "Agents keep 'ignoring the rules' in CLAUDE.md, AGENTS.md, .cursorrules and friends, but half the time the rules are unfollowable: they name paths that moved, scripts that were renamed, a package manager swapped months ago, an owner who left. Fed contradictory memory, the agent is confidently wrong every session, at a token cost paid every session. Across many agents' memory files nobody knows which lines are still true.",
-    "context": "A git repo with history; memory files for ~13 agents in 18+ locations; Claude Code skills (also a portable pasteable protocol). Constraints: mechanical verification only (glob, grep, read-only git); no embeddings, server, database or network; never execute scripts; every edit approved by the human.",
+    "context": "A git repo with history; memory files for ~13 agents in 18+ locations; Claude Code skills (also a portable pasteable protocol). Constraints: no embeddings, server, database or network; never execute scripts; every edit approved by the human.",
     "prior_solutions": "ctx-drift, ctxlint, agents-lint, AgentLinter, claude-memory-health: verify some references against the repo or check hygiene/age, but don't type claims, don't cite the commit that broke a claim, have no provenance, and re-audit everything from zero.",
     "core_mechanism": [
       "M1: Extract memory prose into typed claims (PATH, SCRIPT, SYMBOL, DEP, FACT, OWNER, CONVENTION; opinions skipped), each verified by a type-specific mechanical recipe against the live repo (lockfiles, scripts blocks, CODEOWNERS + git shortlog for owners), with git archaeology to cite the commit that contradicted it and propose the corrected line.",
@@ -125,7 +125,7 @@
     "repo": "Leonxlnx/unlazy",
     "created": "2026-08-09",
     "problem": "On substantial multi-part work (a refactor with many migration paths, work fanned out to subagents), the agent truncates, partially complies, and then reports 'done' with confidence. Subagents hand back work that the parent accepts on their word. I find out later that several required outcomes were never met.",
-    "context": "Claude Code skills and hooks (Stop hook), Codex skills, parallel subagents/fresh contexts, shell. Constraints: Node 16+ with no runtime dependencies; hooks installed only with user consent; checks run with ambient access (no sandbox).",
+    "context": "Claude Code skills and hooks, Codex skills, parallel subagents/fresh contexts, shell. Constraints: Node 16+ with no runtime dependencies; hooks installed only with user consent; checks run with ambient access (no sandbox).",
     "prior_solutions": "Prompting for thoroughness / 'don't be lazy' rules and research-motivated prompt tricks (budget forcing); partial compliance persists and completion claims remain unverified.",
     "core_mechanism": [
       "M1: Write an acceptance ledger before work: each outcome is a gate with a runnable CHECK command and an EXPECT output matcher; a gate passes only on exit 0 AND matched output; recorded evidence is bound to a digest of the gate definition (editing the gate makes evidence stale); the parent re-runs all gates (--reverify) on returned subagent work instead of trusting it.",
@@ -415,7 +415,7 @@
     "repo": "openqodex/openqodex",
     "created": "2026-10-02",
     "problem": "My coding agent writes a change and then tells me it is fine. The LLM reviews I have tried report problems that turn out not to exist, silently skip parts of the change, and bury me in scanner noise from code I never touched. I want a review I can trust before the agent pushes.",
-    "context": "Claude Code/Codex (as author and as separate reviewer processes on the user's login), Cursor/Cline, git hooks/pre-push, static scanners (gitleaks, semgrep, osv-scanner, kubeconform, checkov...). Constraints: runs locally, no account/API key of its own, no telemetry.",
+    "context": "Claude Code/Codex on the user's login, Cursor/Cline, git hooks/pre-push, static scanners (gitleaks, semgrep, osv-scanner, kubeconform, checkov...). Constraints: runs locally, no account/API key of its own, no telemetry.",
     "prior_solutions": "Author agent self-review; single-pass LLM review; scanners alone (noisy, miss logic bugs).",
     "core_mechanism": [
       "M1: Reviewer is a separate agent process from the author; finder sessions propose candidate findings each with a quoted code line as evidence, and a script mechanically checks every quote against the actual code (unverifiable candidates dropped).",
@@ -440,7 +440,7 @@
     "repo": "microsoft/TokenEconomizer",
     "created": "2026-10-13",
     "problem": "Developers run the same coding agents on the same repositories again and again, and the bill is high. Every turn pays again for the agent's instructions, every loaded tool definition and the conversation so far, and each session behaves as if it had never seen the repository before. We want sessions to get cheaper without hurting task success.",
-    "context": "Claude Code, Codex, Copilot CLI, Pi plugins (session/prompt/tool hooks, agent settings files incl. tool deny lists, transcripts with usage); the agent's own login for any model calls. Constraints: black box - cannot change the agent's model, weights or code; no API key of its own; every action reversible; must never stop a turn itself; cost counted with cache pricing including its own calls.",
+    "context": "Claude Code, Codex, Copilot CLI, Pi plugins (session/prompt/tool hooks, agent settings files, transcripts with usage); the agent's own login for any model calls. Constraints: black box - cannot change the agent's model, weights or code; no API key of its own; every action reversible; must never stop a turn itself; cost counted with cache pricing including its own calls.",
     "prior_solutions": "Not framed against named tools; implicit baseline is each session treated in isolation (and hand-written CLAUDE.md).",
     "core_mechanism": [
       "M1: Micro-skills: learn repo facts across sessions from failures that repeat across sessions (and a periodic model review of recent sessions), inject a fact at session start only after it is confirmed in 3 sessions, and drop it when later sessions contradict it.",
@@ -466,7 +466,7 @@
     "repo": "k8s-servant/k8s-skills",
     "created": "2026-10-23",
     "problem": "I want AI agents to help troubleshoot Kubernetes (crashloops, DNS, cert-manager, Flux/Argo, Istio, storage...) on real clusters. Out of the box they guess from memory - docs and training data don't match the error strings the cluster actually prints - investigate in no particular order, and may 'fix' things (delete pods, apply manifests) in the middle of an investigation. Handing an agent cluster credentials feels risky and I can't tell whether its diagnosis is right.",
-    "context": "Agent Skills (SKILL.md) for Claude Code/Codex/Gemini/Copilot; kubectl, read-only az; kind for test clusters; Kubernetes RBAC; Claude Code PreToolUse hooks; CI. Constraints: Secrets must never be read; the human applies anything destructive.",
+    "context": "Agent Skills (SKILL.md) for Claude Code/Codex/Gemini/Copilot; kubectl, az; Kubernetes RBAC; Claude Code PreToolUse hooks; CI. Constraints: Secrets must never be read; the human applies anything destructive.",
     "prior_solutions": "Not compared by name; implicit: agents' general knowledge plus raw kubectl access, generic runbooks.",
     "core_mechanism": [
       "M1: Every command in the skill text is assigned a tier - run freely (read-only verbs), ask first (reversible changes, shown with what changes and an '# Undo:' line), never run (destructive; proposed for the human) - and CI lints the skill text against per-tier allow-lists, requires an undo line for every change and rejects any Secret-reading command.",
