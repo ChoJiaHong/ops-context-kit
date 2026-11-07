@@ -1,0 +1,1226 @@
+[
+ {
+  "list": "L1",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "claude-bouncer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "stalebrain",
+  "score": 2,
+  "item": "I10",
+  "reason": "probe-verified facts with verified_at and TTL re-verification, STALE marking"
+ },
+ {
+  "list": "L1",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L1",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I5",
+  "reason": "accept.yaml probes with predicate plus Stop hook blocking"
+ },
+ {
+  "list": "L1",
+  "unmatched_valuable": 5
+ },
+ {
+  "list": "L2",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I2",
+  "reason": "shell-AST target-aware allow/ask/deny; no deny-with-rewrite"
+ },
+ {
+  "list": "L2",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "stalebrain",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L2",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I4",
+  "reason": "claims.yaml check+expected, Stop hook re-runs and blocks"
+ },
+ {
+  "list": "L2",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L3",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I2",
+  "reason": "resolves real target, policy matrix; limited corrective feedback"
+ },
+ {
+  "list": "L3",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "stalebrain",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "tokeneconomizer",
+  "score": 1,
+  "item": "I10",
+  "reason": "mines repeated cross-session lookups into facts; one mechanism"
+ },
+ {
+  "list": "L3",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L3",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I7",
+  "reason": "task.yaml runnable checks, Stop blocks, evidence hash, edits to checks blocked"
+ },
+ {
+  "list": "L3",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L4",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "cc-projects",
+  "score": 1,
+  "item": "I10",
+  "reason": "runner launches headless sessions in per-repo worktrees but human writes the plan; weak result checking"
+ },
+ {
+  "list": "L4",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I1",
+  "reason": "resolves concrete endpoint of commands vs declared env, denies mismatch"
+ },
+ {
+  "list": "L4",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "stalebrain",
+  "score": 1,
+  "item": "I9",
+  "reason": "check command per fact, UNVERIFIED since date; no typed decay"
+ },
+ {
+  "list": "L4",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L4",
+  "target": "unlazy",
+  "score": 1,
+  "item": "I4",
+  "reason": "predicates but no Stop-blocking; post-merge watcher"
+ },
+ {
+  "list": "L4",
+  "unmatched_valuable": 5
+ },
+ {
+  "list": "L5",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "claude-bouncer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "stalebrain",
+  "score": 1,
+  "item": "I9",
+  "reason": "generated topology map and CI contradiction check of docs"
+ },
+ {
+  "list": "L5",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "tokeneconomizer",
+  "score": 1,
+  "item": "I7",
+  "reason": "static loop breaker on repeated failures"
+ },
+ {
+  "list": "L5",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "target": "unlazy",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L5",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L6",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I1",
+  "reason": "adds explicit --context and denies switches; pin-based rather than full parse"
+ },
+ {
+  "list": "L6",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "stalebrain",
+  "score": 1,
+  "item": "I8",
+  "reason": "per-fact probes, STALE with date; no expiry decay"
+ },
+ {
+  "list": "L6",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L6",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I5",
+  "reason": "hash-locked acceptance predicates, Stop hook blocks"
+ },
+ {
+  "list": "L6",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L7",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I2",
+  "reason": "real shell parser, verb x env matrix; no rewrite feedback"
+ },
+ {
+  "list": "L7",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "stalebrain",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L7",
+  "target": "unlazy",
+  "score": 1,
+  "item": "I8",
+  "reason": "pre/post checks ledger without Stop hook"
+ },
+ {
+  "list": "L7",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L8",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I1",
+  "reason": "target-aware gate resolving real target; ask/deny"
+ },
+ {
+  "list": "L8",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "stalebrain",
+  "score": 1,
+  "item": "I10",
+  "reason": "probe annotations, STALE marking, PR with observed value"
+ },
+ {
+  "list": "L8",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L8",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I6",
+  "reason": "contract.yaml verification commands, Stop hook runs and blocks"
+ },
+ {
+  "list": "L8",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L9",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I6",
+  "reason": "states string-matching permission problem; credential broker mechanism"
+ },
+ {
+  "list": "L9",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "stalebrain",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "tokeneconomizer",
+  "score": 1,
+  "item": "I10",
+  "reason": "cross-session failure-fix miner with confirmation and expiry"
+ },
+ {
+  "list": "L9",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L9",
+  "target": "unlazy",
+  "score": 1,
+  "item": "I3",
+  "reason": "evidence ledger and Stop verifier, but not up-front gates"
+ },
+ {
+  "list": "L9",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L10",
+  "target": "blastradius",
+  "score": 1,
+  "item": "I8",
+  "reason": "cross-repo dep index with consumers/impact query, Stop-hook impact call, not manifest-touch injection"
+ },
+ {
+  "list": "L10",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I2",
+  "reason": "effect-aware gate; rewrites apply to saved plan"
+ },
+ {
+  "list": "L10",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "squadra",
+  "score": 1,
+  "item": "I6",
+  "reason": "tool-agnostic shared task ledger with owner; no proof binding or review"
+ },
+ {
+  "list": "L10",
+  "target": "stalebrain",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L10",
+  "target": "transcripto",
+  "score": 1,
+  "item": "I5",
+  "reason": "verifies final claims by re-running probes, not from recorded results"
+ },
+ {
+  "list": "L10",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I6",
+  "reason": "acceptance-check ledger, done runs check, Stop blocks"
+ },
+ {
+  "list": "L10",
+  "unmatched_valuable": 6
+ },
+ {
+  "list": "L11",
+  "target": "blastradius",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "claude-bouncer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "stalebrain",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "tokeneconomizer",
+  "score": 1,
+  "item": "I9",
+  "reason": "cross-session failure/correction miner"
+ },
+ {
+  "list": "L11",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L11",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I3",
+  "reason": "hashed accept.yaml probes, Stop runs probes and blocks"
+ },
+ {
+  "list": "L11",
+  "unmatched_valuable": 5
+ },
+ {
+  "list": "L12",
+  "target": "blastradius",
+  "score": 2,
+  "item": "I7",
+  "reason": "cross-repo ownership/consumer index plus PreToolUse Edit hook warning of other consumers"
+ },
+ {
+  "list": "L12",
+  "target": "cc-projects",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "claude-bouncer",
+  "score": 1,
+  "item": "I1",
+  "reason": "effect-aware gate with plan-bound rewrite"
+ },
+ {
+  "list": "L12",
+  "target": "elephant-goldfish",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "evolveguard",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "honest-arch-diagrams",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "k8s-skills",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "openqodex",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "squadra",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "stalebrain",
+  "score": 1,
+  "item": "I10",
+  "reason": "inline checks, corrected line drafted from observation; no stamps/decay"
+ },
+ {
+  "list": "L12",
+  "target": "stop-that-shit",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "tokeneconomizer",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "transcripto",
+  "score": 0,
+  "item": null,
+  "reason": "no matching item"
+ },
+ {
+  "list": "L12",
+  "target": "unlazy",
+  "score": 2,
+  "item": "I6",
+  "reason": "acceptance ledger with checks, Stop hook re-runs and blocks"
+ },
+ {
+  "list": "L12",
+  "unmatched_valuable": 5
+ }
+]
