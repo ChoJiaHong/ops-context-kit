@@ -1,0 +1,536 @@
+[
+  {
+    "id": "termaxa",
+    "repo": "termaxa/termaxa",
+    "created": "2026-07-04",
+    "problem": "I let coding agents (Claude Code, Codex, Cursor, Copilot CLI) run shell commands with approvals off or barely watched. The damage is rarely an attack; it is an ordinary chore done with the most forceful spelling: rm -rf to clean up, git push --force, git reset --hard to 'undo my last commit' (19 of 36 models in one benchmark destroyed uncommitted work in a file nobody mentioned), DROP TABLE. Approving every command defeats the point of an agent; trusting it blindly works until uncommitted work, remote commits or table rows are gone.",
+    "context": "Agent hook paths (Claude Code PreToolUse on Bash and write tools; Codex/Cursor/Copilot hooks), git, psql, terraform, kubectl, docker. Constraints: single local binary, no model, no service, no account; must work unattended (agent approvals off); policy must be reviewable in the repo; hooks advise, they are not a sandbox.",
+    "prior_solutions": "The agent's own approval prompt (shows the command text, not its effect; nobody watches it in unattended runs). Sandboxes (bound what a command can reach, but a sandbox that includes the repo still lets rm -rf ./src through). Policy engines like OPA (evaluate a string against rules; carry no consequence, backup or record).",
+    "core_mechanism": [
+      "M1: Before execution, compute the concrete consequence of the command rather than matching its text: resolve delete targets and count files (flagging out-of-project paths and credential dirs like .ssh/.aws), list commits a force push would make the remote lose, uncommitted files a reset --hard/checkout/restore would discard, rows and FK dependents a DROP/DELETE would remove, terraform plan counts.",
+      "M2: Automatically take a command-type-specific restorable backup before the command runs (copy the paths, pin the remote ref to a backup branch, snapshot uncommitted changes to a private git ref, pg_dump the tables, copy tf state) with a one-command rollback; commands that cannot be insured (over budget, terraform destroy, find -delete) are held/denied.",
+      "M3: A circuit breaker that counts destructive intent classes (e.g. file-delete) across spellings and shells (rm -rf, Remove-Item, del /s, find -exec rm) and denies after a threshold, persisting until a human releases it with a reason."
+    ],
+    "full_match": "Proposal contains M1 and M2 (consequence computed per command type AND automatic pre-execution backup with rollback).",
+    "partial_match": "Proposal contains only one of M1 or M2, or contains M3 plus a pre-execution allow/ask/deny gate.",
+    "not_a_match": [
+      "regex/glob allow-deny list on command strings only",
+      "running the agent in a container/VM sandbox",
+      "audit log of commands",
+      "asking the human to approve every command",
+      "relying on git reflog or periodic snapshots/backups unrelated to the specific command"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep - consequence preview plus per-command insurance is a distinctive, checkable mechanism directly about unsafe changes."
+  },
+  {
+    "id": "agent-replay",
+    "repo": "tstanmay13/agent-replay",
+    "created": "2026-07-03",
+    "problem": "Agent runs are non-deterministic: the same task against the same model does different things each time, so when an agent regresses I cannot reproduce or debug it. Comparing two Claude Code sessions means scrolling two transcripts and eyeballing them; I cannot say where behaviour first changed, I have no trustworthy portable artifact of what a run actually did, and I cannot turn a known-good run into a regression test in CI.",
+    "context": "Claude Code transcripts on disk (JSONL records forming a tree linked by parentUuid, with attachments/snapshots interleaved), git, CI (GitHub Actions). Constraint: must work without re-driving the live model or re-executing tools.",
+    "prior_solutions": "Transcript viewers (render text; no verification or semantic comparison). 'Run it again and eyeball it'.",
+    "core_mechanism": [
+      "M1: Normalize every step (role, text, tool calls, tool results; canonicalized inputs with sorted keys; volatile tool_use ids excluded) and content-hash it, with a run digest over all step hashes, so a replay recomputes hashes and proves the record is unmodified (tamper detected at the exact step).",
+      "M2: Diff two runs step-by-step by hash and report the first divergence point and what changed (e.g. tool calls [Read] -> [Edit]) instead of a text diff.",
+      "M3: Rule assertions over a recorded run (forbid path/tool, max tool calls, must-succeed) as a CI gate, and fork at step N with a new prompt."
+    ],
+    "full_match": "Proposal contains M1 and M2 (per-step content hashing of a normalized transcript AND first-divergence diff by hash).",
+    "partial_match": "Proposal contains M1 or M2 alone, or records transcripts into fixtures with CI assertions (M3) without hashing.",
+    "not_a_match": [
+      "plain text diff of transcripts",
+      "transcript/log viewer",
+      "LLM-as-judge comparing two runs",
+      "seeding/temperature 0 to make the model deterministic"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "low",
+    "verdict": "drop: low relevance to the target domain (filter set before any run)"
+  },
+  {
+    "id": "coder-eval",
+    "repo": "UiPath/coder_eval",
+    "created": "2026-07-09",
+    "problem": "We build CLIs and skills that our users drive through coding agents (Claude Code, Codex, Gemini, OpenCode). We need to know whether agents actually complete our domain tasks, whether our skills even trigger, and to catch silent regressions when models, prompts or skills drift. Public benchmarks rank models on fixed shared task sets, not on our work.",
+    "context": "Agent CLIs/SDKs (Claude Agent SDK, Codex SDK, etc.), Docker or temp-dir sandboxes, GitHub Actions; bring-your-own model credentials.",
+    "prior_solutions": "SWE-bench/SkillsBench (fixed datasets), Harbor (scale/RL rollouts), OpenAI Evals (grade model text, not agent actions), hand-rolled scripts (no reproducibility, scoring, telemetry).",
+    "core_mechanism": [
+      "M1: Declarative YAML task = prompt + agent config + sandbox + weighted 0-1 success criteria, run against a real agent in a sandbox and scored on the files and commands it actually produced.",
+      "M2: Harness-agnostic: switching agent is one field; same criteria score every agent; includes a skill_triggered criterion."
+    ],
+    "full_match": "Proposal contains M1 and M2.",
+    "partial_match": "Proposal contains M1 only.",
+    "not_a_match": [
+      "fixed public benchmark",
+      "grading model text output only"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "high",
+    "relevance": "med",
+    "verdict": "drop - a standard agent-eval harness; no distinctive mechanism beyond a feature list."
+  },
+  {
+    "id": "evolveguard",
+    "repo": "RudrenduPaul/evolveguard",
+    "created": "2026-07-15",
+    "problem": "Claude Agent Skills (SKILL.md, with bundled hook scripts) and Claude Code MEMORY.md files change over time, increasingly edited by the agent itself. An edit can quietly expand what the agent will do when the skill or memory is loaded, and nobody reviews every such edit. I want to catch these regressions before the edit is merged.",
+    "context": "SKILL.md files with YAML frontmatter (declared tools, network, filesystem, scope, hooks) plus body text and hook scripts; MEMORY.md (no frontmatter); git pre-commit and CI. Constraints: no LLM calls, no live agent run, no hosted infrastructure, no SDK integration, must not execute the skill's scripts; runs offline.",
+    "prior_solutions": "Braintrust and similar eval platforms (need SDK integration, eval definitions, live traced runs). Statistical A/B behaviour comparison (agent-eval: run both versions live, compute a p-value) - costly and not triggered by a file diff.",
+    "core_mechanism": [
+      "M1: Statically derive a 'capability surface' from the skill/memory artifact: declared frontmatter permissions and scopes combined with evidence scanned from the body text and bundled hook scripts (network calls, filesystem writes, write scopes), and record it as a baseline (optionally filtered per labeled fixture prompt).",
+      "M2: On every edit, re-derive the surface with the same logic and diff it against the baseline (per fixture and whole-surface), failing CI on any new or widened capability (e.g. new fs.write, scope ./workspace/** -> ./**, hook gains a network call)."
+    ],
+    "full_match": "Proposal contains M1 and M2 (static capability inventory of the skill incl. scripts, baselined and diffed on edit).",
+    "partial_match": "Proposal diffs only declared frontmatter/permissions, or keyword-scans the edited text for risky patterns without a baseline diff.",
+    "not_a_match": [
+      "running LLM evals before/after the edit",
+      "plain text diff review by a human",
+      "LLM judge of the edit",
+      "signing/locking skill files against any change"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "med",
+    "verdict": "keep - clear static capability-surface diff mechanism; relevant to agent-edited skills/memory."
+  },
+  {
+    "id": "stalebrain",
+    "repo": "stalebrainlabs/stalebrain",
+    "created": "2026-07-31",
+    "problem": "Agents keep 'ignoring the rules' in CLAUDE.md, AGENTS.md, .cursorrules and friends, but half the time the rules are unfollowable: they name paths that moved, scripts that were renamed, a package manager swapped months ago, an owner who left. Fed contradictory memory, the agent is confidently wrong every session, at a token cost paid every session. Across many agents' memory files nobody knows which lines are still true.",
+    "context": "A git repo with history; memory files for ~13 agents in 18+ locations; Claude Code skills (also a portable pasteable protocol). Constraints: mechanical verification only (glob, grep, read-only git); no embeddings, server, database or network; never execute scripts; every edit approved by the human.",
+    "prior_solutions": "ctx-drift, ctxlint, agents-lint, AgentLinter, claude-memory-health: verify some references against the repo or check hygiene/age, but don't type claims, don't cite the commit that broke a claim, have no provenance, and re-audit everything from zero.",
+    "core_mechanism": [
+      "M1: Extract memory prose into typed claims (PATH, SCRIPT, SYMBOL, DEP, FACT, OWNER, CONVENTION; opinions skipped), each verified by a type-specific mechanical recipe against the live repo (lockfiles, scripts blocks, CODEOWNERS + git shortlog for owners), with git archaeology to cite the commit that contradicted it and propose the corrected line.",
+      "M2: Provenance stamps (inline invisible 'verified <date>' comments) plus per-claim-type half-life confidence decay: past its half-life a claim is re-verified or downgraded to 'as of <date>'; stamps make re-audits incremental."
+    ],
+    "full_match": "Proposal contains M1 and M2 (typed claim verification against repo/git AND per-claim verification stamps with type-dependent expiry/decay).",
+    "partial_match": "Proposal contains only M1 (check memory references against the repo) or only M2 (date/expiry metadata on memory entries).",
+    "not_a_match": [
+      "generic markdown/rules linter",
+      "asking an LLM 'is this still true?' over the file",
+      "periodic manual review of CLAUDE.md",
+      "embedding/RAG-based memory store"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep - distinctive typed-claim verification + provenance/decay; directly about memory drift."
+  },
+  {
+    "id": "unlazy",
+    "repo": "Leonxlnx/unlazy",
+    "created": "2026-08-09",
+    "problem": "On substantial multi-part work (a refactor with many migration paths, work fanned out to subagents), the agent truncates, partially complies, and then reports 'done' with confidence. Subagents hand back work that the parent accepts on their word. I find out later that several required outcomes were never met.",
+    "context": "Claude Code skills and hooks (Stop hook), Codex skills, parallel subagents/fresh contexts, shell. Constraints: Node 16+ with no runtime dependencies; hooks installed only with user consent; checks run with ambient access (no sandbox).",
+    "prior_solutions": "Prompting for thoroughness / 'don't be lazy' rules and research-motivated prompt tricks (budget forcing); partial compliance persists and completion claims remain unverified.",
+    "core_mechanism": [
+      "M1: Write an acceptance ledger before work: each outcome is a gate with a runnable CHECK command and an EXPECT output matcher; a gate passes only on exit 0 AND matched output; recorded evidence is bound to a digest of the gate definition (editing the gate makes evidence stale); the parent re-runs all gates (--reverify) on returned subagent work instead of trusting it.",
+      "M2: A Stop hook that blocks the agent from ending its turn/session while any gate is unmet or a dispatched wave is incomplete, with a progress guard that releases after N blocks without real progress; abandonment is an explicit non-success handoff.",
+      "M3: Parallel leaves must declare disjoint owned paths and claim leases before running; check commands need an approval record keyed to the exact command/cwd/shell/PATH."
+    ],
+    "full_match": "Proposal contains M1 and M2 (machine-checkable acceptance gates written up front AND a stop/exit hook that refuses completion until they pass).",
+    "partial_match": "Proposal contains M1 without a stop-blocking hook, or a Stop hook keyed to a plain checklist/TODO without executable checks.",
+    "not_a_match": [
+      "prompting the agent to be thorough",
+      "TODO list the agent ticks itself",
+      "LLM self-review of completeness",
+      "just running the test suite at the end"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep - executable acceptance ledger + Stop-hook enforcement directly targets unverified completion claims."
+  },
+  {
+    "id": "stop-that-shit",
+    "repo": "lennney/stop-that-shit",
+    "created": "2026-08-11",
+    "problem": "I ask the agent to export a file and it also writes a SHA-256 nobody reads 'just in case'. I ask for a review and it starts editing; I ask for one fix and it refactors the neighbouring module; it re-runs checks that already answered the question and spawns another agent 'to double-check'. Every time I get annoyed I add another 'don't' to AGENTS.md, and AGENTS.md itself turns into a mess while I still have to babysit the agent.",
+    "context": "Claude Code, Codex, OpenCode, Pi, Hermes plugins with pre-tool-call hooks and skills; Node 18+. Constraint: necessary work (callers, migrations, tests) must still be done completely; the guard must not decide by keywords that caches/retries/migrations are unnecessary.",
+    "prior_solutions": "Accumulating prohibition rules in AGENTS.md/CLAUDE.md ('don't over-engineer', 'don't change what I didn't ask') - unbounded growth, not enforced.",
+    "core_mechanism": [
+      "M1: The user declares a per-task contract on the first line of the prompt: a mode (review/answer/monitor = read-only; change) plus explicit bounds (files=..., deps=allow, hash=allow, agents=N), parsed into session state.",
+      "M2: A pre-tool-call guard enforces only those explicit bounds mechanically: blocks file writes in read-only modes and writes outside the declared file list, blocks subagent launches beyond the budget, blocks recognizable hash/checksum operations unless allowed, asks on dependency additions.",
+      "M3: A skill with an ordered judgement procedure (what is the deliverable -> does existing capability suffice -> what concrete gap remains -> what does each defensive layer actually detect -> is verification done, then stop)."
+    ],
+    "full_match": "Proposal contains M1 and M2 (per-task user-declared mode/budget contract enforced by a tool-call hook).",
+    "partial_match": "Proposal has a hook enforcing a static read-only/write policy not tied to a per-task declaration, or only the instruction/procedure (M3).",
+    "not_a_match": [
+      "adding more rules to AGENTS.md/CLAUDE.md",
+      "an LLM reviewer flagging scope creep in the diff afterwards",
+      "static permission allowlist in settings",
+      "plan mode alone"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "med",
+    "verdict": "keep - per-task declared contract enforced at tool-call time is distinctive and checkable."
+  },
+  {
+    "id": "claude-bouncer",
+    "repo": "karlkfi/claude-bouncer",
+    "created": "2026-08-22",
+    "problem": "Claude Code's permission rules judge a shell command by its name, and a name is a bad ID: Bash(grep:*) can't tell an in-repo grep from one reading ~/.aws/credentials, Bash(git push:*) can't tell claude/fix-42 from main, Bash(kubectl:*) can't tell a local kind cluster from the one customers are on. So I either trust every command or answer a prompt every time. Separately, the agent writes commands whose failure reads as success (a test run piped into tail, a gate backgrounded behind an echo) and then reports green.",
+    "context": "Claude Code PreToolUse hooks distributed as plugins; kubeconfig, git remotes/branches, terraform/gcloud/aws/helm CLIs, environment. Constraints: no network, no model call, answer from the command string plus local config; must also behave sanely in bypassPermissions mode where nobody answers prompts.",
+    "prior_solutions": "Claude Code's built-in name/prefix-based allow/ask/deny rules.",
+    "core_mechanism": [
+      "M1: Fully parse the shell command (shared lexer handling heredocs, command substitution, operators, wrappers like sudo/env/timeout) and judge the arguments against live local context: resolved paths vs workspace root, target branch vs protected branches, kube context/cluster or cloud project vs production (including commands relying on ambient context that could change), exit-status masking via pipes/;/background.",
+      "M2: Three-way routing: stay silent (defer to normal permissions) / 'ask' the human only when intent is genuinely unknowable from the string / 'deny' with the exact rewrite in the reason returned to the model (e.g. add --context prod-us, capture $? and re-raise), so the agent self-corrects without interrupting the human.",
+      "M3: Override 'pass' only as a real inline env-var assignment carrying a reason, which lifts only the verdict it names (e.g. prod deny -> ask), never everything."
+    ],
+    "full_match": "Proposal contains M1 and M2 (argument/context-aware command judging AND deny-with-corrective-rewrite fed back to the agent, reserving human prompts for unknowable intent).",
+    "partial_match": "Proposal contains M1 only (argument-aware allow/ask/deny), or deny-with-fix messaging on simple prefix matching.",
+    "not_a_match": [
+      "finer-grained name/prefix allow rules",
+      "container/VM sandbox",
+      "LLM classifier of each command",
+      "separate kubeconfig per session only"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep - context-resolved argument checks (prod kube context, protected branch, exit-status masking) with self-correcting denials fit the target directly."
+  },
+  {
+    "id": "blastradius",
+    "repo": "harris-ahmad/blastradius-mcp",
+    "created": "2026-08-30",
+    "problem": "I maintain many repositories that share infrastructure artifacts: Docker base images, Terraform modules, GitHub Actions, Helm charts, npm/Python packages. When I ask an agent in one repo to 'bump react to 19' or change a module version, it has no idea which other repos consume the same artifact or how tightly they pin it; a single session cannot see across repository boundaries. Vulnerabilities in pinned versions spread across repos also go unnoticed between sessions.",
+    "context": "Claude Code hooks (PreToolUse, Stop), MCP server, skills, headless claude -p, OSV.dev advisories. Constraints: everything local (one SQLite file), no account/server/API key; hooks run under a ~5 s timeout; injected context costs tokens every time.",
+    "prior_solutions": "Code-graph indexers (functions/classes/imports, within one repo). Single-repo vulnerability scans. Plain MCP tools (model-elective: the agent may never call them). Regex manifest parsers (get multi-stage Dockerfiles, ARG-templated bases, heredocs wrong).",
+    "core_mechanism": [
+      "M1: A persistent cross-repo index of infra/package artifacts (images, TF modules, Actions, Helm charts, packages) with exact version specs and file:line, accumulated from every repo the agent opens, answering 'if I bump this, who breaks?'.",
+      "M2: Push, not pull: a PreToolUse hook on Read/Edit/Bash that touches a manifest injects a terse, ranked (open advisory > breadth > version drift), capped and session-deduplicated list of other-repo consumers and their pins into the agent's context, without the agent calling a tool.",
+      "M3: Extraction is delegated to the model: a Stop hook flags manifests not yet indexed and the agent records dependencies via an MCP tool (no parsers shipped, except lockfiles); a background watcher matches OSV advisories against what each pin can actually resolve to."
+    ],
+    "full_match": "Proposal contains M1 and M2 (cross-repo artifact index AND automatic hook-driven injection when the agent touches a manifest).",
+    "partial_match": "Proposal contains M1 with only an on-demand query tool, or hook injection of single-repo dependency info.",
+    "not_a_match": [
+      "code call graph / symbol index",
+      "Dependabot/Renovate",
+      "single-repo SCA scan",
+      "an MCP tool the agent may optionally call",
+      "monorepo migration"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep - cross-repo infra blast-radius pushed via hooks is distinctive and highly relevant to multi-repo infra work."
+  },
+  {
+    "id": "replay-cache-doctor",
+    "repo": "RedRobotKK/Replay",
+    "created": "2026-09-02",
+    "problem": "My coding-agent bill (or rate-limit consumption) went up and nothing errored. ccusage tells me what I spent but not why. I suspect some turns are billed far more than they should be, but I cannot tell which turns, or what I or the client did to cause it.",
+    "context": "Claude Code and Codex transcripts on disk with per-request usage counters (input, cache write, cache read, output); provider list prices and documented caching rules; subagents write separate transcript lanes; optional local proxy. Constraints: no account, no telemetry, originate no network request the user did not type; numbers must state how they were obtained.",
+    "prior_solutions": "ccusage and similar cost totalizers (answer 'how much', not 'which turn and why').",
+    "core_mechanism": [
+      "M1: Re-simulate each session turn by turn against the provider's prompt-caching rules (prefix matching, TTL) to predict cache reads/writes, compare with the recorded usage, and pinpoint the turns where the cache broke and history was re-billed at write prices.",
+      "M2: Classify the cause of each break (history re-rendered after the system prefix, TTL expiry from an idle gap, tool definitions added/removed - naming which tools) and price the re-billed tokens per cause.",
+      "M3: Isolate comparisons per agent lane (subagents) and tag every figure as measured/estimated/structural, refusing to quote what it cannot measure."
+    ],
+    "full_match": "Proposal contains M1 and M2 (cache-rule simulation to locate break turns AND per-break cause classification).",
+    "partial_match": "Proposal flags turns with cache-creation spikes from usage counters without simulating the cache or classifying causes.",
+    "not_a_match": [
+      "cost dashboard / per-session totals",
+      "switching to a cheaper model",
+      "cache keepalive pings",
+      "context compaction"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "low",
+    "verdict": "drop: low relevance to the target domain (filter set before any run)"
+  },
+  {
+    "id": "devops-agent-harness",
+    "repo": "stwins60/devops-agent-harness",
+    "created": "2026-09-05",
+    "problem": "I want AI coding agents to do real DevOps work: diagnose Kubernetes/Docker/AWS/Terraform issues, take Jira tickets to pull requests, run incident response. But the model cannot be trusted to police itself: it may mutate production, push to protected branches, leak secrets into logs or tickets, or assert a root cause without evidence.",
+    "context": "Claude Code/OpenCode/Copilot/Cursor via MCP, kubectl, aws, terraform, ansible, Jira, GitHub/GitLab, scanners; credentials from environment only.",
+    "prior_solutions": "Not stated explicitly beyond 'chatbot' use of agents with raw CLI/MCP access.",
+    "core_mechanism": [
+      "M1: All tool calls go through a harness (MCP server of governed tools) with policy outside the model: permission levels per tool, command classification, approvals, audit, redaction, rollback plan per mutation.",
+      "M2: Environment identity resolved from trusted bindings (kube context, AWS account, namespace); anything unbound is treated as production; request/ticket text can only make it stricter."
+    ],
+    "full_match": "Proposal contains M1 and M2.",
+    "partial_match": "Proposal contains M1 only.",
+    "not_a_match": [
+      "prompt instructions to be careful",
+      "read-only credentials only"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "high",
+    "relevance": "high",
+    "verdict": "drop - kitchen-sink feature list (policy engine, approvals, audit, redaction, runbooks); no single distinctive mechanism."
+  },
+  {
+    "id": "elephant-goldfish",
+    "repo": "google/elephant-goldfish-model",
+    "created": "2026-09-13",
+    "problem": "When I design a feature spec together with an agent over a long conversation, the resulting document reads perfectly to both of us, yet it is full of assumptions we never wrote down, unclear requirements and risks; implementers (human or agent) trip over them later. I want design documents that hold up once implementation starts.",
+    "context": "Coding agents with skills and the ability to spawn subagents (Claude Code, Codex, Antigravity); the project's source code; human approves the final spec.",
+    "prior_solutions": "Asking the same agent, in the same session, to review its own draft (shares the context that hides the gaps); human-only review.",
+    "core_mechanism": [
+      "M1: Split roles by context: the drafter keeps the full project/conversation context, while reviewers are freshly spawned subagents given only the document and its referenced source material, deliberately without the earlier conversation, so unstated assumptions become visible; review is refused if fresh contexts cannot be created.",
+      "M2: Multiple focused fresh reviewers in stages (design soundness, clarity, fit with the code, implementation plan), with the human resolving trade-offs and choosing which findings to address."
+    ],
+    "full_match": "Proposal contains M1 (reviewer deliberately denied the drafting conversation, given only the doc plus referenced sources).",
+    "partial_match": "Proposal uses a separate reviewer agent or panel but gives it full context, or does not make context removal the point.",
+    "not_a_match": [
+      "same-session self-review",
+      "human review only",
+      "spec template/linter",
+      "longer brainstorming"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "high",
+    "relevance": "med",
+    "verdict": "keep - single crisp mechanism (context-stripped reviewers); likely easy to rediscover, useful as a calibration case."
+  },
+  {
+    "id": "honest-arch-diagrams",
+    "repo": "albegosu/honest-arch-diagrams",
+    "created": "2026-09-13",
+    "problem": "Ask an LLM to 'diagram this service' and it draws a Redis, a TLS hop and an auth gateway it never saw. A confident wrong architecture diagram is worse than none. I want agents to produce request-path diagrams of services in our Kubernetes/GitOps/Terraform estate that I can actually trust.",
+    "context": "Agent skills (Claude Code, Cursor, Gemini CLI, Copilot); available sources: kubectl JSON dumps, GitOps/Helm manifests, docker-compose, terraform show -json, OpenAPI specs, OpenTelemetry traces. Constraint: zero-dependency Node CLI; never emit secret values.",
+    "prior_solutions": "Archify (beautiful themeable output), ArchPresent (source-verified inventories, not request paths), C4 codebase skill (C4 model) - none enforce honesty of the topology.",
+    "core_mechanism": [
+      "M1: An intermediate renderer-agnostic model in which every hop must carry evidence (a concrete source object such as Ingress/Service/Endpoints), derived by deterministic adapters from real sources (traces > live k8s > declared manifests > OpenAPI, with evidence strength recorded) instead of the LLM's recall.",
+      "M2: A linter gate before rendering that rejects any hop without evidence ('omitted means absent, not guessed'), with a separate visually distinct tier for inferred companions (dashed, evidence on the edge) that may never sit on the verified path."
+    ],
+    "full_match": "Proposal contains M1 and M2 (evidence-carrying model built from real infra sources AND a validation gate that refuses unevidenced hops).",
+    "partial_match": "Proposal generates diagrams deterministically from manifests/traces without an evidence-required gate, or asks the LLM to cite sources without mechanical rejection.",
+    "not_a_match": [
+      "better prompting of the LLM",
+      "LLM self-check of its diagram",
+      "prettier rendering (D2/Mermaid)",
+      "service-mesh auto-generated topology UI alone"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "med",
+    "verdict": "keep - evidence-required model + lint gate is a clean, transferable anti-hallucination mechanism for infra claims."
+  },
+  {
+    "id": "jev-guard",
+    "repo": "leepokai/jev-guard",
+    "created": "2026-09-17",
+    "problem": "I want coding agents (Claude Code, Codex, Copilot, Gemini, Cursor...) to run without approving every call, yet not run destructive calls, not escalate beyond what I asked, not follow instructions planted in web pages/files/MCP output they read, and not load skills or CLAUDE.md files that do something unexpected.",
+    "context": "Hooks across many agents (PreToolUse/PostToolUse/UserPromptSubmit and equivalents), ACP proxy; TypeSafe 'Jev' System One API (typed probabilistic answers, ~$0.04/M input tokens, sub-second).",
+    "prior_solutions": "Claude Code auto mode (proprietary classifier, Claude Code only); per-call manual approval.",
+    "core_mechanism": [
+      "M1: Ask a cheap typed-answer model narrow questions per tool call (risk 0-3, would a senior engineer want approval, did the user's recent messages ask for exactly this, does this carry out an instruction planted in content the agent read) with session memory, and apply thresholds in code.",
+      "M2: Scan every tool result for agent-directed text (injection/canary) and remember flagged content for the session; scan instruction files on load."
+    ],
+    "full_match": "Proposal contains M1 and M2.",
+    "partial_match": "Proposal contains M1 only.",
+    "not_a_match": [
+      "static allowlist",
+      "sandbox"
+    ],
+    "depends_on_unknown": true,
+    "depends_on_unknown_detail": "TypeSafe Jev / System One API (typed calibrated answers at ~$0.00004 per call); feasibility of per-call judging rests on it.",
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "drop - core depends on post-2026-06 Jev model and closely mirrors Claude Code auto mode."
+  },
+  {
+    "id": "grip",
+    "repo": "guilyx/grip",
+    "created": "2026-09-20",
+    "problem": "AI now writes much of our code, and developers push changes they could not defend: why it is built this way, where it fails, what a malicious caller could do, how they know it works. Code review checks the code, not whether its author understands it, and that understanding is eroding.",
+    "context": "git hooks, pre-commit framework, team-shared repo config; can reuse Claude Code/Codex/Gemini CLI as the model (no API key) or Anthropic/OpenAI/Ollama. Constraints: skip in CI/non-interactive; cheap retries.",
+    "prior_solutions": "Code review and tests (judge the code, not the developer's understanding).",
+    "core_mechanism": [
+      "M1: A pre-push hook that generates questions from the outgoing diff (design rationale, failure modes, adversarial caller, verification), has the developer answer, grades the answers with a model against a hidden rubric, and blocks the push below a team pass mark (with caching of passed diffs and a one-shot skip)."
+    ],
+    "full_match": "Proposal contains M1 (diff-derived comprehension quiz graded by a model, gating push).",
+    "partial_match": "Proposal requires a written explanation/PR rationale from the developer without grading or gating, or gates on an LLM review of the code instead of the developer.",
+    "not_a_match": [
+      "stricter code review",
+      "LLM code review",
+      "pair programming policy",
+      "test coverage gate"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "high",
+    "relevance": "low",
+    "verdict": "drop: low relevance to the target domain (filter set before any run)"
+  },
+  {
+    "id": "jevmem",
+    "repo": "Avinash-jetwani/jevmem",
+    "created": "2026-09-22",
+    "problem": "Each Claude Code session starts fresh, so what we decided last week (we use Postgres 16, never commit .env, approach X failed because Y) lives in last week's chat. CLAUDE.md helps only if someone keeps it up to date, and nobody does. The agent re-proposes forbidden changes and repeats approaches that already failed.",
+    "context": "Claude Code hooks (Stop/UserPromptSubmit/SessionStart/PreToolUse), Cursor hooks, MCP; git-tracked repo file; TypeSafe 'Jev' typed-question model API.",
+    "prior_solutions": "Hand-maintained CLAUDE.md (works if maintained; nobody maintains it).",
+    "core_mechanism": [
+      "M1: After each turn, a cheap typed classifier decides save/skip and kind (decision, rule, bug, todo, dead end with reason); one line is written to a git-tracked JEVMEM.md, superseding old lines by id instead of deleting; relevant lines recalled per prompt, global rules always-on at session start.",
+      "M2: PreToolUse guard checks commands/edits against saved rules and asks the user."
+    ],
+    "full_match": "Proposal contains M1 and M2.",
+    "partial_match": "Proposal contains M1 only.",
+    "not_a_match": [
+      "hand-maintained CLAUDE.md",
+      "vector memory store"
+    ],
+    "depends_on_unknown": true,
+    "depends_on_unknown_detail": "TypeSafe Jev model (fast/cheap typed probabilities) is what makes per-turn classification viable; also uses Claude Code 2.1.27x+ plugin features.",
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "drop - depends on post-2026-06 Jev model; a Jev-agnostic variant (auto-captured decision/dead-end log with supersession + rule-checking PreToolUse hook) could be re-carded if desired."
+  },
+  {
+    "id": "squadra",
+    "repo": "dagoSte/squadra",
+    "created": "2026-09-28",
+    "problem": "I run several agent windows (Claude Code, Codex, Cursor) on one project at once. Coordination lives in chat memory: who owns which task, whether a window actually received its assignment, which code was really tested, whether the code that got reviewed is the code that shipped, and what I decided and when. Agents reviewing their own work say it is fine, and a context reset or new window loses all of it.",
+    "context": "Multiple Claude Code/Codex/interactive Cursor sessions, each possibly in its own git checkout of the same project; transcripts on disk; Python stdlib only; local machine, no account. Constraints: Codex sandbox cannot discover/wake Claude windows; Cursor never launched automatically; nothing published automatically.",
+    "prior_solutions": "Coordinating through chat and each agent's own memory; single-agent self-review; ad hoc task lists.",
+    "core_mechanism": [
+      "M1: One shared local registry (SQLite, hash-chained append-only events) that every window reads/writes through a CLI: tasks with owner and reviewer, messages requiring explicit ACK before work starts, recorded owner decisions with verbatim words, checkpoints for context handover.",
+      "M2: Proof and review bound to the exact code: the builder runs the agreed check (exact argv) on a frozen candidate whose source fingerprint is recorded; any change after proof invalidates proof and review; review must be by a non-author window, by default of the other model (Claude writes/Codex reads), before the coordinator can close.",
+      "M3: For defect-fix tasks, closure requires showing the same test bytes fail on the base and pass on the candidate."
+    ],
+    "full_match": "Proposal contains M1 and M2 (shared durable registry across sessions AND fingerprint-bound proof with mandatory non-author, preferably cross-model, review).",
+    "partial_match": "Proposal has a shared task board/registry across sessions without binding proof to exact code, or cross-agent review without a shared durable record.",
+    "not_a_match": [
+      "one orchestrator agent spawning subagents in a single session",
+      "Jira/kanban board",
+      "chat-based handoff notes",
+      "agent self-review"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep - registry + fingerprint-bound proof + non-author cross-model review is distinctive and maps to parallel-session pain."
+  },
+  {
+    "id": "openqodex",
+    "repo": "openqodex/openqodex",
+    "created": "2026-10-02",
+    "problem": "My coding agent writes a change and then tells me it is fine. The LLM reviews I have tried report problems that turn out not to exist, silently skip parts of the change, and bury me in scanner noise from code I never touched. I want a review I can trust before the agent pushes.",
+    "context": "Claude Code/Codex (as author and as separate reviewer processes on the user's login), Cursor/Cline, git hooks/pre-push, static scanners (gitleaks, semgrep, osv-scanner, kubeconform, checkov...). Constraints: runs locally, no account/API key of its own, no telemetry.",
+    "prior_solutions": "Author agent self-review; single-pass LLM review; scanners alone (noisy, miss logic bugs).",
+    "core_mechanism": [
+      "M1: Reviewer is a separate agent process from the author; finder sessions propose candidate findings each with a quoted code line as evidence, and a script mechanically checks every quote against the actual code (unverifiable candidates dropped).",
+      "M2: Verifier sessions must confirm or refute every candidate and every scanner finding with a reason; scripts check coverage (every changed line assigned to a reviewer, every scanner finding answered) and mark the review 'incomplete' otherwise.",
+      "M3: Scanner findings filtered to changed lines; a push-gate hook requires a passing review of the current work."
+    ],
+    "full_match": "Proposal contains M1 and M2 (independent reviewer with mechanically verified evidence quotes AND verify-every-finding plus coverage accounting).",
+    "partial_match": "Proposal uses a separate reviewer agent plus scanners and a push gate, but without mechanical evidence checking or coverage accounting.",
+    "not_a_match": [
+      "single LLM review pass",
+      "linters/scanners only",
+      "author agent reviewing its own diff",
+      "hosted PR review bot"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "med",
+    "verdict": "keep - find/verify split with mechanical quote verification and coverage checks is distinctive against unverified claims."
+  },
+  {
+    "id": "tokeneconomizer",
+    "repo": "microsoft/TokenEconomizer",
+    "created": "2026-10-13",
+    "problem": "Developers run the same coding agents on the same repositories again and again, and the bill is high. Every turn pays again for the agent's instructions, every loaded tool definition and the conversation so far, and each session behaves as if it had never seen the repository before. We want sessions to get cheaper without hurting task success.",
+    "context": "Claude Code, Codex, Copilot CLI, Pi plugins (session/prompt/tool hooks, agent settings files incl. tool deny lists, transcripts with usage); the agent's own login for any model calls. Constraints: black box - cannot change the agent's model, weights or code; no API key of its own; every action reversible; must never stop a turn itself; cost counted with cache pricing including its own calls.",
+    "prior_solutions": "Not framed against named tools; implicit baseline is each session treated in isolation (and hand-written CLAUDE.md).",
+    "core_mechanism": [
+      "M1: Micro-skills: learn repo facts across sessions from failures that repeat across sessions (and a periodic model review of recent sessions), inject a fact at session start only after it is confirmed in 3 sessions, and drop it when later sessions contradict it.",
+      "M2: Tool pruning: tools unused over p prompts spanning >= m sessions are removed via the agent's own settings deny list, written only after the repo has been idle (cache already expired), with one-command restore.",
+      "M3: Loop guard: learn a per-repo envelope of normal turn length from turns that ended well; when a turn repeats failures, a judge model decides if it is stuck and injects at most one redirect note, then only tells the human how to stop."
+    ],
+    "full_match": "Proposal contains at least two of M1-M3, each driven by evidence accumulated across prior sessions in the same repo.",
+    "partial_match": "Proposal contains one of M1-M3, or all three as static rules without cross-session learning.",
+    "not_a_match": [
+      "context compaction/summarization",
+      "routing to a cheaper model",
+      "a hand-written CLAUDE.md",
+      "prompt caching tweaks only",
+      "hard token budgets that stop the agent"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "med",
+    "verdict": "keep - cross-session, evidence-thresholded learning of facts/tools/loops is distinctive; overlaps memory drift and session pollution."
+  },
+  {
+    "id": "k8s-skills",
+    "repo": "k8s-servant/k8s-skills",
+    "created": "2026-10-23",
+    "problem": "I want AI agents to help troubleshoot Kubernetes (crashloops, DNS, cert-manager, Flux/Argo, Istio, storage...) on real clusters. Out of the box they guess from memory - docs and training data don't match the error strings the cluster actually prints - investigate in no particular order, and may 'fix' things (delete pods, apply manifests) in the middle of an investigation. Handing an agent cluster credentials feels risky and I can't tell whether its diagnosis is right.",
+    "context": "Agent Skills (SKILL.md) for Claude Code/Codex/Gemini/Copilot; kubectl, read-only az; kind for test clusters; Kubernetes RBAC; Claude Code PreToolUse hooks; CI. Constraints: Secrets must never be read; the human applies anything destructive.",
+    "prior_solutions": "Not compared by name; implicit: agents' general knowledge plus raw kubectl access, generic runbooks.",
+    "core_mechanism": [
+      "M1: Every command in the skill text is assigned a tier - run freely (read-only verbs), ask first (reversible changes, shown with what changes and an '# Undo:' line), never run (destructive; proposed for the human) - and CI lints the skill text against per-tier allow-lists, requires an undo line for every change and rejects any Secret-reading command.",
+      "M2: Each skill is verified by scenarios that break a throwaway kind cluster on purpose; a fresh agent with only the skill and a view-only kubeconfig must name the cause, cite the evidence and propose an acceptable fix without changing anything; every quoted error string is reproduced on a pinned version.",
+      "M3: The real guarantee is a read-only RBAC identity; a secret-guard hook is a best-effort second layer."
+    ],
+    "full_match": "Proposal contains M1 and M2 (tiered command policy embedded in and CI-checked against the skill content AND break-it scenario tests run by a fresh agent with read-only credentials).",
+    "partial_match": "Proposal contains only one of M1/M2, or runbook skills plus read-only kubeconfig without tiering or scenario verification.",
+    "not_a_match": [
+      "generic k8s runbooks/docs in context",
+      "k8sgpt-style LLM diagnosis",
+      "kubectl command allowlist hook alone",
+      "giving the agent cluster-admin with approvals"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep - tiered, CI-linted command policy plus fault-injection scenario verification is a concrete method for safe infra delegation."
+  },
+  {
+    "id": "transcripto",
+    "repo": "pypi:transcripto",
+    "created": "2026-08-28",
+    "problem": "An engineer hands tasks to coding agents (Claude Code, Codex, Cursor) and comes back to a closing message saying the work is done. Sometimes edits silently failed, a command errored, or a result was never produced, but the summary still sounds confident. Reading the whole raw session to find out what really happened takes longer than the task itself.",
+    "context": "Agents already write local session transcripts (e.g. ~/.claude/projects JSONL, Codex and Cursor session files). Must run locally, no accounts, no extra runtime dependencies, should work across several agent harnesses.",
+    "prior_solutions": "Trusting the agent's final summary; scrolling the raw transcript manually; generic log viewers that show text but do not classify outcomes.",
+    "core_mechanism": [
+      "M1: Reconstruct the session from the transcripts the agents already write (no new instrumentation): request, each tool call, and its recorded result, in order.",
+      "M2: Classify every tool call's outcome (attempt / success / failure / unknown) from the recorded tool results themselves, independently of and without relying on the agent's closing message."
+    ],
+    "full_match": "Proposal contains M1 and M2: reads existing transcripts and labels each action's real outcome from tool results, explicitly not trusting the agent's own summary.",
+    "partial_match": "Proposal reads existing transcripts to show what happened but does not classify outcomes independent of the agent's claim; or verifies claims by re-running checks rather than from recorded results.",
+    "not_a_match": [
+      "Asking the agent to self-report more carefully",
+      "adding a new logging proxy only",
+      "a generic session dashboard",
+      "requiring tests to pass before saying done"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "med",
+    "relevance": "high",
+    "verdict": "keep: distinctive 'outcome from tool results, not from the claim' mechanism; directly hits unverified agent claims"
+  },
+  {
+    "id": "cc-projects",
+    "repo": "anthropic: Claude Code Projects redesign",
+    "created": "2026-09-17",
+    "problem": "A developer runs several Claude Code sessions in parallel on one larger goal. They have to split the goal into tasks by hand, decide which session gets what, keep track of each session's progress, check each result, and stitch the pieces back together. Most of their time goes into coordination rather than the work.",
+    "context": "Claude Code with cloud sessions; each session can work on a repository, run tests and open pull requests. Subscription usage limits apply.",
+    "prior_solutions": "Manually managing many terminals or a session dashboard (a roster of sessions, but the human still assigns and integrates); subagents inside one session (share one context and budget).",
+    "core_mechanism": [
+      "M1: A coordinator agent (one conversation) decomposes the goal and dispatches tasks to separate full sessions running in parallel, instead of the human assigning them.",
+      "M2: Each parallel thread gets its own branch / copy of the repository, and the coordinator checks the threads' results and integrates them back."
+    ],
+    "full_match": "Proposal contains M1 and M2: an agent coordinator that splits work across independent parallel sessions with isolated branches/workspaces, then verifies and merges results.",
+    "partial_match": "Coordinator that dispatches tasks but no per-thread isolation or result checking; or isolated worktrees per session with human still assigning tasks.",
+    "not_a_match": [
+      "A dashboard listing sessions",
+      "better task templates for the human",
+      "running subagents within a single session context"
+    ],
+    "depends_on_unknown": false,
+    "obviousness": "high",
+    "relevance": "high",
+    "verdict": "keep: easy control case for multi-session coordination"
+  }
+]

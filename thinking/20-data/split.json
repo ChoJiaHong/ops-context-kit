@@ -1,0 +1,21 @@
+{
+  "dev": [
+    "cc-projects",
+    "honest-arch-diagrams",
+    "squadra",
+    "termaxa",
+    "tokeneconomizer",
+    "transcripto",
+    "unlazy"
+  ],
+  "heldout": [
+    "blastradius",
+    "claude-bouncer",
+    "elephant-goldfish",
+    "evolveguard",
+    "k8s-skills",
+    "openqodex",
+    "stalebrain",
+    "stop-that-shit"
+  ]
+}
