@@ -68,6 +68,7 @@
 | [28-model-v2-contribution.md](28-model-v2-contribution.md) | 模型優化版 v2（先定量法、從現有解法的假設出發、每步要證據、硬湊測試操作化、適用範圍必要、產生與審查分開）與最適合的貢獻：地方創生與在地創新提案的方法論（待使用者確認） |
 | [29-venues.md](29-venues.md) | 五個貢獻方向各自可以投的研討會與期刊、下一次截止日與建議先投的管道 |
 | [30-problem-normalization.md](30-problem-normalization.md) | 把目前的問題正規化成已知問題：多 session 的困擾拆成委託代理、隔離、監督控制、變更管理、驗證等已知問題，各有標準解法與現成工具；真正的問題是選型與整合，只有「很多 session 要盯」可能值得自己做 |
+| [31-normalization-vs-gaps.md](31-normalization-vs-gaps.md) | 「正規化問題」和「資訊不完整時補缺口」不是同一個問題：補缺口是正規化的前提，正規化是補缺口的一種應用；補缺口本身可拆成資訊價值、假設式推理、組織學習三個已知問題 |
 | [22-validation-guide.md](22-validation-guide.md) | 驗證問題界定的純 MD 指引，取代已撤掉的程式：關鍵字只找候選、由執行的 AI 讀上下文判斷，納入 20 找到的偏差，附抽樣核對；交給沒看過 18 的 agent 判讀 |
 
 ## 三個版本怎麼搭配
